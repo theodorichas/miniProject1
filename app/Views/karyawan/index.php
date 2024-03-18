@@ -42,7 +42,7 @@
                             <th scope="col">Telp</th>
                             <th scope="col">Alamat</th>
                             <th scope="col">Email</th>
-                            <th scope="col">Position</th>
+                            <th scope="col">Group Name</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -65,7 +65,7 @@
             <div class="modal-body" id="modal-addK">
                 <form name="formKaryawan" id="quickForm">
                     <?= csrf_field(); ?>
-                    <input type="hidden" name="id" id="id" value="">
+                    <input type="hidden" name="userId" id="id" value="">
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama</label>
@@ -97,17 +97,19 @@
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="text" name="password" id="inputPassword" class="form-control">
+                            <input type="password" name="password" id="inputPassword" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="groupName" class="form-label">Group</label>
-                            <input type="text" name="groupName" id="inputGroupname" class="form-control">
-                            <p>
-                                addasd
-                            </p>
+                            <select name="groupName" id="inputGroupname" class="form-control">
+                                <option value="">Select Group</option>
+                                <?php foreach ($group_names as $group_name) : ?>
+                                    <option value="<?= $group_name ?>"><?= $group_name ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <button type="button" id="btnModal" name="update" class="btn btn-primary"></button>
@@ -117,7 +119,7 @@
     </div>
 </div>
 
-<!-- Modal Import Data Excel-->
+<!-- Modal Import Data Excel
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -134,7 +136,9 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
+
+
 
 <!-- Merupakan extensi dari scripts yang ada pada view template -->
 <?= $this->section('scripts'); ?>
@@ -178,12 +182,12 @@
             }, {
                 "data": "email"
             }, {
-                "data": "position"
+                "data": "group_name"
             }, {
                 "data": "action",
                 "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.position + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.id + ')">Delete</button>';
+                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.position + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
+                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
                 }
             }],
             'order': [0, 'asc'],
@@ -209,9 +213,13 @@
                     required: true,
                     email: true
                 },
-                position: {
-                    required: true
+                password: {
+                    required: true,
+                    minlength: 8,
                 },
+                groupName: {
+                    required: true,
+                }
             },
             messages: {
                 nama: {
@@ -230,10 +238,13 @@
                     email: "Please enter a valid email address"
                 },
 
-                position: {
-                    required: "'position' cannot be empty",
+                password: {
+                    required: "'password' cannot be empty",
+                    minlength: "password must contain at least 8 Characters!!",
                 },
-
+                groupName: {
+                    required: "Please select one of the options !!",
+                }
             },
             errorElement: 'span',
             errorPlacement: function(error, element) {
@@ -292,7 +303,7 @@
         })
     })
 
-    function UpdateRecord(id, nama, telp, alamat, email, position) {
+    function UpdateRecord(id, nama, telp, alamat, email, password, group_name) {
         $('#mTitle').text('Edit Karyawan');
         $('#btnModal').text('Update');
         // Populate the modal fields with the existing data
@@ -302,18 +313,20 @@
         $('#inputTelp').val(telp);
         $('#inputAlamat').val(alamat);
         $('#inputEmail').val(email);
-        $('#inputPosition').val(position);
+        $('#inputPassword').val(password);
+        $('#inputGroupname').val(group_name);
     }
 
     function deleteRecord(id) {
         if (confirm('Are you sure you want to delete this record?')) {
             // AJAX request to your delete endpoint
+            console.log("Id yang didapat dari tombol update: ", id);
             $.ajax({
                 url: '<?= site_url('karyawan/delete') ?>',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    'id': id
+                    'userId': id
                 },
                 success: function(response) {
                     console.log(response)

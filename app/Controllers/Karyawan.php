@@ -13,14 +13,13 @@ class Karyawan extends BaseController
         $this->db      = \Config\Database::connect();
         $this->builder = $this->db->table('karyawan');
         $this->ModelKaryawan = new ModelKaryawan();
-        $this->session = \Config\Services::session();
         $this->request = \Config\Services::request();
         helper('general_helper');
     }
 
     public function index() //view table
     {
-        $data['judul'] = 'Data Tables';
+        $data['group_names'] = $this->ModelKaryawan->getGroupNames();
         return view('karyawan/index', $data);
     }
 
@@ -45,35 +44,26 @@ class Karyawan extends BaseController
     }
 
 
-    //Fungsi delete Data
-    public function delete()
-    {
-        $id = $this->request->getPost('id');
-        echo "ID yang terhapus: ", $id;
-        // die();
-        $deleteData = $this->ModelKaryawan->delete_dataKaryawan($id);
-        printSuccess('Operation successful', $id);
-    }
-
-
-    //Fungsi Update
+    //Fungsi Update dan add Data
     public function updateAdd()
     {
         $isSuccess = false;
-        $id = intval($this->request->getPost('id'));
+        $id = intval($this->request->getPost('userId'));
         $nama = $this->request->getPost('nama');
         $telp = $this->request->getPost('telp');
         $alamat = $this->request->getPost('alamat');
         $email = $this->request->getPost('email');
-        $position = $this->request->getPost('position');
+        $password = $this->request->getPost('password');
+        $group_name = $this->request->getPost('groupName');
 
         $data = [
-            'id' => $id,
+            'user_id' => $id,
             'nama' => $nama,
             'telp' => $telp,
             'alamat' => $alamat,
             'email' => $email,
-            'position' => $position,
+            'password' => $password,
+            'group_name' => $group_name,
         ];
 
         if ($id > 0) {
@@ -85,5 +75,15 @@ class Karyawan extends BaseController
             echo ("hello");
             $isSuccess = $this->ModelKaryawan->add_dataKaryawan($data); //diarahkan ke model mahasiswa dengan method add_datakaryawan
         }
+    }
+
+    //Fungsi delete Data
+    public function delete()
+    {
+        $id = $this->request->getPost('userId');
+        echo "ID yang terhapus: ", $id;
+        // die();
+        $deleteData = $this->ModelKaryawan->delete_dataKaryawan($id);
+        printSuccess('Operation successful', $id);
     }
 }
