@@ -129,9 +129,8 @@
                         <div class="mb-3">
                             <label for="visible" class="form-label">Visible</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" name="visible" id="visible" type="checkbox">
                                 <label class="form-check-label" for="visible"></label>
-                                <input type="hidden" name="hidden_visible" id="hidden_visible" value="0">
+                                <input type="checkbox" class="form-check-input" name="visible" id="visible">
                             </div>
                         </div>
                     </div>
@@ -193,7 +192,7 @@
             }, {
                 "data": "action",
                 "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.note + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
+                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
                         '<button class="btn btn-danger"onclick="deleteRecord(' + full.menu_id + ')">Delete</button>';
                 }
             }],
@@ -300,7 +299,7 @@
                         $('#example').DataTable().ajax.reload();
                         $('#exampleModal').modal('hide');
                         $('#visible').prop('checked', false);
-                        $('#hidden_visible').val('0');
+                        $('#visible').val('0');
                     }
                 }
             });
@@ -309,12 +308,11 @@
         $('#visible').change(function() {
             console.log('Checkbox state changed');
             if ($(this).is(':checked')) {
-                $('#hidden_visible').val('1');
+                $('#visible').val('1');
             } else {
-                $('#hidden_visible').val('0');
+                $('#visible').val('0');
             }
-            console.log($('#hidden_visible').val()); // Log the value
-
+            console.log($('#visible').val()); // Log the value
         });
     })
 

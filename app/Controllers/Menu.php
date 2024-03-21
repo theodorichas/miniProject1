@@ -56,7 +56,7 @@ class Menu extends BaseController
         $icon = $this->request->getPost('icon');
         $note = $this->request->getPost('note');
         $order_no = $this->request->getPost('order_no');
-        $visible = $this->request->getPost('hidden_visible');
+        $visible = $this->request->getPost('visible');
 
         $data = [
             'menu_id' => $menu_id,
@@ -75,7 +75,6 @@ class Menu extends BaseController
         if ($menu_id > 0) {
             $isSuccess = $this->ModelMenu->update_dataMenu($menu_id, $data);
         } else {
-            var_dump($visible);
             $isSuccess = $this->ModelMenu->add_dataMenu($data);
         }
     }

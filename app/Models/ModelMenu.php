@@ -47,6 +47,14 @@ class ModelMenu extends Model
         $builder->table('menu')->insert($data);
     }
 
+    public function update_dataMenu($menu_id, $data)
+    {
+        $builder = $this->table('menu');
+        $builder->where('menu_id', $menu_id);
+        $builder->update($data);
+        var_dump($data);
+    }
+
     public function delete_dataMenu($menu_id)
     {
         return $this->delete($menu_id);
