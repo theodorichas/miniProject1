@@ -12,7 +12,7 @@ class ModelGroup extends Model
     }
     protected $table = 'group';
     protected $allowedFields = ['group_code', 'group_name'];
-    protected $primaryKey = 'id'; // Assuming 'id' is your primary key.
+    protected $primaryKey = 'group_id'; // Assuming 'id' is your primary key.
 
     public function searchAndDisplay($keyword = null, $start = 0, $length = 0, $orderColumn = 'group_code', $orderDirection = 'asc')
     {
@@ -44,7 +44,7 @@ class ModelGroup extends Model
     public function update_dataGroup($id, $data)
     {
         $builder = $this->db->table('group');
-        $builder->where('id', $id);
+        $builder->where('group_id', $id);
         $builder->update($data);
     }
 

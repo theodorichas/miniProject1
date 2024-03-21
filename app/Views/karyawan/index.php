@@ -2,6 +2,7 @@
 
 <?= $this->section('links'); ?>
 
+<title><?= $title ?></title>
 <!-- DataTable -->
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') ?>">
@@ -104,7 +105,7 @@
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="groupName" class="form-label">Group</label>
-                            <select name="groupName" id="inputGroupname" class="form-control">
+                            <select name="groupName" id="inputGroupname" class="form-select">
                                 <option value="">Select Group</option>
                                 <?php foreach ($group_names as $group_name) : ?>
                                     <option value="<?= $group_name ?>"><?= $group_name ?></option>
@@ -186,7 +187,7 @@
             }, {
                 "data": "action",
                 "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.position + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
+                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
                         '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
                 }
             }],

@@ -20,7 +20,8 @@ class Group extends BaseController
 
     public function index()
     {
-        return view('group/index');
+        $data['title'] = "Group list";
+        return view('group/index', $data);
     }
 
     public function groupDtb()
@@ -46,12 +47,13 @@ class Group extends BaseController
     public function updateAdd()
     {
         $isSuccess = false;
-        $id = intval($this->request->getPost('id'));
+        $id = intval($this->request->getPost('groupId'));
         $group_code = $this->request->getPost('groupCode');
         $group_name = $this->request->getPost('groupName');
 
+
         $data = [
-            'id' => $id,
+            'group_id' => $id,
             'group_code' => $group_code,
             'group_name' => $group_name,
         ];
@@ -68,7 +70,7 @@ class Group extends BaseController
 
     public function delete()
     {
-        $id = $this->request->getPost('id');
+        $id = $this->request->getPost('groupId');
         echo "ID yang terhapus: ", $id;
         // die();
         $deleteData = $this->ModelGroup->delete_dataGroup($id);

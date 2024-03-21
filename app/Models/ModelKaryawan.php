@@ -42,7 +42,7 @@ class ModelKaryawan extends Model
         return $builder->get()->getResult();
     }
 
-    public function getGroupNames()
+    public function getGroupNames() //ambil group names untuk select options di modal
     {
         $builder = $this->db->table('group');
         $builder->select('group_name');
@@ -59,22 +59,61 @@ class ModelKaryawan extends Model
     public function add_dataKaryawan($data)
     {
         $builder = $this->table('karyawan');
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         $builder->table('karyawan')->insert($data);
     }
 
-
-    //delete data
-    public function delete_dataKaryawan($id)
+    public function getGroupIdByName($group_name)
     {
-        return $this->delete($id);
+        $builder = $this->db->table('group');
+        $builder->select('group_id');
+        $builder->where('group_name', $group_name);
+
+        $query = $builder->get();
+        if ($query->getNumRows() > 0) {
+            // Fetch the first row and return the group_id
+            $row = $query->getRow();
+            return $row->group_id;
+        } else {
+            // Return null if no group_id is found
+            return null;
+        }
     }
 
-    //Update data
-    public function update_dataKaryawan($id, $data)
+    public function insertUserGroup($user_id, $group_id)
+    {
+        $builder = $this->db->table('user_group');
+        $data = [
+            'user_id' => $user_id,
+            'group_id' => $group_id
+        ];
+        $builder->insert($data);
+    }
+
+
+    /// Update data ////
+
+    public function update_dataKaryawan($id, $data, $group_id)
     {
         $builder = $this->db->table('karyawan');
         $builder->where('user_id', $id);
         $builder->update($data);
+        $this->updateUserGroup($id, $group_id);
     }
+
+    public function updateUserGroup($user_id, $group_id)
+    {
+        $builder = $this->db->table('user_group');
+        $builder->where('user_id', $user_id);
+        $builder->update(['group_id' => $group_id]);
+    }
+
+    ///// ----------- ///////
+
+
+    /// delete data ///
+    public function delete_dataKaryawan($id)
+    {
+        return $this->delete($id);
+    }
+    ///// ----------- ///////
 }

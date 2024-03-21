@@ -9,7 +9,7 @@ class Karyawan extends Migration
     public function up()
     {
         $this->forge->addField([
-            'id' => [
+            'user_id' => [
                 'type' => 'INT',
                 'constraint' => 5,
                 'unsigned' => true,
@@ -37,7 +37,7 @@ class Karyawan extends Migration
             ],
 
         ]);
-        $this->forge->addPrimaryKey('id');
+        $this->forge->addPrimaryKey('user_id');
         $this->forge->createTable('Karyawan');
     }
 

@@ -19,11 +19,12 @@ class Karyawan extends BaseController
 
     public function index() //view table
     {
+        $data['title'] = 'User list';
         $data['group_names'] = $this->ModelKaryawan->getGroupNames();
         return view('karyawan/index', $data);
     }
 
-    public function karyawanAjax() //Server Side (Ajax)
+    public function karyawanAjax() //Data Table
     {
         $param['draw'] = isset($_REQUEST['draw']) ? $_REQUEST['draw'] : '';
         $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : '';
@@ -44,8 +45,7 @@ class Karyawan extends BaseController
     }
 
 
-    //Fungsi Update dan add Data
-    public function updateAdd()
+    public function updateAdd() //Fungsi Update dan add Data
     {
         $isSuccess = false;
         $id = intval($this->request->getPost('userId'));
@@ -54,7 +54,9 @@ class Karyawan extends BaseController
         $alamat = $this->request->getPost('alamat');
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
+        $hashedPassword = password_hash('$password', PASSWORD_DEFAULT);
         $group_name = $this->request->getPost('groupName');
+        $group_id = $this->ModelKaryawan->getGroupIdByName($group_name);
 
         $data = [
             'user_id' => $id,
@@ -62,23 +64,21 @@ class Karyawan extends BaseController
             'telp' => $telp,
             'alamat' => $alamat,
             'email' => $email,
-            'password' => $password,
+            'password' => $hashedPassword,
             'group_name' => $group_name,
         ];
 
         if ($id > 0) {
-            echo ("Id yang masuk ke method ini:$id\n");
-            echo ("hai");
-            $isSuccess = $this->ModelKaryawan->update_dataKaryawan($id, $data);
+            $isSuccess = $this->ModelKaryawan->update_dataKaryawan($id, $data, $group_id);
         } else {
-            echo ("Id yang masuk ke method ini:$id\n");
-            echo ("hello");
             $isSuccess = $this->ModelKaryawan->add_dataKaryawan($data); //diarahkan ke model mahasiswa dengan method add_datakaryawan
+            $user_id = $this->ModelKaryawan->insertID();
+            $this->ModelKaryawan->insertUserGroup($user_id, $group_id);
         }
     }
 
-    //Fungsi delete Data
-    public function delete()
+
+    public function delete() //Fungsi delete Data
     {
         $id = $this->request->getPost('userId');
         echo "ID yang terhapus: ", $id;

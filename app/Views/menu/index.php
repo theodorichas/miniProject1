@@ -1,23 +1,25 @@
 <?= $this->extend('template/index'); ?>
 
 <?= $this->section('links'); ?>
-<title><?= $title ?></title>
 
+<title><?= $title ?></title>
 <!-- DataTable -->
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')  ?>">
-
 <!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <!-- SweetAlert2 -->
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') ?> ">
 
-<?= $this->endSection('links'); ?>
 
+<?= $this->endSection('links') ?>
 
 <!-- Main Content -->
 <?= $this->section('content'); ?>
+
+<i class="fal fa-address-card"></i>
+<i class="fa fa-address-card" aria-hidden="true"></i>
 
 
 <!-- Data Table -->
@@ -25,19 +27,25 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">DataTable Group</h3>
+                <h3 class="card-title">DataTable Menu</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
                 <!-- Button trigger modal -->
                 <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Add Group
+                    Add Menu
                 </a>
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Group Code</th>
-                            <th scope="col">Group Name</th>
+                            <th scope="col">Menu Name</th>
+                            <th scope="col">Page Name</th>
+                            <th scope="col">File Name</th>
+                            <th scope="col">Parent Menu</th>
+                            <th scope="col">Icon</th>
+                            <th scope="col">Notes</th>
+                            <th scope="col">Order No.</th>
+                            <th scope="col">Visible</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -58,21 +66,73 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="modal-addK">
-                <form name="formGroup" id="quickForm">
+                <form name="formMenu" id="quickForm">
                     <?= csrf_field(); ?>
-                    <input type="hidden" name="groupId" id="id" value="">
+                    <input type="hidden" name="menu_id" id="menu_id" value="">
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="groupcode" class="form-label">group_code</label>
-                            <input type="number" name="groupCode" id="inputGroupcode" class="form-control">
+                            <label for="menu_name" class="form-label">Menu Name</label>
+                            <input type="text" name="menu_name" id="menu_name" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="groupname" class="form-label">group_name</label>
-                            <input type="text" name="groupName" id="inputGroupname" class="form-control">
+                            <label for="page_name" class="form-label">Page Name</label>
+                            <input type="text" name="page_name" id="page_name" class="form-control">
 
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="file_name" class="form-label">File Name</label>
+                            <input type="text" name="file_name" id="file_name" class="form-control">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="parent_menu" class="form-label">Parent Menu</label>
+                            <input type="text" name="parent_menu" id="parent_menu" class="form-control">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="icon" class="form-label">Icon</label>
+                            <select class="form-select" name="icon" id="icon">
+                                <option value="">Select an Icon</option>
+                                <?php foreach ($icons as $icon) : ?>
+                                    <option value="<?= $icon ?>">
+                                        <i class="<?= $icon ?>"></i> <?= $icon ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div id="selectedIconContainer"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="note" class="form-label">Notes</label>
+                            <input type="text" name="note" id="note" class="form-control">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="order_no" class="form-label">Order no</label>
+                            <input type="number" name="order_no" id="order_no" class="form-control">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="visible" class="form-label">Visible</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" name="visible" id="visible" type="checkbox">
+                                <label class="form-check-label" for="visible"></label>
+                                <input type="hidden" name="hidden_visible" id="hidden_visible" value="0">
+                            </div>
                         </div>
                     </div>
                     <button type="button" id="btnModal" name="update" class="btn btn-primary"></button>
@@ -82,8 +142,6 @@
     </div>
 </div>
 
-
-<!-- Merupakan extensi dari scripts yang ada pada view template -->
 <?= $this->section('scripts'); ?>
 <!-- jquery-validation -->
 <script src="<?= base_url('asset/AdminLTE/plugins/jquery-validation/jquery.validate.min.js') ?>"></script>
@@ -115,16 +173,28 @@
             'processing': true,
             'serverSide': false,
             'serverMethod': 'post',
-            "ajax": "<?= site_url('groupdtb') ?>",
+            "ajax": "<?= site_url('menudtb') ?>",
             "columns": [{
-                "data": "group_code"
+                "data": "menu_name"
             }, {
-                "data": "group_name"
+                "data": "page_name"
+            }, {
+                "data": "file_name"
+            }, {
+                "data": "parent_menu"
+            }, {
+                "data": "icon"
+            }, {
+                "data": "note"
+            }, {
+                "data": "order_no"
+            }, {
+                "data": "visible"
             }, {
                 "data": "action",
                 "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.group_id + ', \'' + full.group_code + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.group_id + ')">Delete</button>';
+                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.note + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
+                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.menu_id + ')">Delete</button>';
                 }
             }],
             'order': [0, 'asc'],
@@ -136,22 +206,47 @@
     $(document).ready(function() {
         $('#quickForm').validate({
             rules: {
-                groupCode: {
-                    required: true,
-                    min: 1,
-                },
-                groupName: {
+                menu_name: {
                     required: true,
                 },
+                page_name: {
+                    required: true,
+                },
+                file_name: {
+                    required: true
+                },
+                parent_menu: {
+                    required: true,
+                },
+                icon: {
+                    required: true,
+                },
+                note: {
+                    required: true,
+                },
+                order_no: {
+                    required: true,
+                }
             },
             messages: {
-                groupCode: {
-                    required: "'this field' cannot be empty",
-                    min: "Please enter a value greater than zero."
+                menu_name: {
+                    required: "This field cannot be empty!"
                 },
-                groupName: {
-                    required: "'this field' cannot be empty",
+                page_name: {
+                    required: "This field cannot be empty!",
                 },
+                file_name: {
+                    required: "This field cannot be empty!",
+                },
+                parent_menu: {
+                    required: "This field cannot be empty!",
+                },
+                note: {
+                    required: "This field cannot be empty!",
+                },
+                order_no: {
+                    required: "This field cannot be empty!",
+                }
             },
             errorElement: 'span',
             errorPlacement: function(error, element) {
@@ -171,20 +266,22 @@
             $('#quickForm').removeClass('error invalid-feedback');
         });
         $('#btnAdd').click(function() {
-            $('#mTitle').text('Add Group');
+            $('#mTitle').text('Add Menu');
             $('#btnModal').text('Add');
             $('#id').val('0');
         })
         $('#btnModal').click(function() {
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
+                // console.log(formData);
             }
             $.ajax({
                 method: 'POST',
                 type: 'JSON',
-                url: '<?= base_url("group/updateAdd") ?>',
+                url: '<?= base_url("/menu/updateAdd") ?>',
                 data: formData,
                 success: function(response) {
+                    console.log(response)
                     if (response.status == 1) {
                         Swal.fire({
                             icon: 'error',
@@ -202,32 +299,51 @@
                         });
                         $('#example').DataTable().ajax.reload();
                         $('#exampleModal').modal('hide');
+                        $('#visible').prop('checked', false);
+                        $('#hidden_visible').val('0');
                     }
                 }
             });
         })
+
+        $('#visible').change(function() {
+            console.log('Checkbox state changed');
+            if ($(this).is(':checked')) {
+                $('#hidden_visible').val('1');
+            } else {
+                $('#hidden_visible').val('0');
+            }
+            console.log($('#hidden_visible').val()); // Log the value
+
+        });
     })
 
-    function UpdateRecord(id, group_code, group_name) {
-        $('#mTitle').text('Edit Group');
+    function UpdateRecord(menu_id, menu_name, page_name, file_name, parent_menu, icon, note, order_no, visible) {
+        $('#mTitle').text('Edit Karyawamenu_namen');
         $('#btnModal').text('Update');
         // Populate the modal fields with the existing data
-        $("#id").val(id);
-        console.log("Id yang didapat dari tombol update: ", id);
-        $('#inputGroupcode').val(group_code);
-        $('#inputGroupname').val(group_name);
+        $("#menu_id").val(menu_id);
+        console.log("Id yang didapat dari tombol update: ", menu_id);
+        $('#menu_name').val(menu_name);
+        $('#page_name').val(page_name);
+        $('#file_name').val(file_name);
+        $('#parent_menu').val(parent_menu);
+        $('#icon').val(icon);
+        $('#note').val(note);
+        $('#order_no').val(order_no);
+        $('#visible').val(visible);
     }
 
-    function deleteRecord(id) {
+    function deleteRecord(menu_id) {
         if (confirm('Are you sure you want to delete this record?')) {
             // AJAX request to your delete endpoint
-            console.log(id);
+            console.log("Id yang didapat dari tombol update: ", menu_id);
             $.ajax({
-                url: '<?= site_url('group/delete') ?>',
+                url: '<?= site_url('menu/delete') ?>',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    'groupId': id
+                    'menu_id': menu_id
                 },
                 success: function(response) {
                     console.log(response)
@@ -249,8 +365,5 @@
     }
 </script>
 
-
 <?= $this->endSection('scripts'); ?>
-
-
 <?= $this->endSection('content'); ?>
