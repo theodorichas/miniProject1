@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\ModelMenu;
-use CodeIgniter\Config\BaseConfig;
 
 class Menu extends BaseController
 {
@@ -58,6 +57,12 @@ class Menu extends BaseController
         $order_no = $this->request->getPost('order_no');
         $visible = $this->request->getPost('visible');
 
+        // // Convert 'visible' value to boolean
+        // $visible = ($visible === '1' || $visible === true) ? true : false;
+
+        // // Update the 'visible' value in the $data array
+        // $data['visible'] = $visible;
+
         $data = [
             'menu_id' => $menu_id,
             'menu_name' => $menu_name,
@@ -70,12 +75,19 @@ class Menu extends BaseController
             'visible' => $visible,
         ];
 
-
-
+        // print_r('<pre');
+        // print_r($data);
+        // die();
         if ($menu_id > 0) {
             $isSuccess = $this->ModelMenu->update_dataMenu($menu_id, $data);
         } else {
             $isSuccess = $this->ModelMenu->add_dataMenu($data);
+        }
+
+        if ($isSuccess) {
+            echo json_encode(['status' => 0]); // Success response
+        } else {
+            echo json_encode(['status' => 1]); // Error response
         }
     }
 

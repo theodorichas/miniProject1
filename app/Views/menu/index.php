@@ -271,7 +271,12 @@
         })
         $('#btnModal').click(function() {
             if ($('#quickForm').valid()) {
-                var formData = $('#quickForm').serialize();
+                var formData = $('#quickForm').serializeArray();
+                var visibilityState = $('#visible').is(':checked') ? '1' : '0';
+                formData.push({
+                    name: 'visible',
+                    value: visibilityState
+                });
                 // console.log(formData);
             }
             $.ajax({
@@ -304,16 +309,6 @@
                 }
             });
         })
-
-        $('#visible').change(function() {
-            console.log('Checkbox state changed');
-            if ($(this).is(':checked')) {
-                $('#visible').val('1');
-            } else {
-                $('#visible').val('0');
-            }
-            console.log($('#visible').val()); // Log the value
-        });
     })
 
     function UpdateRecord(menu_id, menu_name, page_name, file_name, parent_menu, icon, note, order_no, visible) {
@@ -329,7 +324,11 @@
         $('#icon').val(icon);
         $('#note').val(note);
         $('#order_no').val(order_no);
-        $('#visible').val(visible);
+        if (visible == '1') {
+            $('#visible').prop('checked', true);
+        } else {
+            $('#visible').prop('checked', false);
+        }
     }
 
     function deleteRecord(menu_id) {
