@@ -7,8 +7,10 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-//Karyawan Routing
+
 $routes->get('/', 'Home::index');
+
+//Karyawan Routes
 $routes->get('/karyawan', 'Karyawan::index'); //Client Side
 $routes->post('/ajax', 'Karyawan::karyawanAjax');
 $routes->post('/karyawan/delete', 'Karyawan::delete');

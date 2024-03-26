@@ -104,7 +104,7 @@
             </a>
 
             <!-- Sidebar -->
-            <div class="sidebar">
+            <div class="sidebar" id='sidebar'>
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
@@ -117,28 +117,16 @@
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-                        <li class="nav-item">
-                            <a href="<?= base_url('/karyawan') ?>" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Karyawan
-                                </p>
-                            </a>
-                            <a href="<?= base_url('/group') ?>" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Group
-                                </p>
-                            </a>
-                            <a href="<?= base_url('/menu') ?>" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Menu
-                                </p>
-                            </a>
-                        </li>
+                        <?php foreach ($menus as $menu) : ?>
+                            <!-- Determine if the menu item should be hidden based on 'visible' status -->
+                            <?php $visibilityClass = ($menu->visible == 0) ? 'd-none' : ''; ?>
+                            <li class="nav-item <?= $visibilityClass ?>">
+                                <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
+                                    <i class="<?= $menu->icon ?>"></i>
+                                    <p><?= $menu->menu_name ?></p>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -178,6 +166,23 @@
         <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
+
+
+    <!-- Visible Function Sidebar -->
+    <script>
+        // Attach change event listener to checkboxes
+        $('input[type="checkbox"]').change(function() {
+            // Get the corresponding menu item
+            var menuItem = $(this).closest('li');
+            // Toggle visibility of the corresponding menu item based on checkbox state
+            if ($(this).is(':checked')) {
+                menuItem.removeClass('d-none');
+            } else {
+                menuItem.addClass('d-none');
+            }
+        });
+    </script>
+
 
     <!-- jQuery -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery/jquery.min.js') ?>"></script>

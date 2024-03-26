@@ -60,4 +60,14 @@ class ModelMenu extends Model
     {
         return $this->delete($menu_id);
     }
+
+    public function getMenuNames()
+    {
+        $builder = $this->db->table('menu');
+        $builder->select('*');
+        $builder->orderBy('order_no', 'asc');
+        $query = $builder->get();
+
+        return $query->getResult();
+    }
 }

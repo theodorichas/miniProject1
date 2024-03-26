@@ -3,17 +3,20 @@
 namespace App\Controllers;
 
 use App\Models\ModelGroup;
+use App\Models\ModelMenu;
+
 
 class Group extends BaseController
 {
 
-    protected $db, $builder, $ModelGroup;
+    protected $db, $builder, $ModelGroup, $ModelMenu;
 
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
         $this->builder = $this->db->table('group');
         $this->ModelGroup = new ModelGroup();
+        $this->ModelMenu = new ModelMenu();
         $this->request = \Config\Services::request();
         helper('general_helper');
     }
@@ -21,6 +24,7 @@ class Group extends BaseController
     public function index()
     {
         $data['title'] = "Group list";
+        $data['menus'] = $this->ModelMenu->getMenuNames();
         return view('group/index', $data);
     }
 
@@ -65,6 +69,12 @@ class Group extends BaseController
             echo ("Id yang masuk ke method ini:$id\n");
             echo ("hello");
             $isSuccess = $this->ModelGroup->add_dataGroup($data);
+        }
+
+        if ($isSuccess) {
+            echo json_encode(['status' => 0]); // Success response
+        } else {
+            echo json_encode(['status' => 1]); // Error response
         }
     }
 

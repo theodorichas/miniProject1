@@ -196,7 +196,9 @@
                         '<button class="btn btn-danger"onclick="deleteRecord(' + full.menu_id + ')">Delete</button>';
                 }
             }],
-            'order': [0, 'asc'],
+            'order': [
+                [6, 'asc']
+            ],
         });
     });
 </script>
@@ -305,6 +307,7 @@
                         $('#exampleModal').modal('hide');
                         $('#visible').prop('checked', false);
                         $('#visible').val('0');
+                        location.reload();
                     }
                 }
             });

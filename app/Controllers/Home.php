@@ -2,15 +2,26 @@
 
 namespace App\Controllers;
 
+use App\Models\ModelMenu;
+
 class Home extends BaseController
 {
-    public function index(): string
-    {
-        return view('template/index');
-    }
+    protected $db, $builder, $ModelMenu;
 
-    public function index2()
+    public function __construct()
     {
-        return view('user_group/index');
+        $this->db      = \Config\Database::connect();
+        $this->builder = $this->db->table('menu');
+        $this->ModelMenu = new ModelMenu();
+        $this->request = \Config\Services::request();
+        helper('general_helper');
+    }
+    public function index()
+    {
+        $data['menus'] = $this->ModelMenu->getMenuNames();
+        // $data['testing'] = 'hello';
+        var_dump($data);
+        // die;
+        return view('template/index', $data);
     }
 }

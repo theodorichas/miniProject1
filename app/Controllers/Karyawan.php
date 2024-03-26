@@ -3,16 +3,19 @@
 namespace App\Controllers;
 
 use App\Models\ModelKaryawan;
+use App\Models\ModelMenu;
+
 
 class Karyawan extends BaseController
 {
-    protected $db, $builder, $ModelKaryawan;
+    protected $db, $builder, $ModelKaryawan, $ModelMenu;
 
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
         $this->builder = $this->db->table('karyawan');
         $this->ModelKaryawan = new ModelKaryawan();
+        $this->ModelMenu = new ModelMenu();
         $this->request = \Config\Services::request();
         helper('general_helper');
     }
@@ -21,6 +24,7 @@ class Karyawan extends BaseController
     {
         $data['title'] = 'User list';
         $data['group_names'] = $this->ModelKaryawan->getGroupNames();
+        $data['menus'] = $this->ModelMenu->getMenuNames();
         return view('karyawan/index', $data);
     }
 
@@ -74,6 +78,11 @@ class Karyawan extends BaseController
             $isSuccess = $this->ModelKaryawan->add_dataKaryawan($data); //diarahkan ke model mahasiswa dengan method add_datakaryawan
             $user_id = $this->ModelKaryawan->insertID();
             $this->ModelKaryawan->insertUserGroup($user_id, $group_id);
+        }
+        if ($isSuccess) {
+            echo json_encode(['status' => 0]); // Success response
+        } else {
+            echo json_encode(['status' => 1]); // Error response
         }
     }
 
