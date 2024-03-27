@@ -23,20 +23,19 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">DataTable Permission</h3>
+                <h3 class="card-title">DataTable Group Permission</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <!-- Button trigger modal -->
-                <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Add Permission
-                </a>
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Permission Name</th>
-                            <th scope="col">Permission Description</th>
-                            <th scope="col">Action</th>
+                            <th scope="col">Group_id</th>
+                            <th scope="col">View</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                            <th scope="col">menu_name</th>
+                            <th scope="col">file_name</th>
                         </tr>
                     </thead>
                 </table>
@@ -46,45 +45,6 @@
         <!-- /.card -->
     </div>
 </div>
-
-
-<!-- Modal add dan edit Group (Modal dari Bootstrap)-->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="mTitle"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="modal-addK">
-                <form name="formPermission" id="quickForm">
-                    <?= csrf_field(); ?>
-                    <input type="hidden" name="permi_id" id="permi_id" value="">
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="permi_name" class="form-label">Permission Name</label>
-                            <input type="text" name="permi_name" id="permi_name" class="form-control">
-
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="permi_desc" class="form-label">Permission Description</label>
-                            <input type="text" name="permi_desc" id="permi_desc" class="form-control">
-
-                        </div>
-                    </div>
-                    <button type="button" id="btnModal" name="update" class="btn btn-primary"></button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
 
 
 <?= $this->section('scripts'); ?>
@@ -118,25 +78,27 @@
         $('#example').DataTable({
             'processing': true,
             'serverSide': false,
-            'serverMethod': 'POST',
-            'ajax': "<?= site_url('permidtb') ?>",
+            'serverMethod': 'get',
+            'ajax': "<?= site_url('gpermidtb') ?>",
             'columns': [{
-                'data': 'permi_name',
+                'data': 'group_id',
             }, {
-                'data': 'permi_desc'
+                'data': 'view'
             }, {
-                'data': 'action',
-                'render': function(data, type, full, meta) {
-                    return '<button class = "btn btn-primary"onclick="UpdateRecord(' + full.permi_id + ', \'' + full.permi_name + '\', \'' + full.permi_desc + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.permi_id + ')">Delete</button>';
-                }
+                'data': 'edit'
+            }, {
+                'data': 'delete'
+            }, {
+                'data': 'menu_name'
+            }, {
+                'data': 'file_name'
             }]
         })
     })
 </script>
 
 <!-- Jquery -->
-<script>
+<!-- <script>
     $(document).ready(function() {
         $('#quickForm').validate({
             rules: {
@@ -248,7 +210,7 @@
             });
         }
     }
-</script>
+</script> -->
 
 <?= $this->endSection('content'); ?>
 <?= $this->endSection('scripts'); ?>

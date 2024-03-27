@@ -119,26 +119,6 @@
     </div>
 </div>
 
-<!-- Modal Import Data Excel
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h1>hehehe</h1>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
-            </div>
-        </div>
-    </div>
-</div> -->
-
-
 
 <!-- Merupakan extensi dari scripts yang ada pada view template -->
 <?= $this->section('scripts'); ?>
@@ -187,8 +167,7 @@
                 "data": "action",
                 "render": function(data, type, full, meta) {
                     return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>' +
-                        '<button class="btn btn-info"onclick="permission(' + full.user_id + ')">Permissions</button>';
+                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
                 }
             }],
             'order': [0, 'asc'],
@@ -346,10 +325,6 @@
                 }
             });
         }
-    }
-
-    function permission(userId) {
-        window.location.href = '<?= base_url('/permission') ?>?id=' + userId;
     }
 </script>
 

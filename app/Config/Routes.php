@@ -32,8 +32,6 @@ $routes->post('/menu/delete', 'menu::delete');
 $routes->get('/pdf', 'pdf::index');
 $routes->get('/output', 'pdf::printPdf');
 
-//permissions routing
-$routes->get('/permission', 'permission::index');
-$routes->post('/permidtb', 'permission::permiDtb');
-$routes->add('/permission/updateAdd', 'permission::updateAdd');
-$routes->post('/permission/delete', 'permission::delete');
+//gPermissions routing
+$routes->get('/gPermission', 'gpermission::index');
+$routes->get('/gpermidtb', 'gpermission::gpermiDtb');

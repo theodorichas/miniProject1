@@ -124,7 +124,9 @@
                 "data": "action",
                 "render": function(data, type, full, meta) {
                     return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.group_id + ', \'' + full.group_code + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.group_id + ')">Delete</button>';
+                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.group_id + ')">Delete</button>' +
+                        '<button class="btn btn-info"onclick="gPermission(' + full.group_id + ')">Permissions</button>';
+
                 }
             }],
             'order': [0, 'asc'],
@@ -246,6 +248,10 @@
                 }
             });
         }
+    }
+
+    function gPermission(group_id) {
+        window.location.href = '<?= base_url('/gPermission') ?>?id=' + group_id;
     }
 </script>
 
