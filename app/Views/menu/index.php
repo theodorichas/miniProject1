@@ -358,6 +358,7 @@
                             timer: 1500
                         });
                         $('#example').DataTable().ajax.reload();
+                        location.reload();
                     }
                 }
             });

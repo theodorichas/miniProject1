@@ -187,7 +187,8 @@
                 "data": "action",
                 "render": function(data, type, full, meta) {
                     return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
+                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>' +
+                        '<button class="btn btn-info"onclick="permission(' + full.user_id + ')">Permissions</button>';
                 }
             }],
             'order': [0, 'asc'],
@@ -345,6 +346,10 @@
                 }
             });
         }
+    }
+
+    function permission(userId) {
+        window.location.href = '<?= base_url('/permission') ?>?id=' + userId;
     }
 </script>
 
