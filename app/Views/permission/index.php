@@ -1,7 +1,7 @@
 <?= $this->extend('template/index'); ?>
 
-<?= $this->section('links'); ?>
 
+<?= $this->section('links'); ?>
 <title><?= $title ?></title>
 <!-- DataTable -->
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') ?>">
@@ -14,7 +14,6 @@
 
 <?= $this->endSection('links'); ?>
 
-
 <!-- Main Content -->
 <?= $this->section('content'); ?>
 
@@ -24,25 +23,19 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">DataTable Karyawan</h3>
+                <h3 class="card-title">DataTable Permission</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
                 <!-- Button trigger modal -->
                 <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Add Karyawan
-                </a>
-                <a button type="button" id="btnImport" class="btn btn-info swalDefaultInfo" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    Import Data
+                    Add Permission
                 </a>
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Nama</th>
-                            <th scope="col">Telp</th>
-                            <th scope="col">Alamat</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Group Name</th>
+                            <th scope="col">Permission Name</th>
+                            <th scope="col">Permission Description</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -54,7 +47,8 @@
     </div>
 </div>
 
-<!-- Modal add dan edit Karyawan (Modal dari Bootstrap)-->
+
+<!-- Modal add dan edit Group (Modal dari Bootstrap)-->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -63,53 +57,21 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="modal-addK">
-                <form name="formKaryawan" id="quickForm">
+                <form name="formPermission" id="quickForm">
                     <?= csrf_field(); ?>
-                    <input type="hidden" name="userId" id="id" value="">
+                    <input type="hidden" name="permi_id" id="permi_id" value="">
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input type="text" name="nama" id="inputNama" class="form-control">
+                            <label for="permi_name" class="form-label">Permission Name</label>
+                            <input type="text" name="permi_name" id="permi_name" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="telp" class="form-label">Telp</label>
-                            <input type="number" name="telp" id="inputTelp" class="form-control">
+                            <label for="permi_desc" class="form-label">Permission Description</label>
+                            <input type="text" name="permi_desc" id="permi_desc" class="form-control">
 
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="alamat" class="form-label">Alamat</label>
-                            <input type="text" name="alamat" id="inputAlamat" class="form-control">
-
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="inputEmail" class="form-control">
-
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" name="password" id="inputPassword" class="form-control">
-
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="groupName" class="form-label">Group</label>
-                            <select name="groupName" id="inputGroupname" class="form-select">
-                                <option value="">Select Group</option>
-                                <?php foreach ($group_names as $group_name) : ?>
-                                    <option value="<?= $group_name ?>"><?= $group_name ?></option>
-                                <?php endforeach; ?>
-                            </select>
                         </div>
                     </div>
                     <button type="button" id="btnModal" name="update" class="btn btn-primary"></button>
@@ -119,29 +81,14 @@
     </div>
 </div>
 
-<!-- Modal Import Data Excel
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h1>hehehe</h1>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
-            </div>
-        </div>
-    </div>
-</div> -->
 
 
 
-<!-- Merupakan extensi dari scripts yang ada pada view template -->
+
+
+
 <?= $this->section('scripts'); ?>
+
 <!-- jquery-validation -->
 <script src="<?= base_url('asset/AdminLTE/plugins/jquery-validation/jquery.validate.min.js') ?>"></script>
 <script src="<?= base_url('asset/AdminLTE/plugins/jquery-validation/additional-methods.min.js') ?>"></script>
@@ -171,80 +118,42 @@
         $('#example').DataTable({
             'processing': true,
             'serverSide': false,
-            'serverMethod': 'post',
-            "ajax": "<?= site_url('ajax') ?>",
-            "columns": [{
-                "data": "nama"
+            'serverMethod': 'POST',
+            'ajax': "<?= site_url('permidtb') ?>",
+            'columns': [{
+                'data': 'permi_name',
             }, {
-                "data": "telp"
+                'data': 'permi_desc'
             }, {
-                "data": "alamat"
-            }, {
-                "data": "email"
-            }, {
-                "data": "group_name"
-            }, {
-                "data": "action",
-                "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
+                'data': 'action',
+                'render': function(data, type, full, meta) {
+                    return '<button class = "btn btn-primary"onclick="UpdateRecord(' + full.permi_id + ', \'' + full.permi_name + '\', \'' + full.permi_desc + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
+                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.permi_id + ')">Delete</button>';
                 }
-            }],
-            'order': [0, 'asc'],
-        });
-    });
+            }]
+        })
+    })
 </script>
+
 <!-- Jquery -->
 <script>
     $(document).ready(function() {
         $('#quickForm').validate({
             rules: {
-                nama: {
+                permi_name: {
                     required: true,
                 },
-                telp: {
+                permi_desc: {
                     required: true,
-                    minlength: 10
                 },
-                alamat: {
-                    required: true
-                },
-                email: {
-                    required: true,
-                    email: true
-                },
-                password: {
-                    required: true,
-                    minlength: 8,
-                },
-                groupName: {
-                    required: true,
-                }
             },
             messages: {
-                nama: {
-                    required: "'nama' cannot be empty"
+                permi_name: {
+                    required: "'this field' cannot be empty",
                 },
-                telp: {
-                    required: "'telp' cannot be empty",
-                    minlength: "Please enter a correct Phone Number"
+                permi_desc: {
+                    required: "'this field' cannot be empty",
                 },
-                alamat: {
-                    required: "'alamat' cannot be empty",
-                },
-
-                email: {
-                    required: "'email' cannot be empty",
-                    email: "Please enter a valid email address"
-                },
-
-                password: {
-                    required: "'password' cannot be empty",
-                    minlength: "password must contain at least 8 Characters!!",
-                },
-                groupName: {
-                    required: "Please select one of the options !!",
-                }
             },
             errorElement: 'span',
             errorPlacement: function(error, element) {
@@ -264,22 +173,20 @@
             $('#quickForm').removeClass('error invalid-feedback');
         });
         $('#btnAdd').click(function() {
-            $('#mTitle').text('Add Karyawan');
+            $('#mTitle').text('Add Permission');
             $('#btnModal').text('Add');
             $('#id').val('0');
         })
         $('#btnModal').click(function() {
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
-                console.log(formData);
             }
             $.ajax({
                 method: 'POST',
                 type: 'JSON',
-                url: '<?= base_url("/karyawan/updateAdd") ?>',
+                url: '<?= base_url("permission/updateAdd") ?>',
                 data: formData,
                 success: function(response) {
-                    console.log(response)
                     if (response.status == 1) {
                         Swal.fire({
                             icon: 'error',
@@ -303,30 +210,25 @@
         })
     })
 
-    function UpdateRecord(id, nama, telp, alamat, email, password, group_name) {
-        $('#mTitle').text('Edit Karyawan');
+    function UpdateRecord(permi_id, permi_name, permi_desc) {
+        $('#mTitle').text('Edit Permission');
         $('#btnModal').text('Update');
         // Populate the modal fields with the existing data
-        $("#id").val(id);
-        console.log("Id yang didapat dari tombol update: ", id);
-        $('#inputNama').val(nama);
-        $('#inputTelp').val(telp);
-        $('#inputAlamat').val(alamat);
-        $('#inputEmail').val(email);
-        $('#inputPassword').val(password);
-        $('#inputGroupname').val(group_name);
+        $("#permi_id").val(permi_id);
+        // console.log("Id yang didapat dari tombol update: ", permi_id);
+        $('#permi_name').val(permi_name);
+        $('#permi_desc').val(permi_desc);
     }
 
-    function deleteRecord(id) {
+    function deleteRecord(permi_id) {
         if (confirm('Are you sure you want to delete this record?')) {
             // AJAX request to your delete endpoint
-            console.log("Id yang didapat dari tombol update: ", id);
             $.ajax({
-                url: '<?= site_url('karyawan/delete') ?>',
+                url: '<?= site_url('permission/delete') ?>',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    'userId': id
+                    'permi_id': permi_id
                 },
                 success: function(response) {
                     console.log(response)
@@ -348,8 +250,5 @@
     }
 </script>
 
-
-<?= $this->endSection('scripts'); ?>
-
-
 <?= $this->endSection('content'); ?>
+<?= $this->endSection('scripts'); ?>

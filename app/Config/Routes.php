@@ -27,3 +27,13 @@ $routes->get('/menu', 'menu::index');
 $routes->post('/menudtb', 'menu::menuDtb');
 $routes->add('/menu/updateAdd', 'menu::updateAdd');
 $routes->post('/menu/delete', 'menu::delete');
+
+//pdf routing
+$routes->get('/pdf', 'pdf::index');
+$routes->get('/output', 'pdf::printPdf');
+
+//permissions routing
+$routes->get('/permission', 'permission::index');
+$routes->post('/permidtb', 'permission::permiDtb');
+$routes->add('/permission/updateAdd', 'permission::updateAdd');
+$routes->post('/permission/delete', 'permission::delete');
