@@ -47,6 +47,8 @@
 </div>
 
 
+
+
 <?= $this->section('scripts'); ?>
 
 <!-- jquery-validation -->
@@ -83,11 +85,20 @@
             'columns': [{
                 'data': 'group_id',
             }, {
-                'data': 'view'
+                'data': 'view',
+                'render': function(data, type, row, meta) {
+                    return '<input type="checkbox" class="view-checkbox" value="' + row.group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+                }
             }, {
-                'data': 'edit'
+                'data': 'edit',
+                'render': function(data, type, row, meta) {
+                    return '<input type="checkbox" class="view-checkbox" value="' + row.group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+                }
             }, {
-                'data': 'delete'
+                'data': 'delete',
+                'render': function(data, type, row, meta) {
+                    return '<input type="checkbox" class="view-checkbox" value="' + row.group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+                }
             }, {
                 'data': 'menu_name'
             }, {
@@ -96,6 +107,9 @@
         })
     })
 </script>
+
+
+
 
 <!-- Jquery -->
 <!-- <script>

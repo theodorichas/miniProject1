@@ -32,18 +32,16 @@ class GroupPermission extends Migration
                 'type' => 'SMALLINT',
                 'default' => 0,
             ],
-            'menu_name' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
-            ],
-            'file_name' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
-            ],
+            'menu_id' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+            ]
 
         ]);
         $this->forge->addPrimaryKey('gp_id');
         $this->forge->addForeignKey('group_id', 'group', 'group_id');
+        $this->forge->addForeignKey('menu_id', 'menu', 'menu_id');
         $this->forge->createTable('group_permission');
     }
 

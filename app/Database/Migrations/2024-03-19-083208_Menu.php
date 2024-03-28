@@ -14,7 +14,7 @@ class Menu extends Migration
             'menu_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigened' => true,
+                'unsigned' => true,
                 'auto_increment' => true,
 
             ],

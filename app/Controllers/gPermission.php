@@ -22,8 +22,10 @@ class gPermission extends BaseController
 
     public function index() //view table
     {
+        $groupId = $this->request->getGet('id');
         $data['title'] = 'Group Permission list';
         $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['permissions'] = $this->ModelgPermission->getPermissionsByGroupId($groupId);
         return view('group-permission/index', $data);
     }
 
@@ -36,6 +38,7 @@ class gPermission extends BaseController
 
         $data = $this->ModelgPermission->searchAndDisplay($search_value, $start, $length);
         $total_count = $this->ModelgPermission->searchAndDisplay($search_value, null, null, true);
+
 
         $json_data = array(
             'draw' => intval($param['draw']),
