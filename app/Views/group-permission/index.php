@@ -27,6 +27,9 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
+                <a button type="button" id="btnSave" class="btn btn-info swalDefaultSuccess">
+                    Save
+                </a>
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
@@ -80,12 +83,12 @@
         var group_id = '<?= $group_id ?>';
         $('#example').DataTable({
             'processing': true,
-            'serverSide': false,
+            'serverSide': true,
             'serverMethod': 'get',
             'ajax': {
                 'url': "<?= site_url('gpermidtb') ?>",
                 'data': {
-                    'group_id': group_id
+                    'group_id': group_id,
                 }
             },
             'columns': [{
@@ -93,144 +96,53 @@
             }, {
                 'data': 'view',
                 'render': function(data, type, row, meta) {
-                    return '<input type="checkbox" class="view-checkbox" value="' + row.group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+                    return renderCheckbox(data, 'view', row.group_id, row.menu_name, row.file_name);
                 }
             }, {
                 'data': 'edit',
                 'render': function(data, type, row, meta) {
-                    return '<input type="checkbox" class="view-checkbox" value="' + row.group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+                    return renderCheckbox(data, 'edit', row.group_id, row.menu_name, row.file_name);
                 }
             }, {
                 'data': 'delete',
                 'render': function(data, type, row, meta) {
-                    return '<input type="checkbox" class="view-checkbox" value="' + row.group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+                    return renderCheckbox(data, 'delete', row.group_id, row.menu_name, row.file_name);
                 }
             }, {
                 'data': 'menu_name'
             }, {
                 'data': 'file_name'
             }]
+
+        })
+
+        function renderCheckbox(data, type, group_id, menu_name, file_name) {
+            return '<input type="checkbox" class="view-checkbox" data-type="' + type + '" data-group_id="' + group_id + '" data-menu_name="' + menu_name + '" data-file_name="' + file_name + '" value="' + group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+        }
+        // Event listener for checkbox changes
+        $(document).on('change', '.view-checkbox', function() {
+            var isChecked = $(this).prop('checked') ? 1 : 0; // Convert to 1 or 0
+            var type = $(this).data('type');
+            var group_id = $(this).data('group_id');
+            var menu_name = $(this).data('menu_name');
+            var file_name = $(this).data('file_name');
+            console.log('Checkbox changed for group ID: ' + group_id);
+            console.log('Type: ' + type);
+            console.log('Checked: ' + isChecked);
+            console.log('Menu Name: ' + menu_name);
+            console.log('File Name: ' + file_name);
+        });
+    })
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#btnSave').click(function() {
+
         })
     })
 </script>
 
-
-
-
-<!-- Jquery -->
-<!-- <script>
-    $(document).ready(function() {
-        $('#quickForm').validate({
-            rules: {
-                permi_name: {
-                    required: true,
-                },
-                permi_desc: {
-                    required: true,
-                },
-            },
-            messages: {
-                permi_name: {
-                    required: "'this field' cannot be empty",
-                },
-                permi_desc: {
-                    required: "'this field' cannot be empty",
-                },
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function(element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
-        $('#exampleModal').on('hidden.bs.modal', function() {
-            $('#quickForm').trigger('reset');
-            $('#quickForm :input').removeClass('is-invalid');
-            $('#quickForm').removeClass('error invalid-feedback');
-        });
-        $('#btnAdd').click(function() {
-            $('#mTitle').text('Add Permission');
-            $('#btnModal').text('Add');
-            $('#id').val('0');
-        })
-        $('#btnModal').click(function() {
-            if ($('#quickForm').valid()) {
-                var formData = $('#quickForm').serialize();
-            }
-            $.ajax({
-                method: 'POST',
-                type: 'JSON',
-                url: '<?= base_url("permission/updateAdd") ?>',
-                data: formData,
-                success: function(response) {
-                    if (response.status == 1) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Data added unsuccessful',
-                            showConfirmButton: false,
-                            timer: 1500,
-                        });
-
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Data added successfuly',
-                            showConfirmButton: false,
-                            timer: 1500,
-                        });
-                        $('#example').DataTable().ajax.reload();
-                        $('#exampleModal').modal('hide');
-                    }
-                }
-            });
-        })
-    })
-
-    function UpdateRecord(permi_id, permi_name, permi_desc) {
-        $('#mTitle').text('Edit Permission');
-        $('#btnModal').text('Update');
-        // Populate the modal fields with the existing data
-        $("#permi_id").val(permi_id);
-        // console.log("Id yang didapat dari tombol update: ", permi_id);
-        $('#permi_name').val(permi_name);
-        $('#permi_desc').val(permi_desc);
-    }
-
-    function deleteRecord(permi_id) {
-        if (confirm('Are you sure you want to delete this record?')) {
-            // AJAX request to your delete endpoint
-            $.ajax({
-                url: '<?= site_url('permission/delete') ?>',
-                method: 'POST',
-                type: 'JSON',
-                data: {
-                    'permi_id': permi_id
-                },
-                success: function(response) {
-                    console.log(response)
-                    if (response.success) {
-                        // Reload the DataTable or update the row accordingly
-                        alert('Failed to delete data.');
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Data deleted successfully!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        $('#example').DataTable().ajax.reload();
-                    }
-                }
-            });
-        }
-    }
-</script> -->
 
 <?= $this->endSection('content'); ?>
 <?= $this->endSection('scripts'); ?>

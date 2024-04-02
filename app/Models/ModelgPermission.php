@@ -20,8 +20,10 @@ class ModelgPermission extends Model
 
         // Perform a join with the 'menu' table
         $builder->select('group_permission.*, menu.menu_name, menu.file_name');
-        $builder->join('menu', 'menu.menu_id = group_permission.menu_id');
-        $builder->where('group_id', $group_id);
+        $builder->join('menu', 'menu.menu_id = group_permission.menu_id', 'left');
+        $builder->where('group_permission.group_id', $group_id);
+
+        //display menu and file name
 
 
         if ($keyword) {

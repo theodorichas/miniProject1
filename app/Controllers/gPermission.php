@@ -33,6 +33,7 @@ class gPermission extends BaseController
     public function gpermiDtb()
     {
         $group_id = $this->request->getGet('group_id');
+
         $param['draw'] = isset($_REQUEST['draw']) ? $_REQUEST['draw'] : '';
         $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : '';
         $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : '';
@@ -45,8 +46,7 @@ class gPermission extends BaseController
             'draw' => intval($param['draw']),
             'recordsTotal' => count($total_count),
             'recordsFiltered' => count($total_count),
-            'data' => $data
-
+            'data' => $data,
         );
         echo json_encode($json_data);
     }
