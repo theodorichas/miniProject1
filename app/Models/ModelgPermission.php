@@ -12,15 +12,16 @@ class ModelgPermission extends Model
     }
     protected $table = 'group_permission';
     protected $allowedFields = ['group_id', 'view', 'edit', 'delete', 'menu_id'];
-    protected $primaryKey = 'gp_id	';
+    protected $primaryKey = 'gp_id';
 
-    public function searchAndDisplay($keyword = null, $start = 0, $length = 0, $orderColumn = 'group_id', $orderDirection = 'asc')
+    public function searchAndDisplay($keyword = null, $start = 0, $length = 0, $group_id)
     {
         $builder = $this->table('group_permission');
 
         // Perform a join with the 'menu' table
         $builder->select('group_permission.*, menu.menu_name, menu.file_name');
         $builder->join('menu', 'menu.menu_id = group_permission.menu_id');
+        $builder->where('group_id', $group_id);
 
 
         if ($keyword) {
@@ -40,16 +41,6 @@ class ModelgPermission extends Model
         if ($start != 0 or $length != 0) {
             $builder->limit((int)$length, (int)$start);
         }
-        $builder->orderBy($orderColumn, $orderDirection);
         return $builder->get()->getResult();
-    }
-    public function getPermissionsByGroupId($group_id)
-    {
-        $query = $this->db->table('group_permission')
-            ->where('group_id', $group_id)
-            ->get();
-        echo $this->db->getLastQuery(); // or log_message('debug', $this->db->getLastQuery());
-
-        return $query->getResult();
     }
 }

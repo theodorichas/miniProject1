@@ -171,16 +171,16 @@
     <!-- Visible Function Sidebar -->
     <script>
         // Attach change event listener to checkboxes
-        $('input[type="checkbox"]').change(function() {
-            // Get the corresponding menu item
-            var menuItem = $(this).closest('li');
-            // Toggle visibility of the corresponding menu item based on checkbox state
-            if ($(this).is(':checked')) {
-                menuItem.removeClass('d-none');
-            } else {
-                menuItem.addClass('d-none');
-            }
-        });
+        // $('input[type="checkbox"]').change(function() {
+        //     // Get the corresponding menu item
+        //     var menuItem = $(this).closest('li');
+        //     // Toggle visibility of the corresponding menu item based on checkbox state
+        //     if ($(this).is(':checked')) {
+        //         menuItem.removeClass('d-none');
+        //     } else {
+        //         menuItem.addClass('d-none');
+        //     }
+        // });
     </script>
 
 

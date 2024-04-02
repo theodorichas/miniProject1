@@ -25,20 +25,21 @@ class gPermission extends BaseController
         $groupId = $this->request->getGet('id');
         $data['title'] = 'Group Permission list';
         $data['menus'] = $this->ModelMenu->getMenuNames();
-        $data['permissions'] = $this->ModelgPermission->getPermissionsByGroupId($groupId);
+        $data['group_id'] = $groupId;
         return view('group-permission/index', $data);
     }
 
+
     public function gpermiDtb()
     {
+        $group_id = $this->request->getGet('group_id');
         $param['draw'] = isset($_REQUEST['draw']) ? $_REQUEST['draw'] : '';
         $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : '';
         $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : '';
         $search_value = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : '';
 
-        $data = $this->ModelgPermission->searchAndDisplay($search_value, $start, $length);
-        $total_count = $this->ModelgPermission->searchAndDisplay($search_value, null, null, true);
-
+        $data = $this->ModelgPermission->searchAndDisplay($search_value, $start, $length, $group_id);
+        $total_count = $this->ModelgPermission->searchAndDisplay($search_value, null, null, $group_id);
 
         $json_data = array(
             'draw' => intval($param['draw']),

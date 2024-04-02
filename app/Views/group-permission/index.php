@@ -77,11 +77,17 @@
 <!-- Script untuk menampilkan DataTable Server Side menggunakan AJAX -->
 <script>
     $(document).ready(function() {
+        var group_id = '<?= $group_id ?>';
         $('#example').DataTable({
             'processing': true,
             'serverSide': false,
             'serverMethod': 'get',
-            'ajax': "<?= site_url('gpermidtb') ?>",
+            'ajax': {
+                'url': "<?= site_url('gpermidtb') ?>",
+                'data': {
+                    'group_id': group_id
+                }
+            },
             'columns': [{
                 'data': 'group_id',
             }, {
