@@ -251,6 +251,7 @@
     }
 
     function gPermission(group_id) {
+        console.log('Group ID:', group_id); // Log the group_id value
         window.location.href = '<?= base_url('/gPermission') ?>?id=' + group_id;
     }
 </script>

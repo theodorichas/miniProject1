@@ -50,4 +50,36 @@ class gPermission extends BaseController
         );
         echo json_encode($json_data);
     }
+
+    public function updateAdd()
+    {
+        $postData = $this->request->getPost('data');
+
+        foreach ($postData as $row) {
+            if (array_key_exists('group_id', $row)) {
+                $group_id = intval($row['group_id']);
+                $view = intval($row['view']);
+                $edit = intval($row['edit']);
+                $delete = intval($row['delete']);
+                $menu_id = intval($row['menu_id']);
+
+                $data = [
+                    'group_id' => $group_id,
+                    'view' => $view,
+                    'edit' => $edit,
+                    'delete' => $delete,
+                    'menu_id' => $menu_id
+                ];
+
+                if ($group_id !== null) {
+
+                    $this->ModelgPermission->add_permission($data);
+                } else {
+                    $this->ModelgPermission->update_permission($group_id, $data);
+                }
+            } else {
+                error_log("Error: 'group_id' key is missing in row: " . print_r($row, true));
+            }
+        }
+    }
 }

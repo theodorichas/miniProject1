@@ -35,3 +35,4 @@ $routes->get('/output', 'pdf::printPdf');
 //gPermissions routing
 $routes->get('/gPermission', 'gpermission::index');
 $routes->get('/gpermidtb', 'gpermission::gpermiDtb');
+$routes->add('/gpermi/updateAdd', 'gpermission::updateAdd');

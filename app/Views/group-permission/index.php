@@ -1,12 +1,11 @@
 <?= $this->extend('template/index'); ?>
 
-
 <?= $this->section('links'); ?>
 <title><?= $title ?></title>
 <!-- DataTable -->
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') ?>">
-<link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')  ?>">
+<link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') ?>">
 <!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <!-- SweetAlert2 -->
@@ -17,7 +16,7 @@
 <!-- Main Content -->
 <?= $this->section('content'); ?>
 
-
+<?= 'Group Id untuk page ini: ', $group_id; ?>
 <!-- Data Table -->
 <div class="row">
     <div class="col-12">
@@ -27,9 +26,9 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <a button type="button" id="btnSave" class="btn btn-info swalDefaultSuccess">
+                <button type="button" id="btnSave" class="btn btn-info swalDefaultSuccess">
                     Save
-                </a>
+                </button>
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
@@ -49,8 +48,7 @@
     </div>
 </div>
 
-
-
+<?= $this->endSection('content'); ?>
 
 <?= $this->section('scripts'); ?>
 
@@ -96,17 +94,17 @@
             }, {
                 'data': 'view',
                 'render': function(data, type, row, meta) {
-                    return renderCheckbox(data, 'view', row.group_id, row.menu_name, row.file_name);
+                    return renderCheckbox(data, 'view', row.group_id, row.menu_id);
                 }
             }, {
                 'data': 'edit',
                 'render': function(data, type, row, meta) {
-                    return renderCheckbox(data, 'edit', row.group_id, row.menu_name, row.file_name);
+                    return renderCheckbox(data, 'edit', row.group_id, row.menu_id);
                 }
             }, {
                 'data': 'delete',
                 'render': function(data, type, row, meta) {
-                    return renderCheckbox(data, 'delete', row.group_id, row.menu_name, row.file_name);
+                    return renderCheckbox(data, 'delete', row.group_id, row.menu_id);
                 }
             }, {
                 'data': 'menu_name'
@@ -116,33 +114,76 @@
 
         })
 
-        function renderCheckbox(data, type, group_id, menu_name, file_name) {
-            return '<input type="checkbox" class="view-checkbox" data-type="' + type + '" data-group_id="' + group_id + '" data-menu_name="' + menu_name + '" data-file_name="' + file_name + '" value="' + group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+        function renderCheckbox(data, type, group_id, menu_id) {
+            return '<input type="checkbox" class="view-checkbox" data-type="' + type + '" data-group_id="' + group_id + '" data-menu_id="' + menu_id + '" value="' + group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
         }
         // Event listener for checkbox changes
         $(document).on('change', '.view-checkbox', function() {
             var isChecked = $(this).prop('checked') ? 1 : 0; // Convert to 1 or 0
             var type = $(this).data('type');
             var group_id = $(this).data('group_id');
-            var menu_name = $(this).data('menu_name');
-            var file_name = $(this).data('file_name');
+            var menu_id = $(this).data('menu_id'); // Get menu_id from the closest <tr>
             console.log('Checkbox changed for group ID: ' + group_id);
             console.log('Type: ' + type);
             console.log('Checked: ' + isChecked);
-            console.log('Menu Name: ' + menu_name);
-            console.log('File Name: ' + file_name);
+            console.log('Menu ID: ' + menu_id);
         });
     })
 </script>
 
+<!-- Button Save and Insert and Update script  -->
 <script>
-    $(document).ready(function() {
-        $('#btnSave').click(function() {
+    $('#btnSave').click(function() {
+        var group_id = '<?= $group_id ?>'; // Retrieve group_id from a PHP variable
+        if (group_id === null || group_id === '') {
+            group_id = 0;
+        }
+        var tableData = $('#example').DataTable().rows().data().toArray();
+        var formData = [];
+        tableData.forEach(function(row) {
+            formData.push({
+                group_id: group_id,
+                view: row.view == 1 ? 1 : 0,
+                edit: row.edit == 1 ? 1 : 0,
+                delete: row.delete == 1 ? 1 : 0,
+                menu_id: row.menu_id,
+            });
+        });
+        $.ajax({
+            url: '<?= site_url('/gpermi/updateAdd') ?>',
+            method: 'POST',
+            data: {
+                data: formData
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Data added unsuccessful',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
 
-        })
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data added successfuly',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    $('#example').DataTable().ajax.reload();
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'An error occurred while processing your request. Please try again later.',
+                });
+            }
+        });
     })
 </script>
 
-
-<?= $this->endSection('content'); ?>
 <?= $this->endSection('scripts'); ?>
