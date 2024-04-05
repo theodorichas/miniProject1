@@ -135,54 +135,59 @@
 <script>
     $('#btnSave').click(function() {
         var group_id = '<?= $group_id ?>'; // Retrieve group_id from a PHP variable
+        console.log('Group ID for Save:', group_id);
         if (group_id === null || group_id === '') {
             group_id = 0;
         }
         var tableData = $('#example').DataTable().rows().data().toArray();
         var formData = [];
-        tableData.forEach(function(row) {
+        $('#example tbody tr').each(function() {
+            var viewCheckbox = $(this).find('.view-checkbox');
+            var editCheckbox = $(this).find('.edit-checkbox');
+            var deleteCheckbox = $(this).find('.delete-checkbox');
             formData.push({
                 group_id: group_id,
-                view: row.view == 1 ? 1 : 0,
-                edit: row.edit == 1 ? 1 : 0,
-                delete: row.delete == 1 ? 1 : 0,
-                menu_id: row.menu_id,
+                view: viewCheckbox.prop('checked') ? 1 : 0,
+                edit: editCheckbox.prop('checked') ? 1 : 0,
+                delete: deleteCheckbox.prop('checked') ? 1 : 0,
+                menu_id: $(this).data('menu_id'),
             });
         });
-        $.ajax({
-            url: '<?= site_url('/gpermi/updateAdd') ?>',
-            method: 'POST',
-            data: {
-                data: formData
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Data added unsuccessful',
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
+        console.log(formData);
+        // $.ajax({
+        //     url: '<?= site_url('/gpermi/updateAdd') ?>',
+        //     method: 'POST',
+        //     data: {
+        //         data: formData
+        //     },
+        //     dataType: 'json',
+        //     success: function(response) {
+        //         if (response.success) {
+        //             Swal.fire({
+        //                 icon: 'success',
+        //                 title: 'Data added successfully',
+        //                 showConfirmButton: false,
+        //                 timer: 1500,
+        //             });
+        //         } else {
+        //             Swal.fire({
+        //                 icon: 'error',
+        //                 title: 'Data added unsuccessful',
+        //                 showConfirmButton: false,
+        //                 timer: 1500,
+        //             });
+        //         }
+        //         $('#example').DataTable().ajax.reload();
+        //     },
+        //     error: function(xhr, status, error) {
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: 'Error!',
+        //             text: 'An error occurred while processing your request. Please try again later.',
+        //         });
+        //     }
+        // });
 
-                } else {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Data added successfuly',
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
-                    $('#example').DataTable().ajax.reload();
-                }
-            },
-            error: function(xhr, status, error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'An error occurred while processing your request. Please try again later.',
-                });
-            }
-        });
     })
 </script>
 

@@ -51,35 +51,68 @@ class gPermission extends BaseController
         echo json_encode($json_data);
     }
 
+    // public function updateAdd()
+    // {
+    //     $postData = $this->request->getPost('data');
+    //     foreach ($postData as $row) {
+    //         if (array_key_exists('group_id', $row)) {
+    //             $group_id = intval($row['group_id']);
+    //             $view = intval($row['view']);
+    //             $edit = intval($row['edit']);
+    //             $delete = intval($row['delete']);
+    //             $menu_id = intval($row['menu_id']);
+
+    //             $data = [
+    //                 'group_id' => $group_id,
+    //                 'view' => $view,
+    //                 'edit' => $edit,
+    //                 'delete' => $delete,
+    //                 'menu_id' => $menu_id
+    //             ];
+    //             if ($group_id > 0) {
+    //                 $this->ModelgPermission->update_permission($group_id, $data);
+    //             } else {
+    //                 $this->ModelgPermission->add_permission($data);
+    //             }
+    //         } else {
+    //             error_log("Error: 'group_id' key is missing in row: " . print_r($row, true));
+    //         }
+    //     }
+    // }
+
     public function updateAdd()
     {
         $postData = $this->request->getPost('data');
 
-        foreach ($postData as $row) {
-            if (array_key_exists('group_id', $row)) {
-                $group_id = intval($row['group_id']);
-                $view = intval($row['view']);
-                $edit = intval($row['edit']);
-                $delete = intval($row['delete']);
-                $menu_id = intval($row['menu_id']);
+        if (!empty($postData)) {
+            foreach ($postData as $row) {
+                if (isset($row['group_id'])) {
+                    $group_id = intval($row['group_id']);
+                    $view = isset($row['view']) ? intval($row['view']) : 0;
+                    $edit = isset($row['edit']) ? intval($row['edit']) : 0;
+                    $delete = isset($row['delete']) ? intval($row['delete']) : 0;
+                    $menu_id = intval($row['menu_id']);
 
-                $data = [
-                    'group_id' => $group_id,
-                    'view' => $view,
-                    'edit' => $edit,
-                    'delete' => $delete,
-                    'menu_id' => $menu_id
-                ];
+                    $data = [
+                        'group_id' => $group_id,
+                        'view' => $view,
+                        'edit' => $edit,
+                        'delete' => $delete,
+                        'menu_id' => $menu_id
+                    ];
 
-                if ($group_id !== null) {
-
-                    $this->ModelgPermission->add_permission($data);
+                    if ($group_id > 0) {
+                        $this->ModelgPermission->update_permission($group_id, $data);
+                    } else {
+                        $this->ModelgPermission->add_permission($data);
+                    }
                 } else {
-                    $this->ModelgPermission->update_permission($group_id, $data);
+                    error_log("Error: 'group_id' key is missing in row: " . print_r($row, true));
                 }
-            } else {
-                error_log("Error: 'group_id' key is missing in row: " . print_r($row, true));
             }
+            return $this->response->setJSON(['success' => true]);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'No data received.']);
         }
     }
 }
