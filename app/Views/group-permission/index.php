@@ -115,10 +115,21 @@
         })
 
         function renderCheckbox(data, type, group_id, menu_id) {
-            return '<input type="checkbox" class="view-checkbox" data-type="' + type + '" data-group_id="' + group_id + '" data-menu_id="' + menu_id + '" value="' + group_id + '" ' + (data == 1 ? 'checked' : '') + '>';
+            // Add classes based on the type of checkbox
+            var checkboxClass = '';
+            if (type === 'view') {
+                checkboxClass = 'view-checkbox';
+            } else if (type === 'edit') {
+                checkboxClass = 'edit-checkbox';
+            } else if (type === 'delete') {
+                checkboxClass = 'delete-checkbox';
+            }
+
+            return '<input type="checkbox" class="' + checkboxClass + '" data-type="' + type + '" data-group_id="' + group_id + '" data-menu_id="' + menu_id + '" value="' + group_id + '" ' + (data == 1 ? 'checked' : '') + ' data-menu_id="' + menu_id + '">';
         }
+
         // Event listener for checkbox changes
-        $(document).on('change', '.view-checkbox', function() {
+        $(document).on('change', '.view-checkbox, .edit-checkbox, .delete-checkbox', function() {
             var isChecked = $(this).prop('checked') ? 1 : 0; // Convert to 1 or 0
             var type = $(this).data('type');
             var group_id = $(this).data('group_id');
@@ -139,56 +150,58 @@
         if (group_id === null || group_id === '') {
             group_id = 0;
         }
-        var tableData = $('#example').DataTable().rows().data().toArray();
         var formData = [];
-        $('#example tbody tr').each(function() {
-            var viewCheckbox = $(this).find('.view-checkbox');
-            var editCheckbox = $(this).find('.edit-checkbox');
-            var deleteCheckbox = $(this).find('.delete-checkbox');
+        $('#example').find('input[type="checkbox"]').each(function() {
+            var viewCheckbox = $(this);
+            var type = viewCheckbox.data('type');
+            var menu_id = viewCheckbox.data('menu_id');
+            var isChecked = viewCheckbox.prop('checked') ? 1 : 0;
             formData.push({
                 group_id: group_id,
-                view: viewCheckbox.prop('checked') ? 1 : 0,
-                edit: editCheckbox.prop('checked') ? 1 : 0,
-                delete: deleteCheckbox.prop('checked') ? 1 : 0,
-                menu_id: $(this).data('menu_id'),
+                type: type,
+                checked: isChecked,
+                menu_id: menu_id
             });
         });
         console.log(formData);
-        // $.ajax({
-        //     url: '<?= site_url('/gpermi/updateAdd') ?>',
-        //     method: 'POST',
-        //     data: {
-        //         data: formData
-        //     },
-        //     dataType: 'json',
-        //     success: function(response) {
-        //         if (response.success) {
-        //             Swal.fire({
-        //                 icon: 'success',
-        //                 title: 'Data added successfully',
-        //                 showConfirmButton: false,
-        //                 timer: 1500,
-        //             });
-        //         } else {
-        //             Swal.fire({
-        //                 icon: 'error',
-        //                 title: 'Data added unsuccessful',
-        //                 showConfirmButton: false,
-        //                 timer: 1500,
-        //             });
-        //         }
-        //         $('#example').DataTable().ajax.reload();
-        //     },
-        //     error: function(xhr, status, error) {
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: 'Error!',
-        //             text: 'An error occurred while processing your request. Please try again later.',
-        //         });
-        //     }
-        // });
-
+        $.ajax({
+            method: 'POST',
+            url: '<?= base_url('gpermi/updateAdd') ?>',
+            type: 'JSON',
+            data: formData,
+            beforeSend: function() {
+                console.log('Form data:', formData);
+            },
+            success: function(response) {
+                console.log('AJAX request successful!');
+                console.log('Response:', JSON.parse(response));
+                /*if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data added successfully',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Data added unsuccessful',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                }
+                $('#example').DataTable().ajax.reload();*/
+            },
+            error: function(xhr, status, error) {
+                console.log('AJAX request failed!');
+                console.log('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'An error occurred while processing your request. Please try again later.',
+                });
+            }
+        });
     })
 </script>
-
 <?= $this->endSection('scripts'); ?>
