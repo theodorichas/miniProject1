@@ -116,4 +116,13 @@ class ModelKaryawan extends Model
         return $this->delete($id);
     }
     ///// ----------- ///////
+
+    public function getUserByEmail($email)
+    {
+        $builder = $this->db->table('karyawan');
+        $builder->select('*');
+        $builder->where('email', $email);
+        $user = $builder->get()->getRowArray();
+        return $user;
+    }
 }

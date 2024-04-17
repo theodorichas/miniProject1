@@ -57,8 +57,11 @@ class Karyawan extends BaseController
         $telp = $this->request->getPost('telp');
         $alamat = $this->request->getPost('alamat');
         $email = $this->request->getPost('email');
-        $password = $this->request->getPost('password');
-        $hashedPassword = password_hash('$password', PASSWORD_DEFAULT);
+        $password = $password = (string) $this->request->getPost('password');
+        $this->request->getPost('password');
+        var_dump($password);
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        var_dump($hashedPassword);
         $group_name = $this->request->getPost('groupName');
         $group_id = $this->ModelKaryawan->getGroupIdByName($group_name);
 

@@ -83,12 +83,16 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
                         <p>
-                            Welcome back, username
+                            <?php if (!empty($username)) : ?>
+                                Welcome back, <?= $username; ?>
+                            <?php else : ?>
+                                Welcome back, Guest
+                            <?php endif; ?>
                         </p>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <a href="<?= base_url('/myprofile') ?>" class="dropdown-item dropdown-footer">Edit Profile</a>
-                        <a href="/logout" class="dropdown-item dropdown-footer">Log-out</a>
+                        <a href="<?= base_url('/logout') ?>" class="dropdown-item dropdown-footer">Log-out</a>
                     </div>
                 </li>
             </ul>

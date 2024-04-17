@@ -36,3 +36,9 @@ $routes->get('/output', 'pdf::printPdf');
 $routes->get('/gPermission', 'gpermission::index');
 $routes->get('/gpermidtb', 'gpermission::gpermiDtb');
 $routes->add('/gpermi/updateAdd', 'gpermission::updateAdd');
+
+//Log-in & register routing
+$routes->get('/login', 'auth::login');
+$routes->post('/loginAuth', 'auth::loginAuth');
+$routes->get('/logout', 'auth::logout');
+$routes->get('/register', 'auth::register');

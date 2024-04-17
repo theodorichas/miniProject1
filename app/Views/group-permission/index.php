@@ -168,7 +168,9 @@
             method: 'POST',
             url: '<?= base_url('gpermi/updateAdd') ?>',
             type: 'JSON',
-            data: formData,
+            data: {
+                'data': formData
+            },
             beforeSend: function() {
                 console.log('Form data:', formData);
             },

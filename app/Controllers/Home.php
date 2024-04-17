@@ -19,8 +19,11 @@ class Home extends BaseController
     public function index()
     {
         $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['username'] = $_SESSION['nama'] ?? '';
+        echo "testing";
+        die();
         // $data['testing'] = 'hello';
-        var_dump($data);
+        // var_dump($data);
         // die;
         return view('template/index', $data);
     }

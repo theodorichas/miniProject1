@@ -118,10 +118,9 @@ class gPermission extends BaseController
 
     public function updateAdd()
     {
-        $postData = $this->request->getPost();
-
-        printSuccess("success", $postData);
-
+        $postData = $this->request->getPost('data');
+        printSuccess('success', $postData);
+        die();
         if (!empty($postData)) {
             foreach ($postData as $row) {
                 if (isset($row['group_id'])) {
