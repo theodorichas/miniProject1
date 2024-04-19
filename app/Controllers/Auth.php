@@ -5,6 +5,8 @@ namespace App\Controllers;
 use App\Models\ModelKaryawan;
 
 
+
+
 class Auth extends BaseController
 {
 
@@ -16,11 +18,22 @@ class Auth extends BaseController
         $this->builder = $this->db->table('karyawan');
         $this->ModelKaryawan = new ModelKaryawan();
         $this->request = \Config\Services::request();
+        $session = \Config\Services::session();
         helper('general_helper');
     }
 
     public function login()
     {
+        /*
+        // Check if session is active
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            // Session is active
+            echo "Session is active";
+        } else {
+            // Session is not active
+            echo "Session is not active";
+        }
+        */
         $data['title'] = 'login';
         return view('login/index', $data);
     }
@@ -32,22 +45,25 @@ class Auth extends BaseController
         if (empty($email) || empty($password)) {
             return $this->response->setJSON(['error' => 'Email and password are required']);
         }
+
         // Retrieve user from database
         $user = $this->ModelKaryawan->getUserByEmail($email);
         if (!$user) {
             return $this->response->setJSON(['error' => 'User not found']);
         }
-
+        // Verify user Password
         if (!password_verify($password, $user['password'])) {
             return $this->response->setJSON(['error' => 'Invalid password']);
         }
 
-        return $this->response->setJSON(['success' => 'Login successful']);
-
         $_SESSION['user_id'] = $user['user_id']; // Example: Store user ID
         $_SESSION['email'] = $user['email']; // Example: Store email
         $_SESSION['nama'] = $user['nama'];
+
+        return $this->response->setJSON(['success' => 'Login successful']);
+
         // Debug information
+        /*
         $debugInfo = [
             'email' => $email,
             'password_entered' => $password,
@@ -60,6 +76,7 @@ class Auth extends BaseController
 
         // Return debug information in JSON format
         return $this->response->setJSON(['debug' => $debugInfo]);
+        */
     }
 
     public function logout()
@@ -70,12 +87,6 @@ class Auth extends BaseController
         return redirect()->to('/login');
     }
 
-    public function isLoggedIn()
-    {
-        // Check if the user is logged in by verifying the presence of session data
-        return isset($_SESSION['user_id']);
-    }
-
 
     /// ---------- /////
 
@@ -84,5 +95,32 @@ class Auth extends BaseController
     {
         $data['title'] = 'register';
         return view('register/index', $data);
+    }
+
+    public function registerAuth()
+    {
+
+        $userId = intval($this->request->getPost('userId'));
+        $nama = $this->request->getPost('nama');
+        $email = $this->request->getPost('email');
+        $password = (string) $this->request->getPost('password');
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $defaultGroupName = 'Staff';
+
+        $data = [
+            'userId' => $userId,
+            'nama' => $nama,
+            'email' => $email,
+            'password' => $hashedPassword,
+            'group_name' => $defaultGroupName,
+        ];
+        $existingUser = $this->ModelKaryawan->getUserByEmail($email);
+
+        if (!$existingUser) {
+            $this->ModelKaryawan->add_dataKaryawan($data);
+            return $this->response->setJSON(['success' => 'Regis successful']);
+        } else {
+            return $this->response->setJSON(['error' => 'User already exists']);
+        }
     }
 }

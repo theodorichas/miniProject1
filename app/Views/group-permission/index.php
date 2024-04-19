@@ -163,7 +163,6 @@
                 menu_id: menu_id
             });
         });
-        console.log(formData);
         $.ajax({
             method: 'POST',
             url: '<?= base_url('gpermi/updateAdd') ?>',
@@ -172,18 +171,19 @@
                 'data': formData
             },
             beforeSend: function() {
-                console.log('Form data:', formData);
+                console.log('Form data before sending:', formData);
             },
             success: function(response) {
                 console.log('AJAX request successful!');
-                console.log('Response:', JSON.parse(response));
-                /*if (response.success) {
+                console.log('Response:', response);
+                if (response.success) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Data added successfully',
                         showConfirmButton: false,
                         timer: 1500,
                     });
+                    $('#example').DataTable().ajax.reload();
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -192,7 +192,6 @@
                         timer: 1500,
                     });
                 }
-                $('#example').DataTable().ajax.reload();*/
             },
             error: function(xhr, status, error) {
                 console.log('AJAX request failed!');

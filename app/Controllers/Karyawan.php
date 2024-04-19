@@ -48,7 +48,7 @@ class Karyawan extends BaseController
         echo json_encode($json_data);
     }
 
-
+    /*
     public function updateAdd() //Fungsi Update dan add Data
     {
         $isSuccess = false;
@@ -57,11 +57,11 @@ class Karyawan extends BaseController
         $telp = $this->request->getPost('telp');
         $alamat = $this->request->getPost('alamat');
         $email = $this->request->getPost('email');
-        $password = $password = (string) $this->request->getPost('password');
-        $this->request->getPost('password');
-        var_dump($password);
+        $password = (string) $this->request->getPost('password');
+        // $this->request->getPost('password');
+        // var_dump($password);
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        var_dump($hashedPassword);
+        // var_dump($hashedPassword);
         $group_name = $this->request->getPost('groupName');
         $group_id = $this->ModelKaryawan->getGroupIdByName($group_name);
 
@@ -75,20 +75,73 @@ class Karyawan extends BaseController
             'group_name' => $group_name,
         ];
 
+        //Untuk cek apakah user dengan ID ini sudah ada dalam DB
+        $existingUser = $this->ModelKaryawan->getUserByEmail($email);
+
         if ($id > 0) {
             $isSuccess = $this->ModelKaryawan->update_dataKaryawan($id, $data, $group_id);
+            $isSuccess = 1;
         } else {
-            $isSuccess = $this->ModelKaryawan->add_dataKaryawan($data); //diarahkan ke model mahasiswa dengan method add_datakaryawan
-            $user_id = $this->ModelKaryawan->insertID();
-            $this->ModelKaryawan->insertUserGroup($user_id, $group_id);
+            if (!$existingUser) {
+                $isSuccess = $this->ModelKaryawan->add_dataKaryawan($data); //diarahkan ke model mahasiswa dengan method add_datakaryawan
+                $user_id = $this->ModelKaryawan->insertID();
+                $this->ModelKaryawan->insertUserGroup($user_id, $group_id);
+                $isSuccess = 1;
+            } else {
+                return $this->response->setJSON(['error' => 'User already exists']);
+            }
         }
+        echo "Success flag: " . ($isSuccess ? 'true' : 'false') . "<br>";
         if ($isSuccess) {
-            echo json_encode(['status' => 0]); // Success response
+            echo json_encode(['status' => 1]); // Success response
         } else {
-            echo json_encode(['status' => 1]); // Error response
+            echo json_encode(['status' => 0]); // Error response
         }
     }
+    */
 
+    public function updateAdd() //Fungsi Update dan add Data
+    {
+        $id = intval($this->request->getPost('userId'));
+        $nama = $this->request->getPost('nama');
+        $telp = $this->request->getPost('telp');
+        $alamat = $this->request->getPost('alamat');
+        $email = $this->request->getPost('email');
+        $password = (string) $this->request->getPost('password');
+        // $this->request->getPost('password');
+        // var_dump($password);
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // var_dump($hashedPassword);
+        $group_name = $this->request->getPost('groupName');
+        $group_id = $this->ModelKaryawan->getGroupIdByName($group_name);
+
+        $data = [
+            'user_id' => $id,
+            'nama' => $nama,
+            'telp' => $telp,
+            'alamat' => $alamat,
+            'email' => $email,
+            'password' => $hashedPassword,
+            'group_name' => $group_name,
+        ];
+
+        //Untuk cek apakah user dengan ID ini sudah ada dalam DB
+        $existingUser = $this->ModelKaryawan->getUserByEmail($email);
+
+        if ($id > 0) {
+            $this->ModelKaryawan->update_dataKaryawan($id, $data, $group_id);
+            return $this->response->setJSON(['success' => 'Data Updated']);
+        } else {
+            if (!$existingUser) {
+                $this->ModelKaryawan->add_dataKaryawan($data); //diarahkan ke model mahasiswa dengan method add_datakaryawan
+                $user_id = $this->ModelKaryawan->insertID();
+                $this->ModelKaryawan->insertUserGroup($user_id, $group_id);
+                return $this->response->setJSON(['success' => 'Data successfully added']);
+            } else {
+                return $this->response->setJSON(['error' => 'User already exists']);
+            }
+        }
+    }
 
     public function delete() //Fungsi delete Data
     {

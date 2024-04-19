@@ -109,24 +109,27 @@ class ModelgPermission extends Model
     public function update_permission($group_id, $data)
     {
         $builder = $this->db->table('group_permission');
-        $builder->where('group_permission', $group_id);
+        $builder->where('group_id', $group_id);
         $result = $builder->update($data);
-        // $builder->update($data);
-        if (!$result) {
-            $error = $this->db->error();
-            error_log('Database error in update_permission: ' . $error['message']);
+
+        if ($result) {
+            return true; // Update successful
+        } else {
+            error_log('Error updating permissions for group ID: ' . $group_id);
+            return false; // Update failed
         }
-        return $result;
     }
 
     public function add_permission($data)
     {
-        $builder = $this->table('group_permission');
+        $builder = $this->db->table('group_permission');
         $result = $builder->insert($data);
-        if (!$result) {
-            $error = $this->db->error();
-            error_log('Database error in add_permission: ' . $error['message']);
+
+        if ($result) {
+            return true; // Insert successful
+        } else {
+            error_log('Error adding permissions');
+            return false; // Insert failed
         }
-        return $result;
     }
 }

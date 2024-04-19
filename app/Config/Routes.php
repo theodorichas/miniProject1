@@ -7,7 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-
+// $routes->get('/', 'Home::index');
 $routes->get('/', 'Home::index');
 
 //Karyawan Routes
@@ -42,3 +42,4 @@ $routes->get('/login', 'auth::login');
 $routes->post('/loginAuth', 'auth::loginAuth');
 $routes->get('/logout', 'auth::logout');
 $routes->get('/register', 'auth::register');
+$routes->post('/registerAuth', 'auth::registerAuth');

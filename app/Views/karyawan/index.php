@@ -260,15 +260,7 @@
                 data: formData,
                 success: function(response) {
                     console.log(response)
-                    if (response.status == 1) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Data added unsuccessful',
-                            showConfirmButton: false,
-                            timer: 1500,
-                        });
-
-                    } else {
+                    if (response.success) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Data added successfuly',
@@ -277,6 +269,19 @@
                         });
                         $('#example').DataTable().ajax.reload();
                         $('#exampleModal').modal('hide');
+                    } else if (response.error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'User with this email already exists, Please insert a new Email',
+                            text: response.message,
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Data added unsuccessfully',
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
                     }
                 }
             });

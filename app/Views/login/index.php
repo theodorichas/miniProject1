@@ -61,7 +61,7 @@
                         </div>
                         <!-- /.col -->
                         <div class="col-4">
-                            <button type="button" id="btnModal" name="btnModal" class="btn btn-primary btn-block">Sign In</button>
+                            <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Sign In</button>
                         </div>
                         <!-- /.col -->
                     </div>

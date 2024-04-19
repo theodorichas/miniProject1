@@ -116,13 +116,49 @@ class gPermission extends BaseController
     //     }
     // }
 
+    // public function updateAdd()
+    // {
+    //     $postData = $this->request->getPost('data');
+    //     printSuccess('success', $postData);
+    //     if (!empty($postData)) {
+    //         foreach ($postData as $row) {
+    //             if (isset($row['group_id'])) {
+    //                 $group_id = intval($row['group_id']);
+    //                 $view = isset($row['view']) ? intval($row['view']) : 0;
+    //                 $edit = isset($row['edit']) ? intval($row['edit']) : 0;
+    //                 $delete = isset($row['delete']) ? intval($row['delete']) : 0;
+    //                 $menu_id = intval($row['menu_id']);
+
+    //                 $data = [
+    //                     'group_id' => $group_id,
+    //                     'view' => $view,
+    //                     'edit' => $edit,
+    //                     'delete' => $delete,
+    //                     'menu_id' => $menu_id
+    //                 ];
+
+    //                 if ($group_id > 0) {
+    //                     $this->ModelgPermission->update_permission($group_id, $data);
+    //                 } else {
+    //                     $this->ModelgPermission->add_permission($data);
+    //                 }
+    //             } else {
+    //                 error_log("Error: 'group_id' key is missing in row: " . print_r($row, true));
+    //             }
+    //         }
+    //         return $this->response->setJSON(['success' => true]);
+    //     } else {
+    //         return $this->response->setJSON(['success' => false, 'message' => 'No data received.']);
+    //     }
+    // }
+
     public function updateAdd()
     {
         $postData = $this->request->getPost('data');
-        printSuccess('success', $postData);
-        die();
         if (!empty($postData)) {
             foreach ($postData as $row) {
+                var_dump($row);
+                die();
                 if (isset($row['group_id'])) {
                     $group_id = intval($row['group_id']);
                     $view = isset($row['view']) ? intval($row['view']) : 0;
@@ -139,21 +175,19 @@ class gPermission extends BaseController
                     ];
 
                     if ($group_id > 0) {
-                        $result = $this->ModelgPermission->update_permission($group_id, $data);
+                        $this->ModelgPermission->update_permission($group_id, $data);
                     } else {
-                        $result = $this->ModelgPermission->add_permission($data);
-                    }
-
-                    if (!$result) {
-                        return $this->response->setJSON(['success' => false, 'message' => 'Failed to update or add permission.']);
+                        $this->ModelgPermission->add_permission($data);
                     }
                 } else {
                     error_log("Error: 'group_id' key is missing in row: " . print_r($row, true));
                 }
             }
-            return $this->response->setJSON(['success' => true]);
+            $response = ['success' => true];
         } else {
-            return $this->response->setJSON(['success' => false, 'message' => 'No data received.']);
+            $response = ['success' => false, 'message' => 'No data received.'];
         }
+        error_log("Response: " . json_encode($response)); // Log response for debugging
+        return $this->response->setJSON($response);
     }
 }
