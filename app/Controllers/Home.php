@@ -40,4 +40,9 @@ class Home extends BaseController
         */
         return view('template/index', $data);
     }
+
+    public function testing()
+    {
+        return view('testing/index');
+    }
 }

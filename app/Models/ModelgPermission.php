@@ -14,36 +14,6 @@ class ModelgPermission extends Model
     protected $allowedFields = ['group_id', 'view', 'edit', 'delete', 'menu_id'];
     protected $primaryKey = 'gp_id';
 
-    // public function searchAndDisplay($keyword = null, $start = 0, $length = 0, $group_id)
-    // {
-    //     $builder = $this->table('menu');
-
-    //     // Perform a join with the 'menu' table
-    //     $builder->select('menu.*, gp.group_id, gp.view, gp.edit, gp.delete');
-    //     $builder->join('group_permission gp', 'menu.menu_id = gp.menu_id', 'left');
-    //     $builder->where('gp.group_id', $group_id);
-    //     //display menu and file name
-
-
-    //     if ($keyword) {
-    //         $arr_keyword = explode(" ", $keyword);
-    //         for ($i = 0; $i < count($arr_keyword); $i++) {
-    //             $builder->groupStart();
-    //             $builder->orLike('group_id', $arr_keyword[$i]);
-    //             $builder->orLike('view', $arr_keyword[$i]);
-    //             $builder->orLike('edit', $arr_keyword[$i]);
-    //             $builder->orLike('delete', $arr_keyword[$i]);
-    //             $builder->orLike('menu.menu_name', $arr_keyword[$i]); // Search in menu_name column
-    //             $builder->orLike('menu.file_name', $arr_keyword[$i]); // Search in file_name column
-    //             $builder->groupEnd();
-    //         }
-    //     }
-
-    //     if ($start != 0 or $length != 0) {
-    //         $builder->limit((int)$length, (int)$start);
-    //     }
-    //     return $builder->get()->getResult();
-    // }
     public function searchAndDisplay($keyword = null, $start = 0, $length = 0, $group_id)
     {
         $sql = "SELECT menu.*, gp.group_id, gp.view, gp.edit, gp.delete
@@ -81,30 +51,6 @@ class ModelgPermission extends Model
         return $query->getResult();
     }
 
-    // public function updateOrAddPermission($groupId, $menuId, $view, $edit, $delete)
-    // {
-    //     // Check if the permission already exists for the given group and menu
-    //     $existingPermission = $this->where('group_id', $groupId)
-    //         ->where('menu_id', $menuId)
-    //         ->first();
-
-    //     // If permission exists, update it; otherwise, insert a new permission
-    //     if ($existingPermission) {
-    //         $existingPermission->view = $view;
-    //         $existingPermission->edit = $edit;
-    //         $existingPermission->delete = $delete;
-    //         $this->save($existingPermission);
-    //     } else {
-    //         $this->insert([
-    //             'group_id' => $groupId,
-    //             'menu_id' => $menuId,
-    //             'view' => $view,
-    //             'edit' => $edit,
-    //             'delete' => $delete
-    //         ]);
-    //     }
-    // }
-
 
     public function update_permission($group_id, $data)
     {
@@ -120,16 +66,22 @@ class ModelgPermission extends Model
         }
     }
 
-    public function add_permission($data)
+    public function add_permission($newArr, $group_id)
     {
+        // Add the group_id to the data array
+        $data['group_id'] = $group_id;
+
+        // Insert the data into the database
         $builder = $this->db->table('group_permission');
         $result = $builder->insert($data);
 
-        if ($result) {
-            return true; // Insert successful
-        } else {
-            error_log('Error adding permissions');
-            return false; // Insert failed
-        }
+        // Return the result of the insertion operation
+        return $result;
+    }
+
+    public function remove_permission($group_id)
+    {
+        $builder = $this->where('group_id', $group_id)->delete();
+        return $builder;
     }
 }

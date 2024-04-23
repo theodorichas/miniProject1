@@ -43,3 +43,10 @@ $routes->post('/loginAuth', 'auth::loginAuth');
 $routes->get('/logout', 'auth::logout');
 $routes->get('/register', 'auth::register');
 $routes->post('/registerAuth', 'auth::registerAuth');
+
+
+
+
+
+//testing purpose
+$routes->get('/testing', 'home::testing');

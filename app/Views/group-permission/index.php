@@ -142,7 +142,6 @@
     })
 </script>
 
-<!-- Button Save and Insert and Update script  -->
 <script>
     $('#btnSave').click(function() {
         var group_id = '<?= $group_id ?>'; // Retrieve group_id from a PHP variable
@@ -152,13 +151,14 @@
         }
         var formData = [];
         $('#example').find('input[type="checkbox"]').each(function() {
-            var viewCheckbox = $(this);
-            var type = viewCheckbox.data('type');
-            var menu_id = viewCheckbox.data('menu_id');
-            var isChecked = viewCheckbox.prop('checked') ? 1 : 0;
+            var checkbox = $(this);
+            var type = checkbox.data('type');
+            var menu_id = checkbox.data('menu_id');
+            var isChecked = checkbox.prop('checked') ? 1 : 0;
+
+            // Push the checkbox data into formData array
             formData.push({
-                group_id: group_id,
-                type: type,
+                type: type, // Include the type property
                 checked: isChecked,
                 menu_id: menu_id
             });
@@ -168,7 +168,8 @@
             url: '<?= base_url('gpermi/updateAdd') ?>',
             type: 'JSON',
             data: {
-                'data': formData
+                'data': formData,
+                'group_id': group_id,
             },
             beforeSend: function() {
                 console.log('Form data before sending:', formData);
@@ -205,4 +206,5 @@
         });
     })
 </script>
+
 <?= $this->endSection('scripts'); ?>

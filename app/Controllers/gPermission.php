@@ -155,39 +155,32 @@ class gPermission extends BaseController
     public function updateAdd()
     {
         $postData = $this->request->getPost('data');
+        $group_id = $this->request->getPost('group_id');
         if (!empty($postData)) {
+            $arrRes = [];
             foreach ($postData as $row) {
-                var_dump($row);
-                die();
-                if (isset($row['group_id'])) {
-                    $group_id = intval($row['group_id']);
-                    $view = isset($row['view']) ? intval($row['view']) : 0;
-                    $edit = isset($row['edit']) ? intval($row['edit']) : 0;
-                    $delete = isset($row['delete']) ? intval($row['delete']) : 0;
-                    $menu_id = intval($row['menu_id']);
+                // $group_id = intval($row['group_id']);
+                $menu_id = intval($row['menu_id']);
+                $type = $row["type"];
 
-                    $data = [
-                        'group_id' => $group_id,
-                        'view' => $view,
-                        'edit' => $edit,
-                        'delete' => $delete,
-                        'menu_id' => $menu_id
+                $key = $menu_id;
+                if (!isset($arrRes[$key])) {
+                    $arrRes[$key] = [
+                        "group_id" => $group_id,
+                        "menu_id" => $menu_id,
+                        "view" => 0,
+                        "edit" => 0,
+                        "delete" => 0
                     ];
-
-                    if ($group_id > 0) {
-                        $this->ModelgPermission->update_permission($group_id, $data);
-                    } else {
-                        $this->ModelgPermission->add_permission($data);
-                    }
-                } else {
-                    error_log("Error: 'group_id' key is missing in row: " . print_r($row, true));
                 }
+                $arrRes[$key][$type] = intval($row["checked"]);
             }
-            $response = ['success' => true];
+            $newArr = array_values($arrRes);
+            $this->ModelgPermission->add_permission($newArr, $group_id);
+            return $this->response->setJSON(['success' => 'Data have been successfully added']);
         } else {
             $response = ['success' => false, 'message' => 'No data received.'];
+            return $this->response->setJSON($response);
         }
-        error_log("Response: " . json_encode($response)); // Log response for debugging
-        return $this->response->setJSON($response);
     }
 }
