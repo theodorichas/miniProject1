@@ -31,10 +31,18 @@ class Karyawan extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => '255',
             ],
+            'password' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
+            ],
             'position' => [
                 'type' => 'VARCHAR',
                 'constraint' => '255',
             ],
+            'group_name' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255'
+            ]
 
         ]);
         $this->forge->addPrimaryKey('user_id');

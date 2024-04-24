@@ -52,36 +52,74 @@ class ModelgPermission extends Model
     }
 
 
-    public function update_permission($group_id, $data)
-    {
-        $builder = $this->db->table('group_permission');
-        $builder->where('group_id', $group_id);
-        $result = $builder->update($data);
+    // public function add_permission($newArr)
+    // {
 
-        if ($result) {
-            return true; // Update successful
-        } else {
-            error_log('Error updating permissions for group ID: ' . $group_id);
-            return false; // Update failed
+    //     $group_id = $newArr[0]['group_id'];
+    //     $builder = $this->db->table('group_permission');
+    //     $existingRecords = $builder->where('group_id', $group_id)->get()->getResultArray();
+
+
+    //     if (!empty($existingRecords)) {
+    //         // Delete existing records with the same group_id
+    //         $builder->where('group_id', $group_id);
+    //         $builder->emptyTable('group_persmission');
+    //     }
+
+    //     $insertedRows = 0;
+
+    //     // Iterate over each row of data
+    //     foreach ($newArr as $row) {
+    //         // Add the group_id to the data array
+    //         $row['group_id'] = $row['group_id']; // Assuming 'group_id' is the column name
+
+    //         // Insert the data into the database
+    //         $builder = $this->db->table('group_permission');
+    //         $result = $builder->insert($row);
+
+    //         // Check if insertion was successful
+    //         if ($result) {
+    //             $insertedRows++;
+    //         }
+    //     }
+
+    //     // Return the number of rows successfully inserted
+    //     return $insertedRows;
+    // }
+
+    public function add_permission($newArr)
+    {
+        // Extract the group_id from the first row of the new data (assuming all rows have the same group_id)
+        $group_id = $newArr[0]['group_id'];
+
+        // Create a builder instance for the group_permission table
+        $builder = $this->db->table('group_permission');
+
+        // Check if there are existing records with the same group_id
+        $existingRecords = $builder->where('group_id', $group_id)->get()->getResultArray();
+
+        if (!empty($existingRecords)) {
+            // Delete existing records with the same group_id
+            $builder->where('group_id', $group_id)->delete();
         }
-    }
 
-    public function add_permission($newArr, $group_id)
-    {
-        // Add the group_id to the data array
-        $data['group_id'] = $group_id;
+        // Insert the new data into the database
+        $insertedRows = 0;
 
-        // Insert the data into the database
-        $builder = $this->db->table('group_permission');
-        $result = $builder->insert($data);
+        foreach ($newArr as $row) {
+            // Add the group_id to the data array
+            $row['group_id'] = $group_id; // No need for assignment again, already set
 
-        // Return the result of the insertion operation
-        return $result;
-    }
+            // Insert the data into the database
+            $result = $builder->insert($row);
 
-    public function remove_permission($group_id)
-    {
-        $builder = $this->where('group_id', $group_id)->delete();
-        return $builder;
+            // Check if insertion was successful
+            if ($result) {
+                $insertedRows++;
+            }
+        }
+
+        // Return the number of rows successfully inserted
+        return $insertedRows;
     }
 }
