@@ -81,9 +81,9 @@
                 </li>
                 <!-- Notifications Dropdown Menu -->
                 <li class="nav-item dropdown">
-                    <?php if (!empty($username)) : ?>
+                    <?php if (!empty($nama)) : ?>
                         <a class="nav-link" data-toggle="dropdown" href="#">
-                            <p>Welcome back, <?= $username; ?></p>
+                            <p>Welcome back, <?= $nama; ?></p>
                         </a>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                             <!-- <a href="<?= base_url('/myprofile') ?>" class="dropdown-item dropdown-footer">Edit Profile</a> -->

@@ -25,6 +25,7 @@ class Group extends BaseController
     {
         $data['title'] = "Group list";
         $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['nama'] = $_SESSION['nama'] ?? '';
         return view('group/index', $data);
     }
 

@@ -25,6 +25,7 @@ class Karyawan extends BaseController
         $data['title'] = 'User list';
         $data['group_names'] = $this->ModelKaryawan->getGroupNames();
         $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['nama'] = $_SESSION['nama'] ?? '';
         return view('karyawan/index', $data);
     }
 
@@ -108,12 +109,21 @@ class Karyawan extends BaseController
         $alamat = $this->request->getPost('alamat');
         $email = $this->request->getPost('email');
         $password = (string) $this->request->getPost('password');
-        // $this->request->getPost('password');
         // var_dump($password);
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         // var_dump($hashedPassword);
+        $existingUser = $this->ModelKaryawan->getUserByEmail($email);
+        // Check if the password has changed
+        if (!empty($password) && password_verify($password, $existingUser['password'])) {
+            // Password has not changed, use the existing hashed password
+            $hashedPassword = $existingUser['password'];
+        } else {
+            // Password has changed, hash the new password
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        }
         $group_name = $this->request->getPost('groupName');
         $group_id = $this->ModelKaryawan->getGroupIdByName($group_name);
+
 
         $data = [
             'user_id' => $id,
@@ -126,7 +136,6 @@ class Karyawan extends BaseController
         ];
 
         //Untuk cek apakah user dengan ID ini sudah ada dalam DB
-        $existingUser = $this->ModelKaryawan->getUserByEmail($email);
 
         if ($id > 0) {
             $this->ModelKaryawan->update_dataKaryawan($id, $data, $group_id);

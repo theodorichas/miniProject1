@@ -24,6 +24,7 @@ class pdf extends BaseController
         $data['menus'] = $this->ModelMenu->getMenuNames();
         // var_dump($data);
         $data['title'] = 'pdf';
+        $data['nama'] = $_SESSION['nama'] ?? '';
         return view('pdf/index', $data);
     }
 

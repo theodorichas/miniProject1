@@ -18,7 +18,6 @@ class Auth extends BaseController
         $this->builder = $this->db->table('karyawan');
         $this->ModelKaryawan = new ModelKaryawan();
         $this->request = \Config\Services::request();
-        $session = \Config\Services::session();
         helper('general_helper');
     }
 

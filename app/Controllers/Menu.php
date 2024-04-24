@@ -22,6 +22,7 @@ class Menu extends BaseController
         $data['title'] = 'Menu List';
         $data['icons'] = getFontAwesomeCheatSheet();
         $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['nama'] = $_SESSION['nama'] ?? '';
         return view('menu/index', $data);
     }
 

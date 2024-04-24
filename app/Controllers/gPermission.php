@@ -26,6 +26,7 @@ class gPermission extends BaseController
         $data['title'] = 'Group Permission list';
         $data['menus'] = $this->ModelMenu->getMenuNames();
         $data['group_id'] = $groupId;
+        $data['nama'] = $_SESSION['nama'] ?? '';
         return view('group-permission/index', $data);
     }
 
