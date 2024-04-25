@@ -14,12 +14,13 @@
 
 <?= $this->endSection('links'); ?>
 
-
+<h1><?= $group_names ?></h1>
 <!-- Main Content -->
 <?= $this->section('content'); ?>
 
 
 <!-- Data Table -->
+
 <div class="row">
     <div class="col-12">
         <div class="card">

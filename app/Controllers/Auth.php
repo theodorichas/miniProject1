@@ -23,7 +23,7 @@ class Auth extends BaseController
 
     public function login()
     {
-        /*
+        /* 
         // Check if session is active
         if (session_status() === PHP_SESSION_ACTIVE) {
             // Session is active
