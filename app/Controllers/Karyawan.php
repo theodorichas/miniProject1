@@ -26,6 +26,8 @@ class Karyawan extends BaseController
         $data['group_names'] = $this->ModelKaryawan->getGroupNames();
         $data['menus'] = $this->ModelMenu->getMenuNames();
         $data['nama'] = $_SESSION['nama'] ?? '';
+        $data['groups'] = $_SESSION['group_name'];
+        var_dump($_SESSION);
         return view('karyawan/index', $data);
     }
 

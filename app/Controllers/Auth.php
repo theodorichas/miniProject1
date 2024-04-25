@@ -58,6 +58,7 @@ class Auth extends BaseController
         $_SESSION['user_id'] = $user['user_id']; // Example: Store user ID
         $_SESSION['email'] = $user['email']; // Example: Store email
         $_SESSION['nama'] = $user['nama'];
+        $_SESSION['group_name'] = $user['group_name'];
 
         return $this->response->setJSON(['success' => 'Login successful']);
 

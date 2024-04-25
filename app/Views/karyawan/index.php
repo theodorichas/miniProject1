@@ -14,7 +14,6 @@
 
 <?= $this->endSection('links'); ?>
 
-<h1><?= $group_names ?></h1>
 <!-- Main Content -->
 <?= $this->section('content'); ?>
 
@@ -167,8 +166,20 @@
             }, {
                 "data": "action",
                 "render": function(data, type, full, meta) {
+                    var buttons = '';
+                    // var permissions = <?= $groups ?>;
+                    var testing = 1;
+                    // console.log(permissions);
+                    if (testing == 1) {
+                        buttons += '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
+                        buttons += '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
+
+                    }
+                    return buttons;
+                    /*
                     return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
                         '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
+                */
                 }
             }],
             'order': [0, 'asc'],
