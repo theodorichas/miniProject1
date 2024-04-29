@@ -4,18 +4,23 @@ namespace App\Controllers;
 
 use App\Models\ModelGroup;
 use App\Models\ModelMenu;
+use App\Models\ModelKaryawan;
+use App\Models\ModelgPermission;
+
 
 
 class Group extends BaseController
 {
 
-    protected $db, $builder, $ModelGroup, $ModelMenu;
+    protected $db, $builder, $ModelGroup, $ModelMenu, $ModelKaryawan, $ModelgPermission;
 
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
         $this->builder = $this->db->table('group');
         $this->ModelGroup = new ModelGroup();
+        $this->ModelKaryawan = new ModelKaryawan();
+        $this->ModelgPermission = new ModelgPermission();
         $this->ModelMenu = new ModelMenu();
         $this->request = \Config\Services::request();
         helper('general_helper');
@@ -26,6 +31,10 @@ class Group extends BaseController
         $data['title'] = "Group list";
         $data['menus'] = $this->ModelMenu->getMenuNames();
         $data['nama'] = $_SESSION['nama'] ?? '';
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        echo json_encode($data['permission']);
         return view('group/index', $data);
     }
 

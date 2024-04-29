@@ -47,6 +47,8 @@ class Auth extends BaseController
 
         // Retrieve user from database
         $user = $this->ModelKaryawan->getUserByEmail($email);
+
+
         if (!$user) {
             return $this->response->setJSON(['error' => 'User not found']);
         }

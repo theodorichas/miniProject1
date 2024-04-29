@@ -3,16 +3,21 @@
 namespace App\Controllers;
 
 use App\Models\ModelMenu;
+use App\Models\ModelKaryawan;
+use App\Models\ModelgPermission;
+
 
 class Home extends BaseController
 {
-    protected $db, $builder, $ModelMenu;
+    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission;
 
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
         $this->builder = $this->db->table('menu');
+        $this->ModelKaryawan = new ModelKaryawan();
         $this->ModelMenu = new ModelMenu();
+        $this->ModelgPermission = new ModelgPermission();
         $this->request = \Config\Services::request();
         helper('general_helper');
     }
@@ -22,24 +27,12 @@ class Home extends BaseController
         $data['title'] = 'Home';
         $data['menus'] = $this->ModelMenu->getMenuNames();
         $data['nama'] = $_SESSION['nama'] ?? '';
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        echo json_encode($data['permission']);
         return view('home/index', $data);
     }
-    // public function template()
-    // {
-    //     $data['menus'] = $this->ModelMenu->getMenuNames();
-    //     $data['nama'] = $_SESSION['nama'] ?? '';
-    //     /*
-    //     // Check if session is active
-    //     if (session_status() === PHP_SESSION_ACTIVE) {
-    //         // Session is active
-    //         echo "Session is active";
-    //     } else {
-    //         // Session is not active
-    //         echo "Session is not active";
-    //     }
-    //     */
-    //     return view('template/index', $data);
-    // }
 
     public function testing()
     {

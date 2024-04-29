@@ -167,14 +167,17 @@
                 "data": "action",
                 "render": function(data, type, full, meta) {
                     var buttons = '';
-                    // var permissions = <?= $groups ?>;
-                    var testing = 1;
-                    // console.log(permissions);
-                    if (testing == 1) {
-                        buttons += '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
-                        buttons += '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
-
-                    }
+                    var permission = <?= json_encode($permission); ?>;
+                    permission.forEach(function(item) {
+                        if (item.edit == 1) {
+                            buttons += '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
+                            if (item.delete == 1) {
+                                buttons += '<button class="btn btn-danger" onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
+                            }
+                        } else if (item.delete == 1) {
+                            buttons += '<button class="btn btn-danger" onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
+                        }
+                    });
                     return buttons;
                     /*
                     return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +

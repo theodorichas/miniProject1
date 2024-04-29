@@ -5,10 +5,12 @@ namespace App\Controllers;
 
 use App\Models\ModelMenu;
 use App\Models\ModelgPermission;
+use App\Models\ModelKaryawan;
+
 
 class gPermission extends BaseController
 {
-    protected $db, $builder, $ModelMenu, $ModelgPermission;
+    protected $db, $builder, $ModelMenu, $ModelgPermission, $ModelKaryawan;
 
     public function __construct()
     {
@@ -16,6 +18,7 @@ class gPermission extends BaseController
         $this->builder = $this->db->table('group_permission');
         $this->ModelMenu = new ModelMenu();
         $this->ModelgPermission = new ModelgPermission();
+        $this->ModelKaryawan = new ModelKaryawan();
         $this->request = \Config\Services::request();
         helper('general_helper');
     }
@@ -27,6 +30,13 @@ class gPermission extends BaseController
         $data['menus'] = $this->ModelMenu->getMenuNames();
         $data['group_id'] = $groupId;
         $data['nama'] = $_SESSION['nama'] ?? '';
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+
+        //Debug info
+        echo json_encode($data['permission']);
+
         return view('group-permission/index', $data);
     }
 

@@ -3,18 +3,23 @@
 namespace App\Controllers;
 
 use App\Models\ModelMenu;
+use App\Models\ModelKaryawan;
+use App\Models\ModelgPermission;
 use TCPDF;
 
 
 class pdf extends BaseController
 {
-    protected $db, $builder, $ModelMenu;
+    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission;
 
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
         $this->builder = $this->db->table('menu');
         $this->ModelMenu = new ModelMenu();
+        $this->ModelKaryawan = new ModelKaryawan();
+        $this->ModelgPermission = new ModelgPermission();
+
         $this->request = \Config\Services::request();
         helper('general_helper');
     }
@@ -25,6 +30,10 @@ class pdf extends BaseController
         // var_dump($data);
         $data['title'] = 'pdf';
         $data['nama'] = $_SESSION['nama'] ?? '';
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        echo json_encode($data['permission']);
         return view('pdf/index', $data);
     }
 

@@ -122,13 +122,25 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <?php foreach ($menus as $menu) : ?>
-                            <!-- Determine if the menu item should be hidden based on 'visible' status -->
-                            <?php $visibilityClass = ($menu->visible == 0) ? 'd-none' : ''; ?>
+                            <?php
+                            // Determine if the menu item should be hidden based on 'visible' status
+                            $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
+                            // Check if the user has permission to view this menu
+                            $hasPermission = false;
+                            foreach ($permission as $perm) {
+                                if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
+                                    $hasPermission = true;
+                                    break; // No need to continue checking once permission is found
+                                }
+                            }
+                            ?>
                             <li class="nav-item <?= $visibilityClass ?>">
-                                <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
-                                    <i class="<?= $menu->icon ?>"></i>
-                                    <p><?= $menu->menu_name ?></p>
-                                </a>
+                                <?php if ($hasPermission) : ?>
+                                    <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
+                                        <i class="<?= $menu->icon ?>"></i>
+                                        <p><?= $menu->menu_name ?></p>
+                                    </a>
+                                <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
                     </ul>
