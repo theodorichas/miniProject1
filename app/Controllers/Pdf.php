@@ -6,6 +6,8 @@ use App\Models\ModelMenu;
 use App\Models\ModelKaryawan;
 use App\Models\ModelgPermission;
 use TCPDF;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 
 
 class pdf extends BaseController
@@ -39,7 +41,73 @@ class pdf extends BaseController
 
     public function printPdf()
     {
+        // Read data from uploaded Excel file
+        $uploadFile = $this->request->getFile('formFile');
+        $excelData = $this->readExcelData($uploadFile);
 
+        // Process and format the data for the salary slip
+
+        // Generate HTML content for the salary slip
+        $html = $this->generateHtmlFromData($excelData);
+
+        // Create TCPDF instance
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, 'A4', true, 'UTF-8', false);
+        $pdf->SetProtection(array('print', 'copy'), '123', null, 0, null);
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Author Name');
+        $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, 'Header Title', 'Header Description');
+        $pdf->setHeaderFont(array('helvetica', '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(array('helvetica', '', PDF_FONT_SIZE_DATA));
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        // Add a page
+        $pdf->AddPage();
+
+        // Print text using writeHTML()
+        $pdf->writeHTML($html, true, false, true, false, '');
+
+        // Set PDF content type
+        $this->response->setContentType('application/pdf');
+
+        // Output the PDF as inline (I) or as a download (D)
+        $pdf->Output('testing.pdf', 'I');
+    }
+    protected function readExcelData($file)
+    {
+        $spreadsheet = IOFactory::load($file->getTempName());
+        $worksheet = $spreadsheet->getActiveSheet();
+
+        $data = [];
+        foreach ($worksheet->getRowIterator() as $row) {
+            $rowData = [];
+            foreach ($row->getCellIterator() as $cell) {
+                $rowData[] = $cell->getValue();
+            }
+            $data[] = $rowData;
+        }
+
+        return $data;
+    }
+    protected function generateHtmlFromData($data)
+    {
+        // Generate HTML content from the data
+        // Example: Construct HTML table with data
+        $html = '<table border="1">';
+        foreach ($data as $row) {
+            $html .= '<tr>';
+            foreach ($row as $cell) {
+                $html .= '<td>' . $cell . '</td>';
+            }
+            $html .= '</tr>';
+        }
+        $html .= '</table>';
+
+        return $html;
+    }
+    /*
         $html = <<<EOD
         <h1>Welcome to <a href="http://www.tcpdf.org" style="text-decoration:none;background-color:#CC0000;color:black;">&nbsp;<span style="color:black;">TC</span><span style="color:white;">PDF</span>&nbsp;</a>!</h1>
         <i>This is the first example of TCPDF library.</i>
@@ -71,5 +139,5 @@ class pdf extends BaseController
 
         // Output the PDF as inline (I) or as a download (D)
         $pdf->Output('testing.pdf', 'I');
-    }
+    */
 }

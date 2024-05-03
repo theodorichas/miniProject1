@@ -17,9 +17,15 @@
 <!-- Main Content -->
 <?= $this->section('content'); ?>
 
-<h1>Simple Placeholder</h1>
+<form id="excelForm" action="<?= base_url('/output') ?>" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="formFile" class="form-label">Input excel file here</label>
+        <input class="form-control" type="file" id="formFile" name="formFile">
+    </div>
+    <button type="submit" class="btn btn-warning">Generate PDF</button>
+</form>
 
-<a href="<?= base_url('/output') ?>" class="btn btn-warning">Warning</a>
+
 
 
 <?= $this->section('scripts'); ?>
@@ -47,6 +53,22 @@
 <script src="<?= base_url('asset/AdminLTE/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
 <!-- Script Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<script>
+    document.getElementById('excelForm').addEventListener('submit', function(event) {
+        var fileInput = document.getElementById('formFile');
+        if (!fileInput.files || !fileInput.files[0]) {
+            event.preventDefault(); // Prevent form submission
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please select a file!',
+            });
+        }
+    });
+</script>
+
+
 
 <?= $this->endSection('scripts'); ?>
 

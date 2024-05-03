@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\ModelKaryawan;
 use App\Models\ModelMenu;
 use App\Models\ModelgPermission;
-
+use PHPUnit\Util\Json;
 
 class Karyawan extends BaseController
 {
@@ -22,6 +22,7 @@ class Karyawan extends BaseController
         helper('general_helper');
     }
 
+    /*
     public function index() //view table
     {
         $data['title'] = 'User list';
@@ -31,8 +32,57 @@ class Karyawan extends BaseController
         $groupName = $_SESSION['group_name'] ?? '';
         $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
         $data['permission'] = $this->ModelgPermission->get_permission($groupId);
-        echo json_encode($data['permission']);
+        $routes = $this->request->uri->getPath();
+
+        // echo json_encode($data['permission']);
+        echo json_encode($routes);
         return view('karyawan/index', $data);
+    }
+    */
+
+    public function index()
+    {
+        // Get the current URI
+        $routes = $this->request->uri->getPath();
+
+        // Retrieve user's group name from session
+        $groupName = session()->get('group_name');
+
+        // Retrieve group ID by group name
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+
+        // Retrieve permissions for the group
+        $permissions = $this->ModelgPermission->get_permission($groupId);
+
+        // Check if the user has permission for the current route
+        $hasPermission = $this->hasPermission($permissions);
+
+        if (!$hasPermission) {
+            // Redirect or show an error message
+            return view('error-page/index');
+        } else {
+
+            // Proceed to load the view
+            $data['title'] = 'User list';
+            $data['group_names'] = $this->ModelKaryawan->getGroupNames();
+            $data['menus'] = $this->ModelMenu->getMenuNames();
+            $data['nama'] = $_SESSION['nama'] ?? '';
+            $data['permission'] = $permissions;
+
+            echo json_encode($routes);
+            return view('karyawan/index', $data);
+        }
+    }
+
+    public function hasPermission(array $permissions)
+    {
+        // Check if the permission exists for the given route
+        foreach ($permissions as $permission) {
+            if ($permission->view == 1 && $permission->menu_id == 1) {
+                return true; // User has permission to access the route
+            }
+        }
+        return false; // User does not have permission for the route
     }
 
     public function karyawanAjax() //Data Table
@@ -55,57 +105,6 @@ class Karyawan extends BaseController
         echo json_encode($json_data);
     }
 
-    /*
-    public function updateAdd() //Fungsi Update dan add Data
-    {
-        $isSuccess = false;
-        $id = intval($this->request->getPost('userId'));
-        $nama = $this->request->getPost('nama');
-        $telp = $this->request->getPost('telp');
-        $alamat = $this->request->getPost('alamat');
-        $email = $this->request->getPost('email');
-        $password = (string) $this->request->getPost('password');
-        // $this->request->getPost('password');
-        // var_dump($password);
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        // var_dump($hashedPassword);
-        $group_name = $this->request->getPost('groupName');
-        $group_id = $this->ModelKaryawan->getGroupIdByName($group_name);
-
-        $data = [
-            'user_id' => $id,
-            'nama' => $nama,
-            'telp' => $telp,
-            'alamat' => $alamat,
-            'email' => $email,
-            'password' => $hashedPassword,
-            'group_name' => $group_name,
-        ];
-
-        //Untuk cek apakah user dengan ID ini sudah ada dalam DB
-        $existingUser = $this->ModelKaryawan->getUserByEmail($email);
-
-        if ($id > 0) {
-            $isSuccess = $this->ModelKaryawan->update_dataKaryawan($id, $data, $group_id);
-            $isSuccess = 1;
-        } else {
-            if (!$existingUser) {
-                $isSuccess = $this->ModelKaryawan->add_dataKaryawan($data); //diarahkan ke model mahasiswa dengan method add_datakaryawan
-                $user_id = $this->ModelKaryawan->insertID();
-                $this->ModelKaryawan->insertUserGroup($user_id, $group_id);
-                $isSuccess = 1;
-            } else {
-                return $this->response->setJSON(['error' => 'User already exists']);
-            }
-        }
-        echo "Success flag: " . ($isSuccess ? 'true' : 'false') . "<br>";
-        if ($isSuccess) {
-            echo json_encode(['status' => 1]); // Success response
-        } else {
-            echo json_encode(['status' => 0]); // Error response
-        }
-    }
-    */
 
     public function updateAdd() //Fungsi Update dan add Data
     {

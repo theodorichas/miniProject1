@@ -10,6 +10,7 @@ use CodeIgniter\Router\RouteCollection;
 // $routes->get('/', 'Home::index');
 $routes->get('/', 'Home::index');
 
+
 //Karyawan Routes
 $routes->get('/karyawan', 'Karyawan::index'); //Client Side
 $routes->post('/ajax', 'Karyawan::karyawanAjax');
@@ -30,7 +31,7 @@ $routes->post('/menu/delete', 'menu::delete');
 
 //pdf routing
 $routes->get('/pdf', 'pdf::index');
-$routes->get('/output', 'pdf::printPdf');
+$routes->post('/output', 'pdf::printPdf');
 
 //gPermissions routing
 $routes->get('/gPermission', 'gpermission::index');
