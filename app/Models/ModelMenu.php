@@ -67,7 +67,12 @@ class ModelMenu extends Model
         $builder->select('*');
         $builder->orderBy('order_no', 'asc');
         $query = $builder->get();
-
         return $query->getResult();
+    }
+
+    public function getMenuByMenuId($menuId)
+    {
+        $query = $this->db->table('menu')->where('menu_id', $menuId)->get();
+        return $query->getFirstRow();
     }
 }

@@ -5,9 +5,10 @@ namespace App\Controllers;
 use App\Models\ModelKaryawan;
 use App\Models\ModelMenu;
 use App\Models\ModelgPermission;
+use Error;
 use PHPUnit\Util\Json;
 
-class Karyawan extends BaseController
+class Karyawan extends general
 {
     protected $db, $builder, $ModelKaryawan, $ModelMenu, $ModelgPermission;
 
@@ -45,6 +46,12 @@ class Karyawan extends BaseController
         // Get the current URI
         $routes = $this->request->uri->getPath();
 
+        // Get the segments of the URI
+        $segments = explode('/', $routes);
+
+        // Extract the menu_id from the URI
+        $fileName = end($segments); // Assuming the menu_id is at the end of the URI path
+
         // Retrieve user's group name from session
         $groupName = session()->get('group_name');
 
@@ -55,13 +62,12 @@ class Karyawan extends BaseController
         $permissions = $this->ModelgPermission->get_permission($groupId);
 
         // Check if the user has permission for the current route
-        $hasPermission = $this->hasPermission($permissions);
+        $hasPermission = $this->userPermission($permissions, $fileName);
 
         if (!$hasPermission) {
             // Redirect or show an error message
             return view('error-page/index');
         } else {
-
             // Proceed to load the view
             $data['title'] = 'User list';
             $data['group_names'] = $this->ModelKaryawan->getGroupNames();
@@ -72,17 +78,6 @@ class Karyawan extends BaseController
             echo json_encode($routes);
             return view('karyawan/index', $data);
         }
-    }
-
-    public function hasPermission(array $permissions)
-    {
-        // Check if the permission exists for the given route
-        foreach ($permissions as $permission) {
-            if ($permission->view == 1 && $permission->menu_id == 1) {
-                return true; // User has permission to access the route
-            }
-        }
-        return false; // User does not have permission for the route
     }
 
     public function karyawanAjax() //Data Table

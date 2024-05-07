@@ -5,12 +5,11 @@ namespace App\Controllers;
 use App\Models\ModelKaryawan;
 
 
-
-
 class Auth extends BaseController
 {
-
     protected $db, $builder, $ModelKaryawan;
+
+
     //log-in
     public function __construct()
     {
