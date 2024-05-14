@@ -8,7 +8,7 @@ use App\Models\ModelgPermission;
 use App\Models\ModelKaryawan;
 
 
-class gPermission extends BaseController
+class gPermission extends general
 {
     protected $db, $builder, $ModelMenu, $ModelgPermission, $ModelKaryawan;
 
@@ -25,19 +25,44 @@ class gPermission extends BaseController
 
     public function index() //view table
     {
-        $groupId = $this->request->getGet('id');
-        $data['title'] = 'Group Permission list';
-        $data['menus'] = $this->ModelMenu->getMenuNames();
-        $data['group_id'] = $groupId;
-        $data['nama'] = $_SESSION['nama'] ?? '';
-        $groupName = $_SESSION['group_name'] ?? '';
+        // Get the current URI
+        $routes = $this->request->uri->getPath();
+
+        // Get the segments of the URI
+        $segments = explode('/', $routes);
+
+        // Extract the menu_id from the URI
+        $fileName = end($segments); // Assuming the menu_id is at the end of the URI path
+
+        // Retrieve user's group name from session
+        $groupName = session()->get('group_name');
+
+        // Retrieve group ID by group name
         $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
-        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
 
-        //Debug info
-        echo json_encode($data['permission']);
+        // Retrieve permissions for the group
+        $permissions = $this->ModelgPermission->get_permission($groupId);
 
-        return view('group-permission/index', $data);
+        // Check if the user has permission for the current route
+        $hasPermission = $this->userPermission($permissions, $fileName);
+
+        if (!$hasPermission) {
+            return view('error-page/index');
+        } else {
+            $groupId = $this->request->getGet('id');
+            $data['title'] = 'Group Permission list';
+            $data['menus'] = $this->ModelMenu->getMenuNames();
+            $data['group_id'] = $groupId;
+            $data['nama'] = $_SESSION['nama'] ?? '';
+            $groupName = $_SESSION['group_name'] ?? '';
+            $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+            $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+
+            //Debug info
+            echo json_encode($data['permission']);
+
+            return view('group-permission/index', $data);
+        }
     }
 
 

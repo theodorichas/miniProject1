@@ -32,6 +32,9 @@ $routes->post('/menu/delete', 'menu::delete');
 //pdf routing
 $routes->get('/pdf', 'pdf::index');
 $routes->post('/output', 'pdf::printPdf');
+$routes->get('/userdata', 'pdf::userdata');
+$routes->post('/read', 'pdf::read');
+
 
 //gPermissions routing
 $routes->get('/gPermission', 'gpermission::index');

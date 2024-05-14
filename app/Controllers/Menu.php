@@ -6,7 +6,7 @@ use App\Models\ModelMenu;
 use App\Models\ModelKaryawan;
 use App\Models\ModelgPermission;
 
-class Menu extends BaseController
+class Menu extends general
 {
     protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission;
 
@@ -23,15 +23,40 @@ class Menu extends BaseController
 
     public function index() //view table
     {
-        $data['title'] = 'Menu List';
-        $data['icons'] = getFontAwesomeCheatSheet();
-        $data['menus'] = $this->ModelMenu->getMenuNames();
-        $data['nama'] = $_SESSION['nama'] ?? '';
-        $groupName = $_SESSION['group_name'] ?? '';
+        // Get the current URI
+        $routes = $this->request->uri->getPath();
+
+        // Get the segments of the URI
+        $segments = explode('/', $routes);
+
+        // Extract the menu_id from the URI
+        $fileName = end($segments); // Assuming the menu_id is at the end of the URI path
+
+        // Retrieve user's group name from session
+        $groupName = session()->get('group_name');
+
+        // Retrieve group ID by group name
         $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
-        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
-        echo json_encode($data['permission']);
-        return view('menu/index', $data);
+
+        // Retrieve permissions for the group
+        $permissions = $this->ModelgPermission->get_permission($groupId);
+
+        // Check if the user has permission for the current route
+        $hasPermission = $this->userPermission($permissions, $fileName);
+
+        if (!$hasPermission) {
+            return view('error-page/index');
+        } else {
+            $data['title'] = 'Menu List';
+            $data['icons'] = getFontAwesomeCheatSheet();
+            $data['menus'] = $this->ModelMenu->getMenuNames();
+            $data['nama'] = $_SESSION['nama'] ?? '';
+            $groupName = $_SESSION['group_name'] ?? '';
+            $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+            $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+            // echo json_encode($data['permission']); -> To see the permissions
+            return view('menu/index', $data);
+        }
     }
 
     public function menuDtb() //Data Table

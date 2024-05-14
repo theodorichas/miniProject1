@@ -5,8 +5,7 @@ namespace App\Controllers;
 use App\Models\ModelKaryawan;
 use App\Models\ModelMenu;
 use App\Models\ModelgPermission;
-use Error;
-use PHPUnit\Util\Json;
+
 
 class Karyawan extends general
 {
@@ -22,24 +21,6 @@ class Karyawan extends general
         $this->request = \Config\Services::request();
         helper('general_helper');
     }
-
-    /*
-    public function index() //view table
-    {
-        $data['title'] = 'User list';
-        $data['group_names'] = $this->ModelKaryawan->getGroupNames();
-        $data['menus'] = $this->ModelMenu->getMenuNames();
-        $data['nama'] = $_SESSION['nama'] ?? '';
-        $groupName = $_SESSION['group_name'] ?? '';
-        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
-        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
-        $routes = $this->request->uri->getPath();
-
-        // echo json_encode($data['permission']);
-        echo json_encode($routes);
-        return view('karyawan/index', $data);
-    }
-    */
 
     public function index()
     {
@@ -74,8 +55,8 @@ class Karyawan extends general
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['nama'] = $_SESSION['nama'] ?? '';
             $data['permission'] = $permissions;
-
-            echo json_encode($routes);
+            // echo json_encode($routes); -> To see where the routes comin
+            // echo json_encode($data['permission']); -> To see the permissions
             return view('karyawan/index', $data);
         }
     }

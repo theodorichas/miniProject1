@@ -17,15 +17,45 @@
 <!-- Main Content -->
 <?= $this->section('content'); ?>
 
-<form id="excelForm" action="<?= base_url('/output') ?>" method="post" enctype="multipart/form-data">
+<form id="excelForm" enctype="multipart/form-data" action="<?= base_url('/output') ?>" method="POST">
     <div class="mb-3">
-        <label for="formFile" class="form-label">Input excel file here</label>
+        <label for="formFile" id="formFilelbl" class="form-label">Input excel file here</label>
         <input class="form-control" type="file" id="formFile" name="formFile">
     </div>
-    <button type="submit" class="btn btn-warning">Generate PDF</button>
+    <button type="button" id="btnModal" class="btn btn-warning">Generate List</button>
+    <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;">Send Paycheck</button>
 </form>
 
-
+<!-- <div class="row"> -->
+<div class="col-12" id="dataTable" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                DataTable Group
+                <span id="fileNameDisplay" style="font-weight: normal; font-size: 1rem; color: gray;"></span>
+            </h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table id="example" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Nama</th>
+                        <th scope="col">Nip</th>
+                        <th scope="col">Tgl Lahir</th>
+                        <th scope="col">Alamat</th>
+                        <th scope="col">email</th>
+                        <th scope="col">No telp[Whatsapp]</th>
+                        <th scope="col">Salary</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</div>
+<!-- </div> -->
 
 
 <?= $this->section('scripts'); ?>
@@ -55,20 +85,140 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 <script>
-    document.getElementById('excelForm').addEventListener('submit', function(event) {
-        var fileInput = document.getElementById('formFile');
-        if (!fileInput.files || !fileInput.files[0]) {
-            event.preventDefault(); // Prevent form submission
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please select a file!',
-            });
-        }
+    $(document).ready(function() {
+        $('#btnModal').click(function() {
+            var fileInput = document.getElementById('formFile');
+
+            // Check if button text is "Insert a new file"
+            if ($('#btnModal').text() === 'Insert a new file') {
+                // Reset the form and show the file input
+                $('#formFile').val('').show();
+                $('#formFilelbl').show();
+                $('#dataTable').hide();
+                $('#btnPaycheck').hide();
+                $('#btnModal').text('Generate List');
+                return;
+            }
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a file!',
+                });
+            } else {
+                var fileName = fileInput.files[0].name;
+                var fileExtension = fileName.split('.').pop().toLowerCase();
+                if (fileExtension !== 'xls' && fileExtension !== 'xlsx') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Incorrect file format!',
+                        text: 'Please select a valid Excel file (.xls or .xlsx).',
+                    });
+                    return;
+                }
+                var formData = new FormData();
+                formData.append('formFile', fileInput.files[0]);
+                $.ajax({
+                    url: '<?= base_url('/read') ?>',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        var responseData = JSON.parse(response);
+                        var filteredData = responseData.filter(function(row) {
+                            return row.some(function(cell) {
+                                return cell !== null;
+                            });
+                        });
+
+                        if (filteredData.length === 0) {
+                            console.log('All rows contain null values');
+                            return;
+                        }
+
+                        var columns = filteredData.shift();
+                        var convertedData = filteredData.map(function(row) {
+                            var rowData = {};
+                            for (var i = 0; i < columns.length; i++) {
+                                if (columns[i] === 'tgl_lahir') {
+                                    row[i] = excelSerialToDate(row[i]);
+                                    if (row[i] === 'Invalid Date') {
+                                        row[i] = null;
+                                    }
+                                }
+                                rowData[columns[i]] = row[i];
+                            }
+                            return rowData;
+                        });
+
+                        $('#example').DataTable({
+                            data: convertedData,
+                            destroy: true,
+                            columns: columns.map(function(column) {
+                                if (column === 'salary') {
+                                    return {
+                                        data: column,
+                                        render: function(data, type, row) {
+                                            return formatRupiah(data);
+                                        }
+                                    };
+                                }
+                                return {
+                                    data: column
+                                };
+                            })
+                        });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!!',
+                            text: 'Record has been Updated',
+                        });
+
+                        $('#btnModal').text('Insert a new file');
+                        $('#formFilelbl').hide();
+                        $('#fileNameDisplay').text(` - ${fileName}`);
+
+
+                        $('#formFile').hide();
+                        $('#dataTable').show();
+                        $('#btnPaycheck').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX request failed!');
+                        console.log('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Incorrect format!',
+                            text: 'Please insert the correct file format',
+                        });
+                    }
+                });
+            }
+        });
     });
+
+
+    function formatRupiah(value) {
+        return 'Rp' + parseInt(value, 10).toLocaleString('id-ID', {
+            minimumFractionDigits: 0
+        });
+    }
+
+
+    function excelSerialToDate(serial) {
+        var utc_days = Math.floor(serial - 25569);
+        var utc_value = utc_days * 86400;
+        var date_info = new Date(utc_value * 1000);
+
+        var year = date_info.getUTCFullYear();
+        var month = date_info.getUTCMonth() + 1;
+        var day = date_info.getUTCDate();
+
+        return year + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
+    }
 </script>
-
-
 
 <?= $this->endSection('scripts'); ?>
 
