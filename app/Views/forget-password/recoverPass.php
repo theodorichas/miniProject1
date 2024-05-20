@@ -21,69 +21,42 @@
 
 <body class="hold-transition login-page">
     <div class="login-box">
-        <!-- /.login-logo -->
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a class="h1"><b>Admin</b>LTE</a>
+                <a href="../../index2.html" class="h1"><b>Admin</b>LTE</a>
             </div>
             <div class="card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
-                <form name="login" id="quickForm">
-                    <?= csrf_field(); ?>
-                    <!-- Email -->
-                    <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <span class="fas fa-envelope"></span>
-                                </div>
+                <p class="login-box-msg">You are only one step a way from your new password, recover your password now.</p>
+                <form action="<?= base_url('auth/reset_password') ?>" method="post">
+                    <div class="input-group mb-3">
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Password">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
                             </div>
-                            <input type="email" name="email" id="email" class="form-control" placeholder="Email">
                         </div>
                     </div>
-                    <!-- Password -->
-                    <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <span class="fas fa-lock"></span>
-                                </div>
-                            </div>
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Password">
-                            <div class="input-group-append">
-                                <button type="button" id="togglePassword" class="btn btn-outline-secondary">
-                                    <span class="fas fa-eye"></span>
-                                </button>
+                    <div class="input-group mb-3">
+                        <input type="password" name="newPassword" id="newPassword" class="form-control" placeholder="Confirm Password">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-8">
-                            <!-- <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div> -->
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block">Change password</button>
                         </div>
                         <!-- /.col -->
-                        <div class="col-4">
-                            <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Sign In</button>
-                        </div>
-                        <!-- /.col -->
-
                     </div>
                 </form>
-                <p class="mb-1">
-                    <a href="<?= base_url('/forgetPassword') ?>">I forgot my password</a>
-                </p>
-                <p class="mb-0">
-                    <a href="<?= base_url('/register') ?>" class="text-center">Register a new membership</a>
-                </p>
+                <!-- <p class="mt-3 mb-1">
+                    <a href="login.html">Login</a>
+                </p> -->
             </div>
-            <!-- /.card-body -->
+            <!-- /.login-card-body -->
         </div>
-        <!-- /.card -->
     </div>
     <!-- /.login-box -->
 
@@ -193,11 +166,6 @@
             }
         });
     </script>
-
-
-
-
-
 </body>
 
 </html>

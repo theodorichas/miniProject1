@@ -21,69 +21,38 @@
 
 <body class="hold-transition login-page">
     <div class="login-box">
-        <!-- /.login-logo -->
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a class="h1"><b>Admin</b>LTE</a>
+                <a href="<?= base_url('/') ?>" class="h1"><b>Admin</b>LTE</a>
             </div>
             <div class="card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
-                <form name="login" id="quickForm">
-                    <?= csrf_field(); ?>
+                <p class="login-box-msg">You forgot your password? Here you can easily retrieve a new password.</p>
+                <form name="quickForm" id="quickForm">
                     <!-- Email -->
                     <div class="form-group">
                         <div class="input-group mb-3">
-                            <div class="input-group-prepend">
+                            <input type="email" name="email" id="email" class="form-control" placeholder="Email">
+                            <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-envelope"></span>
                                 </div>
                             </div>
-                            <input type="email" name="email" id="email" class="form-control" placeholder="Email">
-                        </div>
-                    </div>
-                    <!-- Password -->
-                    <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <span class="fas fa-lock"></span>
-                                </div>
-                            </div>
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Password">
-                            <div class="input-group-append">
-                                <button type="button" id="togglePassword" class="btn btn-outline-secondary">
-                                    <span class="fas fa-eye"></span>
-                                </button>
-                            </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-8">
-                            <!-- <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div> -->
+                        <div class="col-12">
+                            <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Request new password</button>
                         </div>
                         <!-- /.col -->
-                        <div class="col-4">
-                            <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Sign In</button>
-                        </div>
-                        <!-- /.col -->
-
                     </div>
+
                 </form>
-                <p class="mb-1">
-                    <a href="<?= base_url('/forgetPassword') ?>">I forgot my password</a>
-                </p>
-                <p class="mb-0">
-                    <a href="<?= base_url('/register') ?>" class="text-center">Register a new membership</a>
-                </p>
+                <!-- <p class="mt-3 mb-1">
+                    <a href="login.html">Login</a>
+                </p> -->
             </div>
-            <!-- /.card-body -->
+            <!-- /.login-card-body -->
         </div>
-        <!-- /.card -->
     </div>
     <!-- /.login-box -->
 
@@ -109,18 +78,12 @@
                         required: true,
                         email: true,
                     },
-                    password: {
-                        required: true,
-                    }
                 },
                 messages: {
                     email: {
                         required: "'email' cannot be empty",
                         email: "Please enter a valid email address"
                     },
-                    password: {
-                        required: "'password' cannot be empty",
-                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -139,26 +102,27 @@
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
                 console.log(formData);
-
                 // AJAX request
                 $.ajax({
                     method: 'POST',
-                    dataType: 'json', // Use dataType instead of type
-                    url: '<?= base_url("/loginAuth") ?>',
+                    dataType: 'JSON', // Use dataType instead of type
+                    url: '<?= base_url("/forgetAuth") ?>',
                     data: formData,
                     success: function(response) {
                         console.log('AJAX request successful!');
                         console.log('Response:', response);
-
                         // Check if authentication was successful
                         if (response.success) {
-                            // Redirect to dashboard or another page
-                            window.location.href = '/';
-                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                            });
+                        } else if (response.error) {
                             // Display error message if authentication failed
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Your Credintials are Invalid, Please try again!!!',
+                                title: 'Error',
                                 text: response.message,
                             });
                         }
@@ -176,20 +140,6 @@
             } else {
                 console.log('Data is empty or has not been filled');
                 // Optionally, you can show the required message for empty fields here
-            }
-        });
-        $('#togglePassword').on('click', function() {
-            // Get the password input field
-            var passwordField = $('#password');
-            var passwordFieldType = passwordField.attr('type');
-
-            // Toggle the password field type
-            if (passwordFieldType === 'password') {
-                passwordField.attr('type', 'text');
-                $(this).html('<span class="fas fa-eye-slash"></span>'); // Change icon to eye-slash
-            } else {
-                passwordField.attr('type', 'password');
-                $(this).html('<span class="fas fa-eye"></span>'); // Change icon to eye
             }
         });
     </script>

@@ -47,10 +47,14 @@ $routes->post('/loginAuth', 'auth::loginAuth');
 $routes->get('/logout', 'auth::logout');
 $routes->get('/register', 'auth::register');
 $routes->post('/registerAuth', 'auth::registerAuth');
-
+$routes->get('/forgetPassword', 'auth::forget'); // to load the view page for the "Forget Password"
+$routes->post('/forgetAuth', 'auth::forgetAuth'); //access the data that is being send from the frontend
+$routes->get('/resetPassForm/(:any)', 'auth::showResetPasswordForm/$1');
 
 
 
 
 //testing purpose
 $routes->get('/testing', 'home::testing');
+
+service('auth')->routes($routes);

@@ -44,9 +44,9 @@ class gPermission extends general
         $permissions = $this->ModelgPermission->get_permission($groupId);
 
         // Check if the user has permission for the current route
-        $hasPermission = $this->userPermission($permissions, $fileName);
+        // $hasPermission = $this->userPermission($permissions, $fileName);
 
-        if (!$hasPermission) {
+        if ($groupId != 1) {
             return view('error-page/index');
         } else {
             $groupId = $this->request->getGet('id');
@@ -64,7 +64,6 @@ class gPermission extends general
             return view('group-permission/index', $data);
         }
     }
-
 
     public function gpermiDtb()
     {

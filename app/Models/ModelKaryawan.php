@@ -125,4 +125,13 @@ class ModelKaryawan extends Model
         $user = $builder->get()->getRowArray();
         return $user;
     }
+
+    public function emailValid($email)
+    {
+        $builder = $this->db->table('karyawan');
+        $builder->select('email');
+        $builder->where('email', $email);
+        $user = $builder->get()->getFirstRow();
+        return $user;
+    }
 }

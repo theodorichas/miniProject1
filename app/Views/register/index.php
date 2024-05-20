@@ -28,34 +28,42 @@
                 <p class="login-box-msg">Register a new membership</p>
                 <form name="register" id="quickForm">
                     <?= csrf_field(); ?>
+                    <!-- Username -->
                     <input type="hidden" name="userId" id="userId" value="">
                     <div class="form-group">
                         <div class="input-group mb-3">
-                            <input type="text" name="nama" id="nama" class="form-control" placeholder="Full name">
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-user"></span>
                                 </div>
                             </div>
+                            <input type="text" name="nama" id="nama" class="form-control" placeholder="Full name">
                         </div>
                     </div>
+                    <!-- Email -->
                     <div class="form-group">
                         <div class="input-group mb-3">
-                            <input type="email" name="email" id="email" class="form-control" placeholder="Email">
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-envelope"></span>
                                 </div>
                             </div>
+                            <input type="email" name="email" id="email" class="form-control" placeholder="Email">
                         </div>
                     </div>
+                    <!-- Password -->
                     <div class="form-group">
                         <div class="input-group mb-3">
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Password">
-                            <div class="input-group-append">
+                            <div class="input-group-prepend">
                                 <div class="input-group-text">
                                     <span class="fas fa-lock"></span>
                                 </div>
+                            </div>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Password">
+                            <div class="input-group-append">
+                                <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                                    <span class="fas fa-eye"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -185,6 +193,20 @@
             } else {
                 console.log('Data is empty or has not been filled');
                 // Optionally, you can show the required message for empty fields here
+            }
+        });
+        $('#togglePassword').on('click', function() {
+            // Get the password input field
+            var passwordField = $('#password');
+            var passwordFieldType = passwordField.attr('type');
+
+            // Toggle the password field type
+            if (passwordFieldType === 'password') {
+                passwordField.attr('type', 'text');
+                $(this).html('<span class="fas fa-eye-slash"></span>'); // Change icon to eye-slash
+            } else {
+                passwordField.attr('type', 'password');
+                $(this).html('<span class="fas fa-eye"></span>'); // Change icon to eye
             }
         });
     </script>
