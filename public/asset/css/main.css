@@ -1,0 +1,50 @@
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
+.container-fluid{
+    padding-top: 100px;
+}
+/* Button Function for Datatables */
+.action-btn {
+    margin-right: 10px; /* Adjust the value as needed */
+}
+
+.action-btn:last-child {
+    margin-right: 0; /* Remove right margin from the last button */
+}
+
+.login-req{
+    text-align: center;
+    margin-top: 250px;
+    margin-bottom: 250px;
+
+}
+
+.sidemenu{
+    text-align: center;
+    margin-top: 250px;
+    color: white;
+}
+
+.g-recaptcha{
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+
+/* ==== View Pages ==== */
+/* Karyawan */
+#btnAdd{
+    margin-bottom: 20px;
+    /* margin-top: 100px; */
+}
+
+/* Menu */
+.col-12{
+    padding-top: 20px;
+}
+
+.content-template{
+    padding-top: 20px;
+}

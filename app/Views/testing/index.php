@@ -55,3 +55,7 @@
 </body>
 
 </html>
+
+
+<!-- buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
+buttons += '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.menu_id + ')">Delete</button>'; -->

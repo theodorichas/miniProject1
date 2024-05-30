@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
 
 <head>
@@ -7,6 +7,8 @@
     <?= $this->renderSection('links'); ?>
 
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="<?= base_url('asset/css/main.css') ?>">
     <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome-animation.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome.min.css') ?>">
 
@@ -32,18 +34,17 @@
     <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/summernote/summernote-bs4.min.css') ?>">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed">
-    <div class="wrapper">
 
+<body class="sidebar-mini layout-fixed sidebar-collapse" style="height: auto;">
+    <div class=" wrapper">
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="asset/AdminLTE/dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
         </div>
         <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light fixed-top">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -115,28 +116,36 @@
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <?php foreach ($menus as $menu) : ?>
-                            <?php
-                            // Determine if the menu item should be hidden based on 'visible' status
-                            $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
-                            // Check if the user has permission to view this menu
-                            $hasPermission = false;
-                            foreach ($permission as $perm) {
-                                if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
-                                    $hasPermission = true;
-                                    break; // No need to continue checking once permission is found
+                        <?php if (session()->has('user_id')) : // Check if user is logged in 
+                        ?>
+                            <?php foreach ($menus as $menu) : ?>
+                                <?php
+                                // Determine if the menu item should be hidden based on 'visible' status
+                                $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
+                                // Check if the user has permission to view this menu
+                                $hasPermission = false;
+                                foreach ($permission as $perm) {
+                                    if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
+                                        $hasPermission = true;
+                                        break; // No need to continue checking once permission is found
+                                    }
                                 }
-                            }
-                            ?>
-                            <li class="nav-item <?= $visibilityClass ?>">
-                                <?php if ($hasPermission) : ?>
-                                    <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
-                                        <i class="<?= $menu->icon ?>"></i>
-                                        <p><?= $menu->menu_name ?></p>
-                                    </a>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
+                                ?>
+                                <li class="nav-item <?= $visibilityClass ?>">
+                                    <?php if ($hasPermission) : ?>
+                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
+                                            <i class="<?= $menu->icon ?>"></i>
+                                            <p><?= $menu->menu_name ?></p>
+                                        </a>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php else : // If user is not logged in 
+                        ?>
+                            <div class="brand-text font-weight-light">
+                                <p class="sidemenu">Please log in to see the menus.</p>
+                            </div>
+                        <?php endif; ?>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -144,21 +153,24 @@
             <!-- /.sidebar -->
         </aside>
 
-
-
-
         <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
-            <!-- Main content -->
-            <section class="content">
-                <div class="container-fluid">
-                    <?= $this->renderSection('content'); ?>
-                </div><!-- /.container-fluid -->
-            </section>
-            <!-- /.content -->
-        </div>
-        <!-- /.content-wrapper -->
-
+        <?php if (session()->has('user_id')) : ?>
+            <div class="content-wrapper">
+                <!-- Main content -->
+                <section class="content">
+                    <!-- <h1 id="hehe">hehe</h1> -->
+                    <div class="container-fluid">
+                        <?= $this->renderSection('content'); ?>
+                    </div><!-- /.container-fluid -->
+                </section>
+                <!-- /.content -->
+            </div>
+            <!-- /.content-wrapper -->
+        <?php else : ?>
+            <div class="login-req">
+                <h1>Please Login to see the content</h1>
+            </div>
+        <?php endif; ?>
 
 
         <footer class="main-footer">
@@ -176,23 +188,6 @@
         <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
-
-
-    <!-- Visible Function Sidebar -->
-    <script>
-        // Attach change event listener to checkboxes
-        // $('input[type="checkbox"]').change(function() {
-        //     // Get the corresponding menu item
-        //     var menuItem = $(this).closest('li');
-        //     // Toggle visibility of the corresponding menu item based on checkbox state
-        //     if ($(this).is(':checked')) {
-        //         menuItem.removeClass('d-none');
-        //     } else {
-        //         menuItem.addClass('d-none');
-        //     }
-        // });
-    </script>
-
 
     <!-- jQuery -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery/jquery.min.js') ?>"></script>

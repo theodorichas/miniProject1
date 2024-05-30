@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $title ?></title>
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="<?= base_url('asset/css/main.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome-animation.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome.min.css') ?>">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
@@ -57,6 +61,8 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Google Recaptcha -->
+                    <div class="g-recaptcha" data-sitekey="6LeyX-IpAAAAAIbQtozzPDj7JmSMz3s6zRzopA_J"></div>
                     <div class="row">
                         <div class="col-8">
                             <!-- <div class="icheck-primary">
@@ -67,7 +73,7 @@
                             </div> -->
                         </div>
                         <!-- /.col -->
-                        <div class="col-4">
+                        <div class="col-12">
                             <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Sign In</button>
                         </div>
                         <!-- /.col -->
@@ -99,6 +105,8 @@
 
     <!-- SweetAlert2 -->
     <script src="<?= base_url('asset/AdminLTE/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
+    <!-- Google Captcha -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <!-- Jquery logics -->
     <script>
@@ -139,6 +147,16 @@
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
                 console.log(formData);
+                // Show the loading screen inside a Swal
+                Swal.fire({
+                    title: 'Processing...',
+                    html: '<div class="loading-spinner"></div>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
 
                 // AJAX request
                 $.ajax({
@@ -158,9 +176,10 @@
                             // Display error message if authentication failed
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Your Credintials are Invalid, Please try again!!!',
+                                title: 'Credential Invalid',
                                 text: response.message,
                             });
+                            grecaptcha.reset();
                         }
                     },
                     error: function(xhr, status, error) {
@@ -171,6 +190,7 @@
                             title: 'Error!',
                             text: 'An error occurred while processing your request. Please try again later.',
                         });
+                        grecaptcha.reset();
                     }
                 });
             } else {
@@ -178,6 +198,8 @@
                 // Optionally, you can show the required message for empty fields here
             }
         });
+
+        // Password see through toggle
         $('#togglePassword').on('click', function() {
             // Get the password input field
             var passwordField = $('#password');
@@ -194,7 +216,27 @@
         });
     </script>
 
+    <!-- Flashdata from the Auth Controller :: Verify function-->
+    <script>
+        // Check for session flashdata and display the Swal alert
+        <?php if (session()->getFlashdata('success')) : ?>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '<?= session()->getFlashdata('success') ?>',
+                confirmButtonText: 'OK'
+            });
+        <?php endif; ?>
 
+        <?php if (session()->getFlashdata('error')) : ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '<?= session()->getFlashdata('error') ?>',
+                confirmButtonText: 'OK'
+            });
+        <?php endif; ?>
+    </script>
 
 
 

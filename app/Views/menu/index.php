@@ -17,11 +17,6 @@
 
 <!-- Main Content -->
 <?= $this->section('content'); ?>
-
-<i class="fal fa-address-card"></i>
-<i class="fa fa-address-card" aria-hidden="true"></i>
-
-
 <!-- Data Table -->
 <div class="row">
     <div class="col-12">
@@ -168,7 +163,12 @@
 <!-- Script untuk menampilkan DataTable Server Side menggunakan AJAX -->
 <script>
     $(document).ready(function() {
+        var permission = <?= json_encode($permission); ?>;
+        console.log("Permissions:", permission); // Debugging line
         $('#example').DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
             'processing': true,
             'serverSide': false,
             'serverMethod': 'post',
@@ -192,13 +192,38 @@
             }, {
                 "data": "action",
                 "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.menu_id + ')">Delete</button>';
+                    var buttons = '';
+                    var hasEditPermission = false;
+                    var hasDeletePermission = false;
+
+                    // Check permissions
+                    permission.forEach(function(item) {
+                        console.log("Permission item:", item); // Debugging line
+                        if (item.edit == 1) {
+                            hasEditPermission = true;
+                        }
+                        if (item.delete == 1) {
+                            hasDeletePermission = true;
+                        }
+                    });
+
+                    console.log("Row data:", full); // Debugging line
+                    console.log("Has edit permission:", hasEditPermission); // Debugging line
+                    console.log("Has delete permission:", hasDeletePermission); // Debugging line
+
+                    // Add buttons based on permissions
+                    if (hasEditPermission) {
+                        buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button> ';
+                    }
+                    if (hasDeletePermission) {
+                        buttons += '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.menu_id + ')">Delete</button>';
+                    }
+
+                    return buttons;
                 }
+
             }],
-            'order': [
-                [6, 'asc']
-            ],
+            'order': [6, 'asc'],
         });
     });
 </script>

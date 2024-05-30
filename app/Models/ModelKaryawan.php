@@ -7,8 +7,13 @@ use CodeIgniter\Model;
 class ModelKaryawan extends Model
 {
     protected $table = 'karyawan';
-    protected $allowedFields = ['nama', 'telp', 'alamat', 'email', 'password', 'group_name'];
+    protected $allowedFields = ['nama', 'telp', 'alamat', 'email', 'password', 'group_name', 'token', 'is_verified', 'created_at', 'updated_at'];
     protected $primaryKey = 'user_id'; // Assuming 'id' is your primary key.
+    protected $useTimestamps = true;
+    protected $useSoftDeletes = true;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     public function __construct()
     {
@@ -55,7 +60,7 @@ class ModelKaryawan extends Model
         return $group_names;
     }
 
-    //insert data
+    //insert data //
     public function add_dataKaryawan($data)
     {
         $builder = $this->table('karyawan');
@@ -107,16 +112,39 @@ class ModelKaryawan extends Model
         $builder->update(['group_id' => $group_id]);
     }
 
-    ///// ----------- ///////
 
-
-    /// delete data ///
+    // delete data ///
     public function delete_dataKaryawan($id)
     {
-        return $this->delete($id);
+        $builder = $this->db->table('karyawan');
+        $builder->where('user_id', $id);
+        return $builder->delete();
     }
-    ///// ----------- ///////
 
+    public function soft_delete($id, $deletedBy)
+    {
+        $builder = $this->db->table('karyawan');
+        $builder->where('user_id', $id);
+        $builder->update([
+            'deleted_by' => $deletedBy,
+            'deleted_at' =>  date('Y-m-d H:i:s'),
+            'is_verified' => 0
+        ]);
+    }
+
+    public function restoreSoftdel($id, $deletedBy)
+    {
+        $builder = $this->db->table('karyawan');
+        $builder->where('user_id', $id);
+        $builder->update([
+            'deleted_by' => $deletedBy,
+            'deleted_at' =>  NULL,
+            'is_verified' => 1
+        ]);
+    }
+
+
+    //getting data
     public function getUserByEmail($email)
     {
         $builder = $this->db->table('karyawan');
@@ -126,11 +154,45 @@ class ModelKaryawan extends Model
         return $user;
     }
 
+    public function getStatus($id)
+    {
+        $builder = $this->db->table('karyawan');
+        $builder->select('*');
+        $builder->where('user_id', $id);
+        $status = $builder->get()->getRowArray();
+        return $status;
+    }
+
     public function emailValid($email)
     {
         $builder = $this->db->table('karyawan');
         $builder->select('email');
         $builder->where('email', $email);
+        $user = $builder->get()->getFirstRow();
+        return $user;
+    }
+
+    public function updateByEmail($email, $data)
+    {
+        $builder = $this->db->table('karyawan');
+        $builder->where('email', $email);
+        return $builder->update($data);
+    }
+
+    public function tokenRequest($token)
+    {
+        $builder = $this->db->table('karyawan');
+        $builder->select('token, created_at');
+        $builder->where('token', $token);
+        $user = $builder->get()->getRowArray();
+        return $user;
+    }
+
+    public function getToken($token)
+    {
+        $builder = $this->db->table('karyawan');
+        $builder->select('*');
+        $builder->where('token', $token);
         $user = $builder->get()->getFirstRow();
         return $user;
     }

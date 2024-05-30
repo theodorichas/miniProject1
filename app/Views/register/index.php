@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $title ?></title>
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="<?= base_url('asset/css/main.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome-animation.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome.min.css') ?>">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
@@ -67,15 +71,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="g-recaptcha" data-sitekey="6LeyX-IpAAAAAIbQtozzPDj7JmSMz3s6zRzopA_J"></div>
+
                     <div class="row">
                         <!-- /.col -->
-                        <div class="col-4">
+                        <div class="col-12">
                             <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Register</button>
                         </div>
                         <!-- /.col -->
                     </div>
                 </form>
                 <a href="<?= base_url('/login') ?>" class="text-center">I already have a membership</a>
+                <div id="successMessage" style="display:none;">
+                    <p>Thank you! Your verification link will come shortly, please check your inbox.</p>
+                </div>
             </div>
             <!-- /.form-box -->
         </div><!-- /.card -->
@@ -93,6 +102,8 @@
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery-validation/additional-methods.min.js') ?>"></script>
     <!-- SweetAlert2 -->
     <script src="<?= base_url('asset/AdminLTE/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
+    <!-- Google Captcha -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <!-- Jquery logics -->
     <script>
@@ -141,7 +152,16 @@
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
                 console.log(formData);
-
+                // Show the loading screen inside a Swal
+                Swal.fire({
+                    title: 'Processing...',
+                    html: '<div class="loading-spinner"></div>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
                 // AJAX request
                 $.ajax({
                     method: 'POST',
@@ -155,20 +175,18 @@
                         // Check if authentication was successful
                         if (response.success) {
                             Swal.fire({
-                                icon: 'success',
-                                title: 'Registration Complete, Continue to log in',
+                                icon: 'info',
+                                title: 'Please Confirm',
                                 text: response.message,
-                            }).then((result) => {
-                                // Redirect to login page after the user clicks "OK" on the success message
-                                if (result.isConfirmed) {
-                                    window.location.href = '<?= base_url("/login") ?>';
-                                }
-                            });;
-
+                            });
+                            $('#quickForm').hide();
+                            $('.text-center').hide();
+                            $('#successMessage').show();
+                            $('.login-box-msg').text('Your Almost there')
                         } else if (response.error) {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'User with this email already exists, Please insert a new Email',
+                                title: 'There has been an error/mistake',
                                 text: response.message,
                             })
                         } else {
@@ -178,6 +196,7 @@
                                 title: 'Your Credintials are Invalid, Please try again!!!',
                                 text: response.message,
                             });
+                            grecaptcha.reset();
                         }
                     },
                     error: function(xhr, status, error) {
@@ -188,6 +207,7 @@
                             title: 'Error!',
                             text: 'An error occurred while processing your request. Please try again later.',
                         });
+                        grecaptcha.reset();
                     }
                 });
             } else {
@@ -195,6 +215,8 @@
                 // Optionally, you can show the required message for empty fields here
             }
         });
+
+        // Password see through toggle
         $('#togglePassword').on('click', function() {
             // Get the password input field
             var passwordField = $('#password');
@@ -211,7 +233,19 @@
         });
     </script>
 
+    <!-- Flash Data Alert -->
+    <script>
+        // Check for session flashdata and display the Swal alert
 
+        <?php if (session()->getFlashdata('error')) : ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '<?= session()->getFlashdata('error') ?>',
+                confirmButtonText: 'OK'
+            });
+        <?php endif; ?>
+    </script>
 </body>
 
 </html>

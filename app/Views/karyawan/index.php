@@ -28,13 +28,16 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <!-- Button trigger modal -->
-                <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Add Karyawan
-                </a>
-                <a button type="button" id="btnImport" class="btn btn-info swalDefaultInfo" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <!-- Tombol Add Karyawan -->
+                <div class="btn-addKarywan">
+                    <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Add Karyawan
+                    </a>
+                </div>
+                <!-- Tombol Import Data -->
+                <!-- <a button type="button" id="btnImport" class="btn btn-info swalDefaultInfo" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     Import Data
-                </a>
+                </a> -->
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
@@ -76,7 +79,7 @@
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="telp" class="form-label">Telp</label>
-                            <input type="number" name="telp" id="inputTelp" class="form-control">
+                            <input type="text" name="telp" id="inputTelp" class="form-control">
 
                         </div>
                     </div>
@@ -95,10 +98,12 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
                             <input type="password" name="password" id="inputPassword" class="form-control">
-
+                            <button type="button" class="btn btn-outline-secondary" id="togglePassword" style="display: none;">
+                                <span class="fas fa-eye"></span>
+                            </button>
                         </div>
                     </div>
                     <div class="form-group">
@@ -119,6 +124,7 @@
     </div>
 </div>
 
+<?= $this->endSection('content'); ?>
 
 <!-- Merupakan extensi dari scripts yang ada pada view template -->
 <?= $this->section('scripts'); ?>
@@ -149,6 +155,9 @@
 <script>
     $(document).ready(function() {
         $('#example').DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
             'processing': true,
             'serverSide': false,
             'serverMethod': 'post',
@@ -166,23 +175,10 @@
             }, {
                 "data": "action",
                 "render": function(data, type, full, meta) {
-                    var buttons = '';
-                    var permission = <?= json_encode($permission); ?>;
-                    permission.forEach(function(item) {
-                        if (item.edit == 1) {
-                            buttons += '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
-                            if (item.delete == 1) {
-                                buttons += '<button class="btn btn-danger" onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
-                            }
-                        } else if (item.delete == 1) {
-                            buttons += '<button class="btn btn-danger" onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
-                        }
-                    });
-                    return buttons;
-                    /*
-                    return '<button class="btn btn-primary" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger"onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
-                */
+                    var statusText = full.is_verified == 1 ? 'Deactivate' : 'Activate';
+                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
+                        '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.user_id + ')">Delete</button>' +
+                        '<button class="btn btn-info action-btn" onclick="statusRecord(' + full.user_id + ', ' + full.is_verified + ')">' + statusText + '</button>';
                 }
             }],
             'order': [0, 'asc'],
@@ -262,6 +258,8 @@
             $('#mTitle').text('Add Karyawan');
             $('#btnModal').text('Add');
             $('#id').val('0');
+            $('#togglePassword').show();
+            togglePassword();
         })
         $('#btnModal').click(function() {
             if ($('#quickForm').valid()) {
@@ -314,7 +312,9 @@
         $('#inputAlamat').val(alamat);
         $('#inputEmail').val(email);
         $('#inputPassword').val(password);
+        $('#inputPassword').attr('type', 'password'); // Reset password field type to 'password'
         $('#inputGroupname').val(group_name);
+        $('#togglePassword').hide(); // Hide the toggle button when updating
     }
 
     function deleteRecord(id) {
@@ -331,25 +331,106 @@
                 success: function(response) {
                     console.log(response)
                     if (response.success) {
-                        // Reload the DataTable or update the row accordingly
-                        alert('Failed to delete data.');
-                    } else {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Data deleted successfully!',
+                            title: 'Success',
+                            text: 'User has been successfully deleted',
                             showConfirmButton: false,
                             timer: 1500
                         });
+                        // Reload the DataTable or update the row accordingly
                         $('#example').DataTable().ajax.reload();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Unexpected Error!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.log('AJAX request failed!');
+                    console.log('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request. Please try again later.',
+                    });
                 }
             });
         }
     }
+
+    function statusRecord(id, isVerified) {
+        Swal.fire({
+            title: "Are you sure you want to update the 'Status' of this user?",
+            icon: 'info',
+            showDenyButton: true,
+            confirmButtonText: "yes",
+            denyButtonText: `No`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '<?= site_url('karyawan/status') ?>',
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        'userId': id
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Success',
+                                text: 'User status updated',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            // Reload the DataTable or update the row accordingly
+                            $('#example').DataTable().ajax.reload();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Unexpected Error!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX request failed!');
+                        console.log('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request. Please try again later.',
+                        });
+                    }
+                });
+            }
+        })
+    }
+
+    // Function Toggle password
+    function togglePassword() {
+        // Ensure the togglePassword click event is only attached once
+        $('#togglePassword').off('click').on('click', function() {
+            // Get the password input field
+            var passwordField = $('#inputPassword');
+            var passwordFieldType = passwordField.attr('type');
+
+            // Toggle the password field type
+            if (passwordFieldType === 'password') {
+                passwordField.attr('type', 'text');
+                $(this).html('<span class="fas fa-eye-slash"></span>'); // Change icon to eye-slash
+            } else {
+                passwordField.attr('type', 'password');
+                $(this).html('<span class="fas fa-eye"></span>'); // Change icon to eye
+            }
+        });
+    }
 </script>
 
-
 <?= $this->endSection('scripts'); ?>
-
-
-<?= $this->endSection('content'); ?>

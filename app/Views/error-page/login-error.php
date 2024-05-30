@@ -12,9 +12,9 @@
 <body>
     <script>
         Swal.fire({
-            icon: 'error',
-            title: 'Access Denied',
-            text: 'You do not have permission to access this page.',
+            icon: 'info',
+            title: 'Already Logged in',
+            text: 'You have already logged in, please logged out first to enter a different account',
             confirmButtonText: 'OK'
         }).then((result) => {
             if (result.isConfirmed) {

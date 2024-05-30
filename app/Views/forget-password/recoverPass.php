@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= $title ?></title>
+    <title>Recover Password</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -23,37 +23,51 @@
     <div class="login-box">
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a href="../../index2.html" class="h1"><b>Admin</b>LTE</a>
+                <a href="<?= base_url('/') ?>" class="h1"><b>Admin</b>LTE</a>
             </div>
             <div class="card-body">
                 <p class="login-box-msg">You are only one step a way from your new password, recover your password now.</p>
-                <form action="<?= base_url('auth/reset_password') ?>" method="post">
-                    <div class="input-group mb-3">
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Password">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
+                <form name="quickForm" id="quickForm">
+                    <input type="hidden" name="token" id="token" value="<?= $token ?>">
+                    <!-- Password -->
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Password">
+                            <div class="input-group-append">
+                                <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                                    <span class="fas fa-eye"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="input-group mb-3">
-                        <input type="password" name="newPassword" id="newPassword" class="form-control" placeholder="Confirm Password">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                            <input type="password" name="newPassword" id="newPassword" class="form-control" placeholder="Confirm Password">
+                            <div class="input-group-append">
+                                <button type="button" id="toggleNewPassword" class="btn btn-outline-secondary">
+                                    <span class="fas fa-eye"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary btn-block">Change password</button>
+                            <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Change password</button>
                         </div>
                         <!-- /.col -->
                     </div>
                 </form>
-                <!-- <p class="mt-3 mb-1">
-                    <a href="login.html">Login</a>
-                </p> -->
             </div>
             <!-- /.login-card-body -->
         </div>
@@ -78,21 +92,21 @@
         $(document).ready(function() {
             $('#quickForm').validate({
                 rules: {
-                    email: {
-                        required: true,
-                        email: true,
-                    },
                     password: {
                         required: true,
+                    },
+                    newPassword: {
+                        required: true,
+                        equalTo: "#password",
                     }
                 },
                 messages: {
-                    email: {
-                        required: "'email' cannot be empty",
-                        email: "Please enter a valid email address"
-                    },
                     password: {
-                        required: "'password' cannot be empty",
+                        required: "This field cannot be empty",
+                    },
+                    newPassword: {
+                        required: "This field cannot be empty",
+                        equalTo: "Passwords do not match, Please check your 'Password' once more"
                     }
                 },
                 errorElement: 'span',
@@ -112,26 +126,30 @@
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
                 console.log(formData);
-
                 // AJAX request
                 $.ajax({
                     method: 'POST',
-                    dataType: 'json', // Use dataType instead of type
-                    url: '<?= base_url("/loginAuth") ?>',
+                    dataType: 'JSON', // Use dataType instead of type
+                    url: '<?= base_url("/resetPass") ?>',
                     data: formData,
                     success: function(response) {
-                        console.log('AJAX request successful!');
-                        console.log('Response:', response);
-
                         // Check if authentication was successful
                         if (response.success) {
-                            // Redirect to dashboard or another page
-                            window.location.href = '/';
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                                timer: 5000, // Display the alert for 5 seconds (5000 milliseconds)
+                                showConfirmButton: false // Hide the confirm button
+                            }).then(() => {
+                                // This will run after the timer ends
+                                window.location.href = '/login';
+                            });
                         } else {
                             // Display error message if authentication failed
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Your Credintials are Invalid, Please try again!!!',
+                                title: 'Error',
                                 text: response.message,
                             });
                         }
@@ -151,9 +169,25 @@
                 // Optionally, you can show the required message for empty fields here
             }
         });
+        //See password function for Password Field
         $('#togglePassword').on('click', function() {
             // Get the password input field
             var passwordField = $('#password');
+            var passwordFieldType = passwordField.attr('type');
+
+            // Toggle the password field type
+            if (passwordFieldType === 'password') {
+                passwordField.attr('type', 'text');
+                $(this).html('<span class="fas fa-eye-slash"></span>'); // Change icon to eye-slash
+            } else {
+                passwordField.attr('type', 'password');
+                $(this).html('<span class="fas fa-eye"></span>'); // Change icon to eye
+            }
+        });
+        //See password function for Confirm password Field
+        $('#toggleNewPassword').on('click', function() {
+            // Get the password input field
+            var passwordField = $('#newPassword');
             var passwordFieldType = passwordField.attr('type');
 
             // Toggle the password field type

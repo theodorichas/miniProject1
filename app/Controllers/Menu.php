@@ -51,10 +51,8 @@ class Menu extends general
             $data['icons'] = getFontAwesomeCheatSheet();
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['nama'] = $_SESSION['nama'] ?? '';
-            $groupName = $_SESSION['group_name'] ?? '';
-            $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
-            $data['permission'] = $this->ModelgPermission->get_permission($groupId);
-            // echo json_encode($data['permission']); -> To see the permissions
+            $data['permission'] = $permissions;
+            // echo json_encode($data['permission']);
             return view('menu/index', $data);
         }
     }

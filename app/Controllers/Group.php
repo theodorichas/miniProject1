@@ -58,7 +58,6 @@ class Group extends general
             $groupName = $_SESSION['group_name'] ?? '';
             $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
             $data['permission'] = $this->ModelgPermission->get_permission($groupId);
-            echo json_encode($data['permission']);
             return view('group/index', $data);
         }
     }

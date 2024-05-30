@@ -46,7 +46,7 @@ class Karyawan extends general
         $hasPermission = $this->userPermission($permissions, $fileName);
 
         if (!$hasPermission) {
-            // Redirect or show an error message
+            //show an error message, in a Swal format 
             return view('error-page/index');
         } else {
             // Proceed to load the view
@@ -56,7 +56,7 @@ class Karyawan extends general
             $data['nama'] = $_SESSION['nama'] ?? '';
             $data['permission'] = $permissions;
             // echo json_encode($routes); -> To see where the routes comin
-            // echo json_encode($data['permission']); -> To see the permissions
+            // echo json_encode($data['permission']);
             return view('karyawan/index', $data);
         }
     }
@@ -81,7 +81,7 @@ class Karyawan extends general
         echo json_encode($json_data);
     }
 
-
+    /*
     public function updateAdd() //Fungsi Update dan add Data
     {
         $id = intval($this->request->getPost('userId'));
@@ -131,13 +131,88 @@ class Karyawan extends general
             }
         }
     }
+*/
+    public function updateAdd()
+    {
+        $id = intval($this->request->getPost('userId'));
+        $nama = $this->request->getPost('nama');
+        $telp = $this->request->getPost('telp');
+        $alamat = $this->request->getPost('alamat');
+        $email = $this->request->getPost('email');
+        $password = (string) $this->request->getPost('password');
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $group_name = $this->request->getPost('groupName');
+        $group_id = $this->ModelKaryawan->getGroupIdByName($group_name);
+
+        $data = [
+            'nama' => $nama,
+            'telp' => $telp,
+            'alamat' => $alamat,
+            'email' => $email,
+            'password' => $hashedPassword,
+            'group_name' => $group_name,
+            'is_verified' => true,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+
+        // Check if user with this email already exists
+        $existingUser = $this->ModelKaryawan->getUserByEmail($email);
+
+        if ($id > 0) {
+            // If updating an existing user
+            if ($existingUser) {
+                // Retrieve current created_at value
+                $created_at = $existingUser['created_at'];
+                $data['created_at'] = $created_at;
+                $existingPassword = $existingUser['password'];
+                $newPassword = (string)$this->request->getPost('password');
+
+                if ($existingPassword == $newPassword) {
+                    $data['password'] = $newPassword;
+                    $this->ModelKaryawan->update_dataKaryawan($id, $data, $group_id);
+                    return $this->response->setJSON(['success' => 'Passnya Sama']);
+                } else {
+                    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                    $data['password'] = $hashedPassword;
+                    $this->ModelKaryawan->update_dataKaryawan($id, $data, $group_id);
+                    return $this->response->setJSON(['success' => 'Passnya Beda']);
+                }
+                return $this->response->setJSON(['success' => 'Data successfully updated']);
+            } else {
+                return $this->response->setJSON(['error' => 'User does not exist']);
+            }
+        } else {
+            // If creating a new user
+            if (!$existingUser) {
+                $data['created_at'] = date('Y-m-d H:i:s');
+                $this->ModelKaryawan->add_dataKaryawan($data);
+                $user_id = $this->ModelKaryawan->insertID();
+                $this->ModelKaryawan->insertUserGroup($user_id, $group_id);
+                return $this->response->setJSON(['success' => 'Data successfully added']);
+            } else {
+                return $this->response->setJSON(['error' => 'User already exists']);
+            }
+        }
+    }
 
     public function delete() //Fungsi delete Data
     {
         $id = $this->request->getPost('userId');
-        echo "ID yang terhapus: ", $id;
-        // die();
-        $deleteData = $this->ModelKaryawan->delete_dataKaryawan($id);
-        printSuccess('Operation successful', $id);
+        $this->ModelKaryawan->delete_dataKaryawan($id);
+        return $this->response->setJSON(['success' => 'Data successfully deleted']);
+    }
+
+    public function status() //Fungsi Soft Delete (Active deactive user)
+    {
+        $id = $this->request->getPost('userId');
+        $user = $this->ModelKaryawan->getStatus($id);
+        $deletedBy = session()->get('user_id');
+        if ($user['is_verified'] == 0) {
+            $this->ModelKaryawan->restoreSoftdel($id, $deletedBy);
+            return $this->response->setJSON(['success' => 'User Successfully re-activated']);
+        } else {
+            $this->ModelKaryawan->soft_delete($id, $deletedBy);
+            return $this->response->setJSON(['success' => 'User Successfully de-activated']);
+        }
     }
 }

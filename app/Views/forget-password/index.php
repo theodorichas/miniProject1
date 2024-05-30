@@ -47,15 +47,18 @@
                     </div>
 
                 </form>
-                <!-- <p class="mt-3 mb-1">
-                    <a href="login.html">Login</a>
-                </p> -->
+                <div id="successMessage" style="display:none;">
+                    <p>Thank you! Your verification link will come shortly, please check your inbox.</p>
+                </div>
             </div>
             <!-- /.login-card-body -->
         </div>
     </div>
+    <button id="loadingScreen" class="btn btn-primary" type="button" style="display:none;">
+        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+        Loading...
+    </button>
     <!-- /.login-box -->
-
     <!-- jQuery -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery/jquery.min.js') ?>"></script>
     <!-- Bootstrap 4 -->
@@ -101,7 +104,8 @@
         $('#btnModal').click(function() {
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
-                console.log(formData);
+                // Show the loading screen
+                $('#loadingScreen').show();
                 // AJAX request
                 $.ajax({
                     method: 'POST',
@@ -109,17 +113,17 @@
                     url: '<?= base_url("/forgetAuth") ?>',
                     data: formData,
                     success: function(response) {
-                        console.log('AJAX request successful!');
-                        console.log('Response:', response);
-                        // Check if authentication was successful
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success',
                                 text: response.message,
                             });
+                            $('#loadingScreen').hide();
+                            $('#quickForm').hide();
+                            $('.login-box-msg').text('Yess!!')
+                            $('#successMessage').show();
                         } else if (response.error) {
-                            // Display error message if authentication failed
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',

@@ -42,8 +42,7 @@ class Karyawan extends Migration
             'group_name' => [
                 'type' => 'VARCHAR',
                 'constraint' => '255'
-            ]
-
+            ],
         ]);
         $this->forge->addPrimaryKey('user_id');
         $this->forge->createTable('Karyawan');
