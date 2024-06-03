@@ -154,6 +154,10 @@
 <!-- Script untuk menampilkan DataTable Server Side menggunakan AJAX -->
 <script>
     $(document).ready(function() {
+        // Pass PHP permissions to JavaScript
+        var menuId = <?= $menuId->menu_id ?>;
+        var permissions = <?= json_encode($permission) ?>;
+        var karyawanPermissions = permissions.find(p => p.menu_id == menuId);
         $('#example').DataTable({
             "responsive": true,
             "lengthChange": false,
@@ -173,13 +177,26 @@
             }, {
                 "data": "group_name"
             }, {
-                "data": "action",
+                "data": null,
                 "render": function(data, type, full, meta) {
                     var statusText = full.is_verified == 1 ? 'Deactivate' : 'Activate';
-                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.user_id + ')">Delete</button>' +
-                        '<button class="btn btn-info action-btn" onclick="statusRecord(' + full.user_id + ', ' + full.is_verified + ')">' + statusText + '</button>';
-                }
+                    var buttons = '';
+                    // Conditionally render Update button based on edit permission
+                    if (karyawanPermissions.edit == 1) {
+                        buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
+                    }
+
+                    // Conditionally render Delete button based on delete permission
+                    if (karyawanPermissions.delete == 1) {
+                        buttons += '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
+                    }
+
+                    // Render status button always
+                    buttons += '<button class="btn btn-info action-btn" onclick="statusRecord(' + full.user_id + ', ' + full.is_verified + ')">' + statusText + '</button>';
+
+                    return buttons;
+                },
+                "defaultContent": ""
             }],
             'order': [0, 'asc'],
         });
@@ -318,48 +335,57 @@
     }
 
     function deleteRecord(id) {
-        if (confirm('Are you sure you want to delete this record?')) {
-            // AJAX request to your delete endpoint
-            console.log("Id yang didapat dari tombol update: ", id);
-            $.ajax({
-                url: '<?= site_url('karyawan/delete') ?>',
-                method: 'POST',
-                type: 'JSON',
-                data: {
-                    'userId': id
-                },
-                success: function(response) {
-                    console.log(response)
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'User has been successfully deleted',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        // Reload the DataTable or update the row accordingly
-                        $('#example').DataTable().ajax.reload();
-                    } else {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '<?= site_url('karyawan/delete') ?>',
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        'userId': id
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted',
+                                text: 'User has been successfully deleted',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            // Reload the DataTable or update the row accordingly
+                            $('#example').DataTable().ajax.reload();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Unexpected Error!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX request failed!');
+                        console.log('Error:', error);
                         Swal.fire({
                             icon: 'error',
-                            title: 'Unexpected Error!',
-                            showConfirmButton: false,
-                            timer: 1500
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request. Please try again later.',
                         });
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.log('AJAX request failed!');
-                    console.log('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'An error occurred while processing your request. Please try again later.',
-                    });
-                }
-            });
-        }
+                });
+            }
+        });
+        console.log("Id yang didapat dari tombol update: ", id);
     }
 
     function statusRecord(id, isVerified) {
@@ -368,7 +394,8 @@
             icon: 'info',
             showDenyButton: true,
             confirmButtonText: "yes",
-            denyButtonText: `No`
+            denyButtonText: `No`,
+            allowOutsideClick: false,
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({

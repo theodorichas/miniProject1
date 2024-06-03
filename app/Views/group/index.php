@@ -112,6 +112,9 @@
 <script>
     $(document).ready(function() {
         $('#example').DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
             'processing': true,
             'serverSide': false,
             'serverMethod': 'post',
@@ -121,13 +124,14 @@
             }, {
                 "data": "group_name"
             }, {
-                "data": "action",
+                "data": null,
                 "render": function(data, type, full, meta) {
                     return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.group_id + ', \'' + full.group_code + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
                         '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.group_id + ')">Delete</button>' +
                         '<button class="btn btn-info action-btn"onclick="gPermission(' + full.group_id + ')">Permissions</button>';
 
-                }
+                },
+                "defaultContent": ""
             }],
             'order': [0, 'asc'],
         });

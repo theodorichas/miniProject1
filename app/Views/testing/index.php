@@ -59,3 +59,17 @@
 
 <!-- buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
 buttons += '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.menu_id + ')">Delete</button>'; -->
+
+<!-- {
+                "data": null,
+                "render": function(data, type, full, meta) {
+                    var statusText = full.is_verified == 1 ? 'Deactivate' : 'Activate';
+                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
+                        '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.user_id + ')">Delete</button>' +
+                        '<button class="btn btn-info action-btn" onclick="statusRecord(' + full.user_id + ', ' + full.is_verified + ')">' + statusText + '</button>';
+                },
+                "defaultContent": ""
+            }],
+            'order': [0, 'asc'], -->
+
+<?= site_url('ajax') ?>

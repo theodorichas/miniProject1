@@ -75,4 +75,12 @@ class ModelMenu extends Model
         $query = $this->db->table('menu')->where('menu_id', $menuId)->get();
         return $query->getFirstRow();
     }
+
+    public function getMenuIdbyURI($fileName)
+    {
+        $builder = $this->db->table('menu');
+        $builder->select('menu_id');
+        $builder->where('menu_name', $fileName);
+        return $builder->get()->getFirstRow();
+    }
 }

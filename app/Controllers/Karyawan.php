@@ -33,6 +33,9 @@ class Karyawan extends general
         // Extract the menu_id from the URI
         $fileName = end($segments); // Assuming the menu_id is at the end of the URI path
 
+        // Retrieve the menu_id from the URI
+        $menuId = $this->ModelMenu->getMenuIdbyURI($fileName);
+
         // Retrieve user's group name from session
         $groupName = session()->get('group_name');
 
@@ -42,6 +45,7 @@ class Karyawan extends general
         // Retrieve permissions for the group
         $permissions = $this->ModelgPermission->get_permission($groupId);
 
+
         // Check if the user has permission for the current route
         $hasPermission = $this->userPermission($permissions, $fileName);
 
@@ -50,11 +54,12 @@ class Karyawan extends general
             return view('error-page/index');
         } else {
             // Proceed to load the view
-            $data['title'] = 'User list';
+            $data['title'] = $fileName;
             $data['group_names'] = $this->ModelKaryawan->getGroupNames();
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['nama'] = $_SESSION['nama'] ?? '';
             $data['permission'] = $permissions;
+            $data['menuId'] = $menuId;
             // echo json_encode($routes); -> To see where the routes comin
             // echo json_encode($data['permission']);
             return view('karyawan/index', $data);
@@ -151,7 +156,6 @@ class Karyawan extends general
             'email' => $email,
             'password' => $hashedPassword,
             'group_name' => $group_name,
-            'is_verified' => true,
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
@@ -206,12 +210,12 @@ class Karyawan extends general
     {
         $id = $this->request->getPost('userId');
         $user = $this->ModelKaryawan->getStatus($id);
-        $deletedBy = session()->get('user_id');
+        $updatedBy = session()->get('user_id');
         if ($user['is_verified'] == 0) {
-            $this->ModelKaryawan->restoreSoftdel($id, $deletedBy);
+            $this->ModelKaryawan->restoreSoftdel($id, $updatedBy);
             return $this->response->setJSON(['success' => 'User Successfully re-activated']);
         } else {
-            $this->ModelKaryawan->soft_delete($id, $deletedBy);
+            $this->ModelKaryawan->soft_delete($id, $updatedBy);
             return $this->response->setJSON(['success' => 'User Successfully de-activated']);
         }
     }

@@ -32,6 +32,9 @@ class Menu extends general
         // Extract the menu_id from the URI
         $fileName = end($segments); // Assuming the menu_id is at the end of the URI path
 
+        // Retrieve the menu_id from the URI
+        $menuId = $this->ModelMenu->getMenuIdbyURI($fileName);
+
         // Retrieve user's group name from session
         $groupName = session()->get('group_name');
 
@@ -52,6 +55,7 @@ class Menu extends general
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['nama'] = $_SESSION['nama'] ?? '';
             $data['permission'] = $permissions;
+            $data['menuId'] = $menuId;
             // echo json_encode($data['permission']);
             return view('menu/index', $data);
         }

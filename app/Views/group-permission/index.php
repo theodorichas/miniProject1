@@ -80,6 +80,9 @@
     $(document).ready(function() {
         var group_id = '<?= $group_id ?>';
         $('#example').DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
             'processing': true,
             'serverSide': true,
             'serverMethod': 'get',

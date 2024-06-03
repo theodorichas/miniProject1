@@ -121,24 +121,24 @@ class ModelKaryawan extends Model
         return $builder->delete();
     }
 
-    public function soft_delete($id, $deletedBy)
+    public function soft_delete($id, $updatedBy)
     {
         $builder = $this->db->table('karyawan');
         $builder->where('user_id', $id);
         $builder->update([
-            'deleted_by' => $deletedBy,
-            'deleted_at' =>  date('Y-m-d H:i:s'),
+            'updated_by' => $updatedBy,
+            'updated_at' => date('Y-m-d H:i:s'),
             'is_verified' => 0
         ]);
     }
 
-    public function restoreSoftdel($id, $deletedBy)
+    public function restoreSoftdel($id, $updatedBy)
     {
         $builder = $this->db->table('karyawan');
         $builder->where('user_id', $id);
         $builder->update([
-            'deleted_by' => $deletedBy,
-            'deleted_at' =>  NULL,
+            'updated_by' => $updatedBy,
+            'updated_at' => date('Y-m-d H:i:s'),
             'is_verified' => 1
         ]);
     }

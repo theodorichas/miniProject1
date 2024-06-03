@@ -163,8 +163,11 @@
 <!-- Script untuk menampilkan DataTable Server Side menggunakan AJAX -->
 <script>
     $(document).ready(function() {
-        var permission = <?= json_encode($permission); ?>;
-        console.log("Permissions:", permission); // Debugging line
+        // Pass PHP permissions to JavaScript
+        var menuId = <?= $menuId->menu_id ?>;
+        var permissions = <?= json_encode($permission) ?>;
+        var karyawanPermissions = permissions.find(p => p.menu_id == menuId); // Assuming menu_id for karyawan page is 1
+
         $('#example').DataTable({
             "responsive": true,
             "lengthChange": false,
@@ -174,59 +177,54 @@
             'serverMethod': 'post',
             "ajax": "<?= site_url('menudtb') ?>",
             "columns": [{
-                "data": "menu_name"
-            }, {
-                "data": "page_name"
-            }, {
-                "data": "file_name"
-            }, {
-                "data": "parent_menu"
-            }, {
-                "data": "icon"
-            }, {
-                "data": "note"
-            }, {
-                "data": "order_no"
-            }, {
-                "data": "visible"
-            }, {
-                "data": "action",
-                "render": function(data, type, full, meta) {
-                    var buttons = '';
-                    var hasEditPermission = false;
-                    var hasDeletePermission = false;
+                    "data": "menu_name"
+                },
+                {
+                    "data": "page_name"
+                },
+                {
+                    "data": "file_name"
+                },
+                {
+                    "data": "parent_menu"
+                },
+                {
+                    "data": "icon"
+                },
+                {
+                    "data": "note"
+                },
+                {
+                    "data": "order_no"
+                },
+                {
+                    "data": "visible"
+                },
+                {
+                    "data": null,
+                    "render": function(data, type, full, meta) {
+                        var buttons = '';
 
-                    // Check permissions
-                    permission.forEach(function(item) {
-                        console.log("Permission item:", item); // Debugging line
-                        if (item.edit == 1) {
-                            hasEditPermission = true;
+                        // Conditionally render Update button based on edit permission
+                        if (karyawanPermissions.edit == 1) {
+                            buttons += buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
                         }
-                        if (item.delete == 1) {
-                            hasDeletePermission = true;
+
+                        // Conditionally render Delete button based on delete permission
+                        if (karyawanPermissions.delete == 1) {
+                            buttons += '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.menu_id + ')">Delete</button>';
                         }
-                    });
 
-                    console.log("Row data:", full); // Debugging line
-                    console.log("Has edit permission:", hasEditPermission); // Debugging line
-                    console.log("Has delete permission:", hasDeletePermission); // Debugging line
-
-                    // Add buttons based on permissions
-                    if (hasEditPermission) {
-                        buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button> ';
-                    }
-                    if (hasDeletePermission) {
-                        buttons += '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.menu_id + ')">Delete</button>';
-                    }
-
-                    return buttons;
+                        return buttons;
+                    },
+                    "defaultContent": ""
                 }
-
-            }],
+            ],
             'order': [6, 'asc'],
         });
     });
 </script>
+
 <!-- Jquery -->
 <script>
     $(document).ready(function() {

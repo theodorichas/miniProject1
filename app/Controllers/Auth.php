@@ -146,10 +146,13 @@ class Auth extends BaseController
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
+        $group_id = $this->ModelKaryawan->getGroupIdByName($defaultGroupName);
         $existingUser = $this->ModelKaryawan->getUserByEmail($email);
 
         if (!$existingUser) {
             $this->ModelKaryawan->add_dataKaryawan($data);
+            $user_id = $this->ModelKaryawan->insertID();
+            $this->ModelKaryawan->insertUserGroup($user_id, $group_id);
             $this->sendEmailverif($email, $token);
             return $this->response->setJSON(['success' => true, 'message' => 'An Email verification link has been sent to your inbox']);
         } else {
