@@ -230,27 +230,27 @@
             },
             messages: {
                 nama: {
-                    required: "'nama' cannot be empty"
+                    required: "<?= lang('app.text-required-name') ?>"
                 },
                 telp: {
-                    required: "'telp' cannot be empty",
-                    minlength: "Please enter a correct Phone Number"
+                    required: "<?= lang('app.text-required-phone') ?>",
+                    minlength: "<?= lang('app.text-required-phone-minlen') ?>"
                 },
                 alamat: {
-                    required: "'alamat' cannot be empty",
+                    required: "<?= lang('app.text-required-address') ?>",
                 },
 
                 email: {
-                    required: "'email' cannot be empty",
-                    email: "Please enter a valid email address"
+                    required: "<?= lang('app.text-required-email') ?>",
+                    email: "<?= lang('app.text-required-email-min') ?>"
                 },
 
                 password: {
-                    required: "'password' cannot be empty",
-                    minlength: "password must contain at least 8 Characters!!",
+                    required: "<?= lang('app.text-required-password') ?>",
+                    minlength: "<?= lang('app.text-required-password-min') ?>",
                 },
                 groupName: {
-                    required: "Please select one of the options !!",
+                    required: "<?= lang('app.text-required-group-name') ?>",
                 }
             },
             errorElement: 'span',
@@ -272,7 +272,7 @@
         });
         $('#btnAdd').click(function() {
             $('#mTitle').text('<?= lang('app.text-title-user-modal') ?>');
-            $('#btnModal').text('<?= lang('app.button-add-user-modal') ?>');
+            $('#btnModal').text('<?= lang('app.button-add-modal') ?>');
             $('#id').val('0');
             $('#togglePassword').show();
             togglePassword();
@@ -319,7 +319,7 @@
 
     function UpdateRecord(id, nama, telp, alamat, email, password, group_name) {
         $('#mTitle').text('<?= lang('app.text-title-update-modal') ?>');
-        $('#btnModal').text('<?= lang('app.button-update-user-modal') ?>');
+        $('#btnModal').text('<?= lang('app.button-update-modal') ?>');
         // Populate the modal fields with the existing data
         $("#id").val(id);
         console.log("Id yang didapat dari tombol update: ", id);
@@ -335,13 +335,13 @@
 
     function deleteRecord(id) {
         Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            title: "<?= lang('app.text-swal-title') ?>,",
+            text: "<?= lang('app.text-swal-content') ?>,",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "<?= lang('app.text-swal-confirm') ?>,"
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({

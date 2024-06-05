@@ -23,6 +23,9 @@ class Menu extends general
 
     public function index() //view table
     {
+        //calling the setLanguage function in general controller
+        $this->setLanguage();
+
         // Get the current URI
         $routes = $this->request->uri->getPath();
 
@@ -59,6 +62,11 @@ class Menu extends general
             // echo json_encode($data['permission']);
             return view('menu/index', $data);
         }
+    }
+    public function changeLanguage($language)
+    {
+        session()->set('language', $language);
+        return redirect()->back();
     }
 
     public function menuDtb() //Data Table

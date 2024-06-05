@@ -28,20 +28,20 @@
             <div class="card-body">
                 <!-- Button trigger modal -->
                 <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Add Menu
+                    <?= lang('app.button-add-menu') ?>
                 </a>
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Menu Name</th>
-                            <th scope="col">Page Name</th>
-                            <th scope="col">File Name</th>
-                            <th scope="col">Parent Menu</th>
-                            <th scope="col">Icon</th>
-                            <th scope="col">Notes</th>
-                            <th scope="col">Order No.</th>
-                            <th scope="col">Visible</th>
-                            <th scope="col">Action</th>
+                            <th scope="col"><?= lang('app.text-menu') ?></th>
+                            <th scope="col"><?= lang('app.text-page-menu') ?></th>
+                            <th scope="col"><?= lang('app.text-file-menu') ?></th>
+                            <th scope="col"><?= lang('app.text-parent-menu') ?></th>
+                            <th scope="col"><?= lang('app.text-menu-icon') ?></th>
+                            <th scope="col"><?= lang('app.text-menu-note') ?></th>
+                            <th scope="col"><?= lang('app.text-menu-order') ?></th>
+                            <th scope="col"><?= lang('app.text-menu-visible') ?></th>
+                            <th scope="col"><?= lang('app.text-action') ?></th>
                         </tr>
                     </thead>
                 </table>
@@ -207,12 +207,12 @@
 
                         // Conditionally render Update button based on edit permission
                         if (karyawanPermissions.edit == 1) {
-                            buttons += buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
+                            buttons += buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= lang('app.button-update') ?></button>';
                         }
 
                         // Conditionally render Delete button based on delete permission
                         if (karyawanPermissions.delete == 1) {
-                            buttons += '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.menu_id + ')">Delete</button>';
+                            buttons += '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.menu_id + ')"><?= lang('app.button-delete') ?></button>';
                         }
 
                         return buttons;
@@ -254,22 +254,22 @@
             },
             messages: {
                 menu_name: {
-                    required: "This field cannot be empty!"
+                    required: "<?= lang('app.text-required-menu-name') ?>"
                 },
                 page_name: {
-                    required: "This field cannot be empty!",
+                    required: "<?= lang('app.text-required-menu-page') ?>",
                 },
                 file_name: {
-                    required: "This field cannot be empty!",
+                    required: "<?= lang('app.text-required-menu-file') ?>",
                 },
                 parent_menu: {
-                    required: "This field cannot be empty!",
+                    required: "<?= lang('app.text-required-menu-parent') ?>",
                 },
                 note: {
-                    required: "This field cannot be empty!",
+                    required: "<?= lang('app.text-required-menu-note') ?>",
                 },
                 order_no: {
-                    required: "This field cannot be empty!",
+                    required: "<?= lang('app.text-required-menu-order') ?>",
                 }
             },
             errorElement: 'span',
@@ -290,8 +290,8 @@
             $('#quickForm').removeClass('error invalid-feedback');
         });
         $('#btnAdd').click(function() {
-            $('#mTitle').text('Add Menu');
-            $('#btnModal').text('Add');
+            $('#mTitle').text('<?= lang('app.button-add-menu') ?>');
+            $('#btnModal').text('<?= lang('app.button-add-modal') ?>');
             $('#id').val('0');
         })
         $('#btnModal').click(function() {
