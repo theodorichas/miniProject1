@@ -24,6 +24,19 @@ class Home extends BaseController
 
     public function index()
     {
+        // Access the language service from the framework
+        $language = \Config\Services::language();
+
+        // Get the user's preferred language from the session.
+        // If the user hasn't set a language preference, use the default language ('en').
+        $userLanguage = session()->get('language') ?? 'en';
+
+        // Set the language to be used in the user interface.
+        // The `setLocale` method takes the language code as an argument.
+        // The language code is used to determine which language files to load.
+        // The language files contain the translations for the user interface elements.
+        // The translations are used to display the user interface elements in the user's preferred language.
+        $language->setLocale($userLanguage);
         $data['title'] = 'Home';
         $data['menus'] = $this->ModelMenu->getMenuNames();
         $data['nama'] = $_SESSION['nama'] ?? '';
@@ -31,6 +44,17 @@ class Home extends BaseController
         $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
         $data['permission'] = $this->ModelgPermission->get_permission($groupId);
         return view('home/index', $data);
+    }
+
+    public function changeLanguage($language)
+    {
+        // Set the selected language as the user's session language.
+        // This will be used to localize the user interface in the future.
+        session()->set('language', $language);
+
+        // Redirect the user back to the previous page.
+        // This ensures that the user stays on the same page after changing the language.
+        return redirect()->back();
     }
 
     public function testing()

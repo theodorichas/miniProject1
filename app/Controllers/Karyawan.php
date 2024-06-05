@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\ModelKaryawan;
 use App\Models\ModelMenu;
 use App\Models\ModelgPermission;
+use CodeIgniter\Cookie\Cookie;
 
 
 class Karyawan extends general
@@ -19,11 +20,14 @@ class Karyawan extends general
         $this->ModelMenu = new ModelMenu();
         $this->ModelgPermission = new ModelgPermission();
         $this->request = \Config\Services::request();
-        helper('general_helper');
+        // helper('general_helper');
     }
 
     public function index()
     {
+        //calling the setLanguage function in general controller
+        $this->setLanguage();
+
         // Get the current URI
         $routes = $this->request->uri->getPath();
 
@@ -50,7 +54,6 @@ class Karyawan extends general
         $hasPermission = $this->userPermission($permissions, $fileName);
 
         if (!$hasPermission) {
-            //show an error message, in a Swal format 
             return view('error-page/index');
         } else {
             // Proceed to load the view
@@ -64,6 +67,12 @@ class Karyawan extends general
             // echo json_encode($data['permission']);
             return view('karyawan/index', $data);
         }
+    }
+
+    public function changeLanguage($language)
+    {
+        session()->set('language', $language);
+        return redirect()->back();
     }
 
     public function karyawanAjax() //Data Table

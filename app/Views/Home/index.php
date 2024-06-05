@@ -13,6 +13,9 @@
 <?= $this->section('content'); ?>
 <div class="content-template">
     <div class="row">
+        <h1><?= lang('app.title-p') ?></h1>
+    </div>
+    <div class="row">
         <div class="col-lg-3 col-6">
             <!-- small box -->
             <div class="small-box bg-info">

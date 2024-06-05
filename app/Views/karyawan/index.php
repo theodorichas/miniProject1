@@ -17,36 +17,35 @@
 <!-- Main Content -->
 <?= $this->section('content'); ?>
 
-
 <!-- Data Table -->
 
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">DataTable Karyawan</h3>
+                <h3 class="card-title"><?= lang('app.card-title-user') ?></h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <!-- Tombol Add Karyawan -->
+                <!-- Tombol Add Users -->
                 <div class="btn-addKarywan">
                     <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Add Karyawan
+                        <?= lang('app.button-add-user') ?>
                     </a>
                 </div>
                 <!-- Tombol Import Data -->
                 <!-- <a button type="button" id="btnImport" class="btn btn-info swalDefaultInfo" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    Import Data
+                    Import Datas
                 </a> -->
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Nama</th>
-                            <th scope="col">Telp</th>
-                            <th scope="col">Alamat</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Group Name</th>
-                            <th scope="col">Action</th>
+                            <th scope="col"><?= lang('app.text-name') ?></th>
+                            <th scope="col"><?= lang('app.text-phone') ?></th>
+                            <th scope="col"><?= lang('app.text-address') ?></th>
+                            <th scope="col"><?= lang('app.text-email') ?></th>
+                            <th scope="col"><?= lang('app.text-group-name') ?></th>
+                            <th scope="col"><?= lang('app.text-action') ?></th>
                         </tr>
                     </thead>
                 </table>
@@ -71,28 +70,28 @@
                     <input type="hidden" name="userId" id="id" value="">
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
+                            <label for="nama" class="form-label"><?= lang('app.text-name') ?></label>
                             <input type="text" name="nama" id="inputNama" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="telp" class="form-label">Telp</label>
+                            <label for="telp" class="form-label"><?= lang('app.text-phone') ?></label>
                             <input type="text" name="telp" id="inputTelp" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="alamat" class="form-label">Alamat</label>
+                            <label for="alamat" class="form-label"><?= lang('app.text-address') ?></label>
                             <input type="text" name="alamat" id="inputAlamat" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label"><?= lang('app.text-email') ?></label>
                             <input type="email" name="email" id="inputEmail" class="form-control">
 
                         </div>
@@ -108,7 +107,7 @@
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="groupName" class="form-label">Group</label>
+                            <label for="groupName" class="form-label"><?= lang('app.text-group-name') ?></label>
                             <select name="groupName" id="inputGroupname" class="form-select">
                                 <option value="">Select Group</option>
                                 <?php foreach ($group_names as $group_name) : ?>
@@ -179,16 +178,16 @@
             }, {
                 "data": null,
                 "render": function(data, type, full, meta) {
-                    var statusText = full.is_verified == 1 ? 'Deactivate' : 'Activate';
+                    var statusText = full.is_verified == 1 ? '<?= lang('app.button-status-de-active') ?>' : '<?= lang('app.button-status-active') ?>';
                     var buttons = '';
                     // Conditionally render Update button based on edit permission
                     if (karyawanPermissions.edit == 1) {
-                        buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>';
+                        buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= lang('app.button-update') ?></button>';
                     }
 
                     // Conditionally render Delete button based on delete permission
                     if (karyawanPermissions.delete == 1) {
-                        buttons += '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.user_id + ')">Delete</button>';
+                        buttons += '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.user_id + ')"><?= lang('app.button-delete') ?></button>';
                     }
 
                     // Render status button always
@@ -272,8 +271,8 @@
             $('#quickForm').removeClass('error invalid-feedback');
         });
         $('#btnAdd').click(function() {
-            $('#mTitle').text('Add Karyawan');
-            $('#btnModal').text('Add');
+            $('#mTitle').text('<?= lang('app.text-title-user-modal') ?>');
+            $('#btnModal').text('<?= lang('app.button-add-user-modal') ?>');
             $('#id').val('0');
             $('#togglePassword').show();
             togglePassword();
@@ -319,8 +318,8 @@
     })
 
     function UpdateRecord(id, nama, telp, alamat, email, password, group_name) {
-        $('#mTitle').text('Edit Karyawan');
-        $('#btnModal').text('Update');
+        $('#mTitle').text('<?= lang('app.text-title-update-modal') ?>');
+        $('#btnModal').text('<?= lang('app.button-update-user-modal') ?>');
         // Populate the modal fields with the existing data
         $("#id").val(id);
         console.log("Id yang didapat dari tombol update: ", id);

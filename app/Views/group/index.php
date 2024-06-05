@@ -36,9 +36,9 @@
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Group Code</th>
-                            <th scope="col">Group Name</th>
-                            <th scope="col">Action</th>
+                            <th scope="col"><?= lang('app.text-group-code') ?></th>
+                            <th scope="col"><?= lang('app.text-group-name') ?></th>
+                            <th scope="col"><?= lang('app.text-action') ?></th>
                         </tr>
                     </thead>
                 </table>
@@ -126,8 +126,8 @@
             }, {
                 "data": null,
                 "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.group_id + ', \'' + full.group_code + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>' +
-                        '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.group_id + ')">Delete</button>' +
+                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.group_id + ', \'' + full.group_code + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= lang('app.button-update') ?></button>' +
+                        '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.group_id + ')"><?= lang('app.button-delete') ?></button>' +
                         '<button class="btn btn-info action-btn"onclick="gPermission(' + full.group_id + ')">Permissions</button>';
 
                 },

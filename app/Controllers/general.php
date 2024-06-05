@@ -20,6 +20,18 @@ class general extends BaseController
         helper('general_helper');
     }
 
+    public function setLanguage()
+    {
+        $language = \Config\Services::language();
+        $userLanguage = session()->get('language');
+        $language->setLocale($userLanguage);
+
+        if (!session()->has('language')) {
+            session()->set('language', $userLanguage);
+        }
+    }
+
+
     public function userPermission($permissions, $fileName)
     {
         // Get the current URI

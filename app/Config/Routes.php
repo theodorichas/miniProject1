@@ -9,10 +9,13 @@ use CodeIgniter\Router\RouteCollection;
 
 // $routes->get('/', 'Home::index');
 $routes->get('/', 'Home::index');
+$routes->get('/change-language/(:any)', 'Home::changeLanguage/$1');
 
 
 //Karyawan Routes
 $routes->get('/karyawan', 'Karyawan::index'); //Client Side
+$routes->get('/change-language/(:any)', 'Karyawan::changeLanguage/$1');
+
 $routes->post('/ajax', 'Karyawan::karyawanAjax');
 $routes->post('/karyawan/delete', 'Karyawan::delete');
 $routes->post('/karyawan/status', 'Karyawan::status');

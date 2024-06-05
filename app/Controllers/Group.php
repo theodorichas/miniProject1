@@ -28,6 +28,9 @@ class Group extends general
 
     public function index()
     {
+        //calling the setLanguage function in general controller
+        $this->setLanguage();
+
         // Get the current URI
         $routes = $this->request->uri->getPath();
 
@@ -60,6 +63,12 @@ class Group extends general
             $data['permission'] = $this->ModelgPermission->get_permission($groupId);
             return view('group/index', $data);
         }
+    }
+
+    public function changeLanguage($language)
+    {
+        session()->set('language', $language);
+        return redirect()->back();
     }
 
     public function groupDtb()

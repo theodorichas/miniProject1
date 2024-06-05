@@ -1,5 +1,5 @@
 <!-- <!DOCTYPE html> -->
-<html lang="en">
+<html lang="<?= session()->get('language') ?? 'en' ?>">
 
 <head>
     <meta charset="utf-8">
@@ -37,7 +37,7 @@
 </head>
 
 
-<body class="sidebar-mini layout-fixed sidebar-collapse" style="height: auto;">
+<body class="sidebar-mini layout-fixed sidebar-collapse layout-footer-fixed" style="height: auto;">
     <div class=" wrapper">
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
@@ -75,6 +75,17 @@
                     </div>
                 </li>
                 <!-- Notifications Dropdown Menu -->
+                <?php $currentLanguage = session()->get('language') ?? 'en'; ?>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                        <i class="fas fa-globe"></i>
+                        <?= ($currentLanguage === 'en') ? 'EN' : 'ID' ?>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="<?= base_url('/change-language/en') ?>">English/En</a>
+                        <a class="dropdown-item" href="<?= base_url('/change-language/id') ?>">Indonesian/Id</a>
+                    </div>
+                </li>
                 <li class="nav-item dropdown">
                     <?php if (!empty($nama)) : ?>
                         <a class="nav-link" data-toggle="dropdown" href="#">
@@ -143,7 +154,7 @@
                         <?php else : // If user is not logged in 
                         ?>
                             <div class="brand-text font-weight-light">
-                                <p class="sidemenu">Please log in to see the menus.</p>
+                                <p class="sidemenu"><?= lang('app.sidemenu-alert'); ?></p>
                             </div>
                         <?php endif; ?>
                     </ul>
@@ -168,12 +179,14 @@
             <!-- /.content-wrapper -->
         <?php else : ?>
             <div class="login-req">
-                <h1>Please Login to see the content</h1>
+                <h1>
+                    <?= lang('app.login-require') ?>
+                </h1>
             </div>
         <?php endif; ?>
 
 
-        <footer class="main-footer">
+        <footer class="main-footer text-sm">
             <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
             All rights reserved.
             <div class="float-right d-none d-sm-inline-block">
