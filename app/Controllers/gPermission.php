@@ -25,6 +25,8 @@ class gPermission extends general
 
     public function index() //view table
     {
+        //calling the setLanguage function in general controller
+        $this->setLanguage();
         // Get the current URI
         $routes = $this->request->uri->getPath();
 
@@ -63,6 +65,12 @@ class gPermission extends general
 
             return view('group-permission/index', $data);
         }
+    }
+
+    public function changeLanguage($language)
+    {
+        session()->set('language', $language);
+        return redirect()->back();
     }
 
     public function gpermiDtb()

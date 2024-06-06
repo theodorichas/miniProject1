@@ -190,7 +190,7 @@ class Karyawan extends general
                     $this->ModelKaryawan->update_dataKaryawan($id, $data, $group_id);
                     return $this->response->setJSON(['success' => 'Passnya Beda']);
                 }
-                return $this->response->setJSON(['success' => 'Data successfully updated']);
+                return $this->response->setJSON(['success' => true, 'message' => 'Data successfully updated']);
             } else {
                 return $this->response->setJSON(['error' => 'User does not exist']);
             }

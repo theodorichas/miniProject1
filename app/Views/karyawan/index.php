@@ -292,7 +292,7 @@
                     if (response.success) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Data added successfuly',
+                            title: '<?= lang('app.text-swal-title-success') ?>',
                             showConfirmButton: false,
                             timer: 1500,
                         });
@@ -301,7 +301,7 @@
                     } else if (response.error) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'User with this email already exists, Please insert a new Email',
+                            title: '<?= lang('app.text-swal-email-exist') ?>',
                             text: response.message,
                         })
                     } else {
@@ -335,13 +335,14 @@
 
     function deleteRecord(id) {
         Swal.fire({
-            title: "<?= lang('app.text-swal-title') ?>,",
-            text: "<?= lang('app.text-swal-content') ?>,",
+            title: "<?= lang('app.text-swal-title-delete') ?>,",
+            text: "<?= lang('app.text-swal-warning-delete') ?>,",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "<?= lang('app.text-swal-confirm') ?>,"
+            cancelButtonText: "<?= lang('app.button-no') ?>",
+            confirmButtonText: "<?= lang('app.text-swal-confirm-delete') ?>",
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
@@ -356,8 +357,8 @@
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Deleted',
-                                text: 'User has been successfully deleted',
+                                title: '<?= lang('app.text-swal-deleted-title') ?>',
+                                text: '<?= lang('app.text-swal-deleted-text') ?>',
                                 showConfirmButton: false,
                                 timer: 1500
                             });
@@ -389,11 +390,11 @@
 
     function statusRecord(id, isVerified) {
         Swal.fire({
-            title: "Are you sure you want to update the 'Status' of this user?",
+            title: "<?= lang('app.text-swal-status-user-title') ?>",
             icon: 'info',
             showDenyButton: true,
-            confirmButtonText: "yes",
-            denyButtonText: `No`,
+            confirmButtonText: "<?= lang('app.button-yes') ?>",
+            denyButtonText: "<?= lang('app.button-no') ?>",
             allowOutsideClick: false,
         }).then((result) => {
             if (result.isConfirmed) {
@@ -409,8 +410,8 @@
                         if (response.success) {
                             Swal.fire({
                                 icon: 'info',
-                                title: 'Success',
-                                text: 'User status updated',
+                                title: '<?= lang('app.text-swal-title') ?>',
+                                text: '<?= lang('app.text-swal-status-user-message') ?>',
                                 showConfirmButton: false,
                                 timer: 1500
                             });

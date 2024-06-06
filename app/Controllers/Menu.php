@@ -131,5 +131,6 @@ class Menu extends general
     {
         $menu_id = $this->request->getPost('menu_id');
         $this->ModelMenu->delete_dataMenu($menu_id);
+        return $this->response->setJSON(['success' => 'Data successfully deleted']);
     }
 }

@@ -4,10 +4,27 @@ return [
     'title-p' => "Ini dalam Bahasa Indonesia",
 
     //Sweet Alert
-    'text-swal-title' => 'Apakah anda yakin?',
-    'text-swal-content' => 'Anda tidak akan bisa mengembalikannya!',
-    'text-swal-confirm' => 'Iya, hapus!',
+    'text-swal-title' => "Berhasil",
+    'text-swal-title-error' => "tejadi kesalahan!",
+    'text-swal-title-success' => "Berhasil",
+    'text-swal-title-delete' => 'Apakah anda yakin?',
+    'text-swal-warning-delete' => 'Anda tidak akan bisa mengembalikannya!',
+    'text-swal-confirm-delete' => 'Iya, hapus!',
+    'text-swal-deleted-title' => 'Terhapus!',
+    //Sweet Alert -> user
+    'text-swal-deleted-text' => 'User telah berhasil di hapus!',
+    'text-swal-email-exist' => 'User dengan email ini sudah terdaftar, silahkan gunakan email yang lain.',
+    'text-swal-status-user-title' => 'Apakah anda yakin ingin perbaharui status user ini?',
+    'text-swal-status-user-message' => "Status user berhasil di perbaharui!",
+    //Sweet Alert -> menu
+    'text-swal-deleted-text-menu' => 'Menu berhasil di hapus!',
+    //Sweet Alert -> group
+    'text-swal-deleted-text-group' => 'Group has been deleted!',
 
+
+
+
+    //
     //Required -> user
     'text-required-name' => "field 'Nama' tidak boleh kosong !!",
     'text-required-phone' => "field 'Telp' tidak boleh kosong !!",
@@ -24,14 +41,18 @@ return [
     'text-required-menu-page' => "field ini tidak boleh kosong!",
     'text-required-menu-file' => "field ini tidak boleh kosong!",
     'text-required-menu-parent' => "field ini tidak boleh kosong!",
+    'text-required-menu-icon' => "field ini tidak boleh kosong!",
     'text-required-menu-note' => "field ini tidak boleh kosong!",
     'text-required-menu-order' => "field ini tidak boleh kosong!",
     //DataTable//
 
     //button
+    'button-yes' => 'Iya',
+    'button-no' => 'Tidak',
     'button-update' => 'Perbaharui',
     'button-delete' => 'Hapus',
     'button-add-modal' => 'Tambah',
+    'button-update-modal' => 'Perbaharui',
     'text-action' => 'Aksi',
 
     //user
@@ -51,18 +72,27 @@ return [
 
     //menu
     'button-add-menu' => 'Tambah Menu',
+    'text-title-modal-menu-update' => "Perbaruhi menu",
     'text-menu' => 'Nama menu',
-    'text-page-menu' => 'Nama halaman',
-    'text-file-menu' => 'Nama file',
-    'text-parent-menu' => 'Name induk',
+    'text-menu-page' => 'Nama halaman',
+    'text-menu-file' => 'Nama file',
+    'text-menu-parent' => 'Nama induk',
     'text-menu-icon' => 'Ikon',
     'text-menu-note' => 'Catatan',
     'text-menu-order' => 'No urut.',
     'text-menu-visible' => 'Visibilitas',
 
     //group
+    'button-add-group' => 'Tambah Group',
+    'text-title-modal-group-update' => "Perbaruhi Group",
     'text-group-code' => 'Kode Group',
     'text-group-name' => 'Nama Group',
+
+    //group permission
+    'text-group-id' => 'Group ID',
+    'text-view' => 'Tampilan view',
+    'text-edit' => 'Tampilan edit',
+    'text-delete' => 'Tampilan delete',
 
     //Sidemenu template
     'sidemenu-alert' => 'Silakan Log-in 7untuk melihat menu',

@@ -32,12 +32,12 @@
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Group_id</th>
-                            <th scope="col">View</th>
-                            <th scope="col">Edit</th>
-                            <th scope="col">Delete</th>
-                            <th scope="col">menu_name</th>
-                            <th scope="col">file_name</th>
+                            <th scope="col"><?= lang('app.text-group-id') ?></th>
+                            <th scope="col"><?= lang('app.text-view') ?></th>
+                            <th scope="col"><?= lang('app.text-edit') ?></th>
+                            <th scope="col"><?= lang('app.text-delete') ?></th>
+                            <th scope="col"><?= lang('app.text-menu') ?></th>
+                            <th scope="col"><?= lang('app.text-menu-file') ?></th>
                         </tr>
                     </thead>
                 </table>

@@ -34,9 +34,9 @@
                     <thead>
                         <tr>
                             <th scope="col"><?= lang('app.text-menu') ?></th>
-                            <th scope="col"><?= lang('app.text-page-menu') ?></th>
-                            <th scope="col"><?= lang('app.text-file-menu') ?></th>
-                            <th scope="col"><?= lang('app.text-parent-menu') ?></th>
+                            <th scope="col"><?= lang('app.text-menu-page') ?></th>
+                            <th scope="col"><?= lang('app.text-menu-file') ?></th>
+                            <th scope="col"><?= lang('app.text-menu-parent') ?></th>
                             <th scope="col"><?= lang('app.text-menu-icon') ?></th>
                             <th scope="col"><?= lang('app.text-menu-note') ?></th>
                             <th scope="col"><?= lang('app.text-menu-order') ?></th>
@@ -66,35 +66,35 @@
                     <input type="hidden" name="menu_id" id="menu_id" value="">
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="menu_name" class="form-label">Menu Name</label>
+                            <label for="menu_name" class="form-label"><?= lang('app.text-menu') ?></label>
                             <input type="text" name="menu_name" id="menu_name" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="page_name" class="form-label">Page Name</label>
+                            <label for="page_name" class="form-label"><?= lang('app.text-menu-page') ?></label>
                             <input type="text" name="page_name" id="page_name" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="file_name" class="form-label">File Name</label>
+                            <label for="file_name" class="form-label"><?= lang('app.text-menu-file') ?></label>
                             <input type="text" name="file_name" id="file_name" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="parent_menu" class="form-label">Parent Menu</label>
+                            <label for="parent_menu" class="form-label"><?= lang('app.text-menu-parent') ?></label>
                             <input type="text" name="parent_menu" id="parent_menu" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="icon" class="form-label">Icon</label>
+                            <label for="icon" class="form-label"><?= lang('app.text-menu-icon') ?></label>
                             <select class="form-select" name="icon" id="icon">
                                 <option value="">Select an Icon</option>
                                 <?php foreach ($icons as $icon) : ?>
@@ -108,21 +108,21 @@
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="note" class="form-label">Notes</label>
+                            <label for="note" class="form-label"><?= lang('app.text-menu-note') ?></label>
                             <input type="text" name="note" id="note" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="order_no" class="form-label">Order no</label>
+                            <label for="order_no" class="form-label"><?= lang('app.text-menu-order') ?></label>
                             <input type="number" name="order_no" id="order_no" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="visible" class="form-label">Visible</label>
+                            <label for="visible" class="form-label"><?= lang('app.text-menu-visible') ?></label>
                             <div class="form-check form-switch">
                                 <label class="form-check-label" for="visible"></label>
                                 <input type="checkbox" class="form-check-input" name="visible" id="visible">
@@ -265,6 +265,9 @@
                 parent_menu: {
                     required: "<?= lang('app.text-required-menu-parent') ?>",
                 },
+                icon: {
+                    required: "<?= lang('app.text-required-menu-icon') ?>",
+                },
                 note: {
                     required: "<?= lang('app.text-required-menu-note') ?>",
                 },
@@ -314,7 +317,7 @@
                     if (response.status == 1) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Data added unsuccessful',
+                            title: '<?= lang('app.text-swal-title-error') ?>',
                             showConfirmButton: false,
                             timer: 1500,
                         });
@@ -322,7 +325,7 @@
                     } else {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Data added successfuly',
+                            title: '<?= lang('app.text-swal-title-success') ?>',
                             showConfirmButton: false,
                             timer: 1500,
                         });
@@ -338,8 +341,8 @@
     })
 
     function UpdateRecord(menu_id, menu_name, page_name, file_name, parent_menu, icon, note, order_no, visible) {
-        $('#mTitle').text('Edit Karyawamenu_namen');
-        $('#btnModal').text('Update');
+        $('#mTitle').text('<?= lang('app.text-title-modal-group-update') ?>');
+        $('#btnModal').text('<?= lang('app.button-update') ?>');
         // Populate the modal fields with the existing data
         $("#menu_id").val(menu_id);
         console.log("Id yang didapat dari tombol update: ", menu_id);
@@ -358,34 +361,84 @@
     }
 
     function deleteRecord(menu_id) {
-        if (confirm('Are you sure you want to delete this record?')) {
-            // AJAX request to your delete endpoint
-            console.log("Id yang didapat dari tombol update: ", menu_id);
-            $.ajax({
-                url: '<?= site_url('menu/delete') ?>',
-                method: 'POST',
-                type: 'JSON',
-                data: {
-                    'menu_id': menu_id
-                },
-                success: function(response) {
-                    console.log(response)
-                    if (response.success) {
-                        // Reload the DataTable or update the row accordingly
-                        alert('Failed to delete data.');
-                    } else {
+        Swal.fire({
+            title: "<?= lang('app.text-swal-title-delete') ?>",
+            text: "<?= lang('app.text-swal-warning-delete') ?>",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "<?= lang('app.text-swal-confirm-delete') ?>"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '<?= site_url('menu/delete') ?>',
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        'menu_id': menu_id
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '<?= lang('app.text-swal-deleted-title') ?>',
+                                text: '<?= lang('app.text-swal-deleted-text-menu') ?>',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            // Reload the DataTable or update the row accordingly
+                            $('#example').DataTable().ajax.reload();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Unexpected Error!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX request failed!');
+                        console.log('Error:', error);
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Data deleted successfully!',
-                            showConfirmButton: false,
-                            timer: 1500
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request. Please try again later.',
                         });
-                        $('#example').DataTable().ajax.reload();
-                        location.reload();
                     }
-                }
-            });
-        }
+                });
+            }
+        });
+        // if (confirm('Are you sure you want to delete this record?')) {
+        //     // AJAX request to your delete endpoint
+        //     console.log("Id yang didapat dari tombol update: ", menu_id);
+        //     $.ajax({
+        //         url: '<?= site_url('menu/delete') ?>',
+        //         method: 'POST',
+        //         type: 'JSON',
+        //         data: {
+        //             'menu_id': menu_id
+        //         },
+        //         success: function(response) {
+        //             console.log(response)
+        //             if (response.success) {
+        //                 // Reload the DataTable or update the row accordingly
+        //                 alert('Failed to delete data.');
+        //             } else {
+        //                 Swal.fire({
+        //                     icon: 'success',
+        //                     title: 'Data deleted successfully!',
+        //                     showConfirmButton: false,
+        //                     timer: 1500
+        //                 });
+        //                 $('#example').DataTable().ajax.reload();
+        //                 location.reload();
+        //             }
+        //         }
+        //     });
+        // }
     }
 </script>
 

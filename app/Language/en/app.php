@@ -5,9 +5,24 @@ return [
     'title-p' => "This is in English",
 
     //Sweet Alert
-    'text-swal-title' => "Are you sure?",
-    'text-swal-content' => "You won't be able to revert this!",
-    'text-swal-confirm' => "Yes, delete it!",
+    'text-swal-title' => "Success",
+    'text-swal-title-error' => "Something went wrong!",
+    'text-swal-title-success' => "Success",
+    'text-swal-title-delete' => 'Are you sure?',
+    'text-swal-warning-delete' => 'Once deleted, you will not be able to revert this!',
+    'text-swal-confirm-delete' => 'Yes, delete it!',
+    'text-swal-deleted-title' => 'Deleted!',
+
+    //Sweet Alert -> user
+    'text-swal-deleted-text' => 'User has been deleted!',
+    'text-swal-email-exist' => 'User with this email already exists, Please insert a new Email',
+    'text-swal-status-user-title' => "Are you sure you want to update the 'Status' of this user?",
+    'text-swal-status-user-message' => "User status had been updated!",
+
+    //Sweet Alert -> menu
+    'text-swal-deleted-text-menu' => 'Menu has been deleted!',
+    //Sweet Alert -> group
+    'text-swal-deleted-text-group' => 'Group has been deleted!',
 
     //Required -> user
     'text-required-name' => "field 'name' cannot be empty",
@@ -25,12 +40,15 @@ return [
     'text-required-menu-page' => "This field cannot be empty!",
     'text-required-menu-file' => "This field cannot be empty!",
     'text-required-menu-parent' => "This field cannot be empty!",
+    'text-required-menu-icon' => "This field cannot be empty!",
     'text-required-menu-note' => "This field cannot be empty!",
     'text-required-menu-order' => "This field cannot be empty!",
 
     //DataTable//
 
     //button
+    'button-yes' => 'Yes',
+    'button-no' => 'No',
     'button-update' => 'Update',
     'button-delete' => 'Delete',
     'button-add-modal' => 'Add',
@@ -51,6 +69,7 @@ return [
 
     //menu
     'button-add-menu' => 'Add Menu',
+    'text-title-modal-menu-update' => "Update menu",
     'text-menu' => 'Menu Name',
     'text-page-menu' => 'Page Name',
     'text-file-menu' => 'File Name',
@@ -62,8 +81,18 @@ return [
 
 
     //group
+    'button-add-group' => 'Add Group',
+    'text-title-modal-group-update' => "Update Group",
     'text-group-code' => 'Group Code',
     'text-group-name' => 'Group Name',
+
+    //group permission
+    'text-group-id' => 'Group ID',
+    'text-view' => 'View',
+    'text-edit' => 'Edit',
+    'text-delete' => 'Delete',
+
+
 
     //Sidemenu template
     'sidemenu-alert' => 'Please log in to see the menus',

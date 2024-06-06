@@ -31,7 +31,7 @@
             <div class="card-body">
                 <!-- Button trigger modal -->
                 <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Add Group
+                    <?= lang('app.button-add-group') ?>
                 </a>
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
@@ -63,14 +63,14 @@
                     <input type="hidden" name="groupId" id="id" value="">
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="groupcode" class="form-label">group_code</label>
+                            <label for="groupcode" class="form-label"><?= lang('app.text-group-code') ?></label>
                             <input type="number" name="groupCode" id="inputGroupcode" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="groupname" class="form-label">group_name</label>
+                            <label for="groupname" class="form-label"><?= lang('app.text-group-name') ?></label>
                             <input type="text" name="groupName" id="inputGroupname" class="form-control">
 
                         </div>
@@ -177,8 +177,8 @@
             $('#quickForm').removeClass('error invalid-feedback');
         });
         $('#btnAdd').click(function() {
-            $('#mTitle').text('Add Group');
-            $('#btnModal').text('Add');
+            $('#mTitle').text('<?= lang('app.button-add-group') ?>');
+            $('#btnModal').text('<?= lang('app.button-add-modal') ?>');
             $('#id').val('0');
         })
         $('#btnModal').click(function() {
@@ -194,7 +194,7 @@
                     if (response.status == 1) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Data added unsuccessful',
+                            title: '<?= lang('app.text-swal-title-error') ?>',
                             showConfirmButton: false,
                             timer: 1500,
                         });
@@ -202,7 +202,7 @@
                     } else {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Data added successfuly',
+                            title: '<?= lang('app.text-swal-title-success') ?>',
                             showConfirmButton: false,
                             timer: 1500,
                         });
@@ -215,8 +215,8 @@
     })
 
     function UpdateRecord(id, group_code, group_name) {
-        $('#mTitle').text('Edit Group');
-        $('#btnModal').text('Update');
+        $('#mTitle').text('<?= lang('app.text-title-modal-group-update') ?>');
+        $('#btnModal').text('<?= lang('app.button-update') ?>');
         // Populate the modal fields with the existing data
         $("#id").val(id);
         console.log("Id yang didapat dari tombol update: ", id);
@@ -225,33 +225,57 @@
     }
 
     function deleteRecord(id) {
-        if (confirm('Are you sure you want to delete this record?')) {
-            // AJAX request to your delete endpoint
-            console.log(id);
-            $.ajax({
-                url: '<?= site_url('group/delete') ?>',
-                method: 'POST',
-                type: 'JSON',
-                data: {
-                    'groupId': id
-                },
-                success: function(response) {
-                    console.log(response)
-                    if (response.success) {
-                        // Reload the DataTable or update the row accordingly
-                        alert('Failed to delete data.');
-                    } else {
+        Swal.fire({
+            title: "<?= lang('app.text-swal-title-delete') ?>,",
+            text: "<?= lang('app.text-swal-warning-delete') ?>,",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            cancelButtonText: "<?= lang('app.button-no') ?>",
+            confirmButtonText: "<?= lang('app.text-swal-confirm-delete') ?>",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '<?= site_url('group/delete') ?>',
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        'groupId': id
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '<?= lang('app.text-swal-deleted-title') ?>',
+                                text: '<?= lang('app.text-swal-deleted-text-group') ?>',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            // Reload the DataTable or update the row accordingly
+                            $('#example').DataTable().ajax.reload();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Unexpected Error!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX request failed!');
+                        console.log('Error:', error);
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Data deleted successfully!',
-                            showConfirmButton: false,
-                            timer: 1500
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request. Please try again later.',
                         });
-                        $('#example').DataTable().ajax.reload();
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     }
 
     function gPermission(group_id) {

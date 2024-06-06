@@ -124,9 +124,8 @@ class Group extends general
     public function delete()
     {
         $id = $this->request->getPost('groupId');
-        echo "ID yang terhapus: ", $id;
         // die();
-        $deleteData = $this->ModelGroup->delete_dataGroup($id);
-        printSuccess('Operation successful', $id);
+        $this->ModelGroup->delete_dataGroup($id);
+        return $this->response->setJSON(['success' => 'Data successfully deleted']);
     }
 }
