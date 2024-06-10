@@ -13,7 +13,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class pdf extends general
 {
-    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission;
+    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $email;
 
     public function __construct()
     {
@@ -23,11 +23,14 @@ class pdf extends general
         $this->ModelKaryawan = new ModelKaryawan();
         $this->ModelgPermission = new ModelgPermission();
         $this->request = \Config\Services::request();
+        $this->email = \Config\Services::email();
+
         helper('general_helper');
     }
 
     public function index()
     {
+        $this->setLanguage();
         // Get the current URI
         $routes = $this->request->uri->getPath();
 
@@ -140,6 +143,7 @@ class pdf extends general
 
         return $data;
     }
+
     protected function generateHtmlFromData($data)
     {
         // Generate HTML content from the data
@@ -170,5 +174,76 @@ class pdf extends general
             // Return the data in JSON format
             echo json_encode($excelData);
         }
+    }
+    public function readPC()
+    {
+        $uploadFile = $this->request->getFile('formFile');
+        if (!$uploadFile) {
+            // Handle case where no file is uploaded
+            echo json_encode(["error" => "No file uploaded."]);
+        } else {
+            // Read data from Excel file
+            $excelData = $this->readExcelDataPC($uploadFile);
+
+            // Return the data in JSON format
+            echo json_encode($excelData);
+        }
+    }
+    protected function readExcelDataPC($file)
+    {
+        $spreadsheet = IOFactory::load($file->getTempName());
+        $worksheet = $spreadsheet->getActiveSheet();
+
+        $data = [];
+        foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
+            // Skip the header row if there is one
+            if ($rowIndex == 1) {
+                continue;
+            }
+
+            $rowData = [];
+            foreach ($row->getCellIterator() as $cellIndex => $cell) {
+                // Assuming the columns are A for Name, B for Salary, C for Email
+                if ($cellIndex == 'A') {
+                    $rowData['name'] = $cell->getValue();
+                } elseif ($cellIndex == 'G') {
+                    $rowData['salary'] = $cell->getValue();
+                } elseif ($cellIndex == 'E') {
+                    $rowData['email'] = $cell->getValue();
+                }
+            }
+            $data[] = $rowData;
+        }
+
+        return $data;
+    }
+    public function sendEmail()
+    {
+        $uploadFile = $this->request->getFile('formFile');
+        if (!$uploadFile->isValid()) {
+            return $this->response->setJSON(['error' => 'No file uploaded or file is invalid.']);
+        }
+
+        // Read data from Excel file
+        $excelData = $this->readExcelData($uploadFile);
+
+        // Load email library
+        $email = \Config\Services::email();
+        foreach ($excelData as $employee) {
+
+            $email->setTo($employee['email']);
+            $email->setFrom('testing.magang@gmail.com', 'Arona');
+            $email->setSubject('Your Paycheck/Invoice');
+            $email->setMessage('<p>Click this link to reset your password:</p> <p>Click this link to reset your password:</p>');
+
+            if (!$email->send()) {
+                log_message('error', 'Failed to send email to: ' . $employee['email']);
+                return $this->response->setStatusCode(500)
+                    ->setJSON(['status' => 'error', 'message' => 'Failed to send email to: ' . $employee['email']]);
+            }
+        }
+
+        return $this->response->setStatusCode(200)
+            ->setJSON(['status' => 'success', 'message' => 'Emails sent successfully']);
     }
 }

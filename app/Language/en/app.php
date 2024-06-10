@@ -92,6 +92,11 @@ return [
     'text-edit' => 'Edit',
     'text-delete' => 'Delete',
 
+    //pdf
+    'text-input-excel' => 'Upload Excel File here',
+    'text-generate-file' => 'Generate List',
+    'text-send-email' => 'Send Email',
+    'text-insert-new-file' => 'Insert New File',
 
 
     //Sidemenu template

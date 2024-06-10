@@ -94,6 +94,13 @@ return [
     'text-edit' => 'Tampilan edit',
     'text-delete' => 'Tampilan delete',
 
+    //pdf
+    'text-input-excel' => 'Upload file Excel disini',
+    'text-generate-file' => 'Generate File',
+    'text-send-email' => 'kirim Email',
+    'text-insert-new-file' => 'Masukan file baru',
+
+
     //Sidemenu template
     'sidemenu-alert' => 'Silakan Log-in 7untuk melihat menu',
 

@@ -19,11 +19,12 @@
 
 <form id="excelForm" enctype="multipart/form-data" action="<?= base_url('/output') ?>" method="POST">
     <div class="mb-3">
-        <label for="formFile" id="formFilelbl" class="form-label">Input excel file here</label>
+        <label for="formFile" id="formFilelbl" class="form-label"><?= lang('app.text-input-excel') ?></label>
         <input class="form-control" type="file" id="formFile" name="formFile">
     </div>
-    <button type="button" id="btnModal" class="btn btn-warning">Generate List</button>
-    <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;">Send Paycheck</button>
+    <button type="button" id="btnModal" class="btn btn-warning"><?= lang('app.text-generate-file') ?></button>
+    <button type="button" id="btnEmail" class="btn btn-info" style="display: none;">Send Paycheck</button>
+    <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button>
 </form>
 
 <!-- <div class="row"> -->
@@ -89,13 +90,14 @@
         $('#btnModal').click(function() {
             var fileInput = document.getElementById('formFile');
 
-            // Check if button text is "Insert a new file"
-            if ($('#btnModal').text() === 'Insert a new file') {
+            // Check if button text is "Insert new file"
+            if ($('#btnModal').text() === '<?= lang('app.text-insert-new-file') ?>') {
                 // Reset the form and show the file input
                 $('#formFile').val('').show();
                 $('#formFilelbl').show();
                 $('#dataTable').hide();
                 $('#btnPaycheck').hide();
+                $('#btnEmail').hide();
                 $('#btnModal').text('Generate List');
                 return;
             }
@@ -154,6 +156,9 @@
                         });
 
                         $('#example').DataTable({
+                            "responsive": true,
+                            "lengthChange": false,
+                            "autoWidth": false,
                             data: convertedData,
                             destroy: true,
                             columns: columns.map(function(column) {
@@ -176,7 +181,7 @@
                             text: 'Record has been Updated',
                         });
 
-                        $('#btnModal').text('Insert a new file');
+                        $('#btnModal').text('<?= lang('app.text-insert-new-file') ?>');
                         $('#formFilelbl').hide();
                         $('#fileNameDisplay').text(` - ${fileName}`);
 
@@ -184,6 +189,8 @@
                         $('#formFile').hide();
                         $('#dataTable').show();
                         $('#btnPaycheck').show();
+                        $('#btnEmail').show();
+
                     },
                     error: function(xhr, status, error) {
                         console.log('AJAX request failed!');
@@ -196,6 +203,41 @@
                     }
                 });
             }
+        });
+
+        $('#btnEmail').click(function() {
+            var formData = new FormData();
+            formData.append('formFile', $('#formFile')[0].files[0]);
+            $.ajax({
+                url: '<?= base_url('/readPC') ?>',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    try {
+                        var responseData = JSON.parse(response);
+                        var filteredData = responseData.filter(function(row) {
+                            return Object.values(row).some(function(cell) {
+                                return cell !== null && cell !== '';
+                            });
+                        });
+
+                        if (filteredData.length === 0) {
+                            console.log('All rows contain null values');
+                            return;
+                        }
+
+                        // Display the extracted information
+                        console.log('Filtered Data:', filteredData);
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
+                    }
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+            });
         });
     });
 

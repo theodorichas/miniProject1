@@ -183,7 +183,7 @@
                 if (response.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Data added successfully',
+                        title: '<?= lang('app.text-swal-title') ?>',
                         showConfirmButton: false,
                         timer: 1500,
                     });
@@ -191,7 +191,7 @@
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Data added unsuccessful',
+                        title: '<?= lang('app.text-swal-title-error') ?>',
                         showConfirmButton: false,
                         timer: 1500,
                     });
