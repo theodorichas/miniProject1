@@ -69,11 +69,12 @@ return [
 
     //menu
     'button-add-menu' => 'Add Menu',
+    'button-add-parent-menu' => 'Add Parent Menu',
     'text-title-modal-menu-update' => "Update menu",
     'text-menu' => 'Menu Name',
-    'text-page-menu' => 'Page Name',
-    'text-file-menu' => 'File Name',
-    'text-parent-menu' => 'Parent Name',
+    'text-menu-page' => 'Page Name',
+    'text-menu-file' => 'File Name',
+    'text-menu-parent' => 'Parent Name',
     'text-menu-icon' => 'Icon',
     'text-menu-note' => 'Notes',
     'text-menu-order' => 'Order no.',

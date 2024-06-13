@@ -14,7 +14,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class pdf extends general
 {
     protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $email;
-
+    protected $helpers = ['formatHelper', 'general_helper'];
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
@@ -26,6 +26,7 @@ class pdf extends general
         $this->email = \Config\Services::email();
 
         helper('general_helper');
+        helper('formatHelper');
     }
 
     public function index()
@@ -217,33 +218,86 @@ class pdf extends general
 
         return $data;
     }
+    // public function sendEmail()
+    // {
+    //     $uploadFile = $this->request->getFile('formFile');
+    //     if (!$uploadFile->isValid()) {
+    //         return $this->response->setJSON(['error' => 'No file uploaded or file is invalid.']);
+    //     }
+
+    //     // Read data from Excel file
+    //     $excelData = $this->readExcelDataPC($uploadFile);
+
+    //     // Load email library
+    //     $email = \Config\Services::email();
+    //     foreach ($excelData as $employee) {
+
+    //         $email->setTo($employee['email']);
+    //         $email->setFrom('testing.magang@gmail.com', 'Arona');
+    //         $email->setSubject('Your Paycheck/Invoice');
+    //         $email->setMessage('<p>Yes it has been send my lord</p>');
+
+    //         if (!$email->send()) {
+    //             $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
+    //         } else {
+    //             $results[] = ['email' => $employee['email'], 'status' => 'success', 'message' => 'A verification link has been sent to your email'];
+    //         }
+    //     }
+    // }
+
     public function sendEmail()
     {
+        // Capture output to prevent any unexpected output
+        ob_start();
+
         $uploadFile = $this->request->getFile('formFile');
         if (!$uploadFile->isValid()) {
+            // Clean the buffer
+            ob_end_clean();
             return $this->response->setJSON(['error' => 'No file uploaded or file is invalid.']);
         }
 
         // Read data from Excel file
-        $excelData = $this->readExcelData($uploadFile);
+        $excelData = $this->readExcelDataPC($uploadFile);
+
+        // Filter out rows with empty email addresses
+        $filteredData = array_filter($excelData, function ($employee) {
+            return !empty($employee['email']);
+        });
+        function formatRupiah($value)
+        {
+            // Format the given value as Indonesian Rupiah.
+            // The number_format() function is used to format the value as a string with a specified number of decimal places,
+            // thousands separator, and decimal point.
+            // The value is formatted with no decimal places, a comma as the thousands separator, and a dot as the decimal point.
+            // The resulting string is then prefixed with "Rp.".
+            return 'Rp. ' . number_format($value, 0, ',', '.');
+        }
 
         // Load email library
         $email = \Config\Services::email();
-        foreach ($excelData as $employee) {
 
+        $results = [];
+        foreach ($filteredData as $employee) {
+            // Format salary
+            $employee['formatted_salary'] = formatRupiah($employee['salary']);
+
+            // Render email message
+            $message = view('template/paycheck', ['employee' => $employee]);
             $email->setTo($employee['email']);
             $email->setFrom('testing.magang@gmail.com', 'Arona');
-            $email->setSubject('Your Paycheck/Invoice');
-            $email->setMessage('<p>Click this link to reset your password:</p> <p>Click this link to reset your password:</p>');
+            $email->setSubject('Your Paycheck/Invoice "' . $employee['name'] . '"');
+            $email->setMessage($message);
 
             if (!$email->send()) {
-                log_message('error', 'Failed to send email to: ' . $employee['email']);
-                return $this->response->setStatusCode(500)
-                    ->setJSON(['status' => 'error', 'message' => 'Failed to send email to: ' . $employee['email']]);
+                $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
+            } else {
+                $results[] = ['email' => $employee['email'], 'status' => 'success', 'message' => 'Paycheck has been sent to employees'];
             }
         }
 
-        return $this->response->setStatusCode(200)
-            ->setJSON(['status' => 'success', 'message' => 'Emails sent successfully']);
+        // Clean the buffer and return JSON response
+        ob_end_clean();
+        return $this->response->setJSON(['results' => $results]);
     }
 }

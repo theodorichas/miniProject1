@@ -77,6 +77,16 @@
                 <!-- Notifications Dropdown Menu -->
                 <?php $currentLanguage = session()->get('language') ?? 'en'; ?>
                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="themeDropdown" role="button" data-toggle="dropdown">
+                        <i id="themeIcon" class="fas"></i>
+                        <span id="themeText"></span>
+                    </a>
+                    <div class=" dropdown-menu" aria-labelledby="themeDropdown">
+                        <a class="dropdown-item" href="#" id="lightMode">Light Mode</a>
+                        <a class="dropdown-item" href="#" id="darkMode">Dark Mode</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
                         <i class="fas fa-globe"></i>
                         <?= ($currentLanguage === 'en') ? 'EN' : 'ID' ?>
@@ -127,21 +137,33 @@
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <?php if (session()->has('user_id')) : // Check if user is logged in 
-                        ?>
-                            <?php foreach ($menus as $menu) : ?>
-                                <?php
-                                // Determine if the menu item should be hidden based on 'visible' status
-                                $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
-                                // Check if the user has permission to view this menu
-                                $hasPermission = false;
-                                foreach ($permission as $perm) {
-                                    if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
-                                        $hasPermission = true;
-                                        break; // No need to continue checking once permission is found
-                                    }
-                                }
-                                ?>
+                        <!-- This is going to be the parent menu option -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    Menu Options
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <!-- and this is going to be the sub menu -->
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <?php if (session()->has('user_id')) : // Check if user is logged in 
+                                    ?>
+                                        <?php foreach ($menus as $menu) : ?>
+                                            <?php
+                                            // Determine if the menu item should be hidden based on 'visible' status
+                                            $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
+                                            // Check if the user has permission to view this menu
+                                            $hasPermission = false;
+                                            foreach ($permission as $perm) {
+                                                if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
+                                                    $hasPermission = true;
+                                                    break; // No need to continue checking once permission is found
+                                                }
+                                            }
+                                            ?>
                                 <li class="nav-item <?= $visibilityClass ?>">
                                     <?php if ($hasPermission) : ?>
                                         <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
@@ -157,6 +179,9 @@
                                 <p class="sidemenu"><?= lang('app.sidemenu-alert'); ?></p>
                             </div>
                         <?php endif; ?>
+                        </li>
+                    </ul>
+                    </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -232,9 +257,48 @@
     <script src="<?= base_url('asset/AdminLTE/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') ?>"></script>
     <!-- AdminLTE App -->
     <script src="<?= base_url('asset/AdminLTE/dist/js/adminlte.js') ?>"></script>
+    <!-- Script Ganti Theme -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const lightMode = document.getElementById('lightMode');
+            const darkMode = document.getElementById('darkMode');
 
+            // Function to set the theme
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    body.classList.add('dark-mode');
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-lightbulb');
+                    themeText.textContent = 'Dark Mode';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    body.classList.remove('dark-mode');
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                    themeIcon.classList.remove('fa-lightbulb');
+                    themeIcon.classList.add('fa-sun');
+                    themeText.textContent = 'Light Mode';
+                    localStorage.setItem('theme', 'light');
+                }
+            }
 
+            // Check for saved user preference and apply it
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
 
+            // Event listeners for the dropdown items
+            lightMode.addEventListener('click', function() {
+                setTheme('light');
+            });
+
+            darkMode.addEventListener('click', function() {
+                setTheme('dark');
+            });
+        });
+    </script>
     <?= $this->renderSection('scripts'); ?>
 
 </body>

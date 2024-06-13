@@ -31,8 +31,8 @@ class Menu extends Migration
                 'constraint' => 255,
             ],
             'parent_menu' => [
-                'type' => 'INT',
-                'constraint' => 11,
+                'type' => 'VARCHAR',
+                'constraint' => 255,
                 'null' => true,
             ],
             'icon' => [

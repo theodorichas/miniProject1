@@ -38,7 +38,7 @@ $routes->get('/pdf', 'pdf::index');
 $routes->post('/output', 'pdf::printPdf');
 $routes->get('/userdata', 'pdf::userdata');
 $routes->post('/read', 'pdf::read');
-$routes->post('/readPC', 'pdf::sendEmail');
+$routes->post('/send-email', 'pdf::sendEmail');
 
 
 //gPermissions routing

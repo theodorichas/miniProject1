@@ -28,7 +28,7 @@
 </form>
 
 <!-- <div class="row"> -->
-<div class="col-12" id="dataTable" style="display: none;">
+<div class="col-12" id="dataTable">
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
@@ -57,7 +57,7 @@
     <!-- /.card -->
 </div>
 <!-- </div> -->
-
+<?= $this->endSection('content'); ?>
 
 <?= $this->section('scripts'); ?>
 
@@ -84,12 +84,25 @@
 <script src="<?= base_url('asset/AdminLTE/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
 <!-- Script Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
+<!-- Script datatable -->
 <script>
     $(document).ready(function() {
+        $('#example').DataTable({
+            responsive: true,
+            lengthChange: false,
+            autoWidth: false,
+        });
         $('#btnModal').click(function() {
             var fileInput = document.getElementById('formFile');
-
+            Swal.fire({
+                title: 'Processing...',
+                html: '<div class="loading-spinner"></div>',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
             // Check if button text is "Insert new file"
             if ($('#btnModal').text() === '<?= lang('app.text-insert-new-file') ?>') {
                 // Reset the form and show the file input
@@ -154,11 +167,10 @@
                             }
                             return rowData;
                         });
-
                         $('#example').DataTable({
-                            "responsive": true,
-                            "lengthChange": false,
-                            "autoWidth": false,
+                            responsive: true,
+                            lengthChange: false,
+                            autoWidth: false,
                             data: convertedData,
                             destroy: true,
                             columns: columns.map(function(column) {
@@ -175,6 +187,7 @@
                                 };
                             })
                         });
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!!',
@@ -208,31 +221,50 @@
         $('#btnEmail').click(function() {
             var formData = new FormData();
             formData.append('formFile', $('#formFile')[0].files[0]);
+            Swal.fire({
+                title: 'Processing...',
+                html: '<div class="loading-spinner"></div>',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
             $.ajax({
-                url: '<?= base_url('/readPC') ?>',
+                url: '<?= base_url('/send-email') ?>',
                 type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    try {
-                        var responseData = JSON.parse(response);
-                        var filteredData = responseData.filter(function(row) {
-                            return Object.values(row).some(function(cell) {
-                                return cell !== null && cell !== '';
-                            });
-                        });
+                    // The response is already a JavaScript object, so no need to parse it
+                    console.log('Raw Response:', response);
 
-                        if (filteredData.length === 0) {
-                            console.log('All rows contain null values');
-                            return;
-                        }
-
-                        // Display the extracted information
-                        console.log('Filtered Data:', filteredData);
-                    } catch (e) {
-                        console.error('Error parsing JSON:', e);
+                    if (response.error) {
+                        console.error('Error:', response.error);
+                        alert(response.error);
+                        return;
                     }
+
+                    var filteredData = response.results.filter(function(row) {
+                        return Object.values(row).some(function(cell) {
+                            return cell !== null && cell !== '';
+                        });
+                    });
+
+                    if (filteredData.length === 0) {
+                        console.log('All rows contain null values');
+                        return;
+                    }
+
+                    // Display the extracted information
+                    console.log('Filtered Data:', filteredData);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!!',
+                        text: "Paycheck has been sent to employee's email address!!",
+                    });
+                    alert('Emails processed successfully. Check the console for details.');
                 },
                 error: function(error) {
                     console.error('Error:', error);
@@ -263,6 +295,3 @@
 </script>
 
 <?= $this->endSection('scripts'); ?>
-
-
-<?= $this->endSection('content'); ?>

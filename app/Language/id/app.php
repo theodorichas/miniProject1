@@ -72,6 +72,7 @@ return [
 
     //menu
     'button-add-menu' => 'Tambah Menu',
+    'button-add-parent-menu' => 'Tambah Menu Utama',
     'text-title-modal-menu-update' => "Perbaruhi menu",
     'text-menu' => 'Nama menu',
     'text-menu-page' => 'Nama halaman',
