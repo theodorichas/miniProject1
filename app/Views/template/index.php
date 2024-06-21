@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome-animation.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome.min.css') ?>">
 
+    <!-- CSS W3S -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
@@ -54,26 +58,6 @@
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
-                <!-- Navbar Search -->
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                    </a>
-                    <div class="navbar-search-block">
-                        <form class="form-inline">
-                            <div class="input-group input-group-sm">
-                                <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-                                <div class="input-group-append">
-                                    <button class="btn btn-navbar" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </li>
                 <!-- Notifications Dropdown Menu -->
                 <?php $currentLanguage = session()->get('language') ?? 'en'; ?>
                 <li class="nav-item dropdown">
@@ -98,7 +82,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <?php if (!empty($nama)) : ?>
-                        <a class="nav-link" data-toggle="dropdown" href="#">
+                        <a class="nav-link welcome-text" data-toggle="dropdown" href="#" id="welcome-text">
                             <p>Welcome back, <?= $nama; ?></p>
                         </a>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -137,52 +121,61 @@
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <!-- This is going to be the parent menu option -->
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-copy"></i>
-                                <p>
-                                    Menu Options
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <!-- and this is going to be the sub menu -->
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <?php if (session()->has('user_id')) : // Check if user is logged in 
-                                    ?>
-                                        <?php foreach ($menus as $menu) : ?>
-                                            <?php
-                                            // Determine if the menu item should be hidden based on 'visible' status
-                                            $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
-                                            // Check if the user has permission to view this menu
-                                            $hasPermission = false;
-                                            foreach ($permission as $perm) {
-                                                if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
-                                                    $hasPermission = true;
-                                                    break; // No need to continue checking once permission is found
-                                                }
-                                            }
-                                            ?>
-                                <li class="nav-item <?= $visibilityClass ?>">
-                                    <?php if ($hasPermission) : ?>
-                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
-                                            <i class="<?= $menu->icon ?>"></i>
-                                            <p><?= $menu->menu_name ?></p>
+                        <?php if (session()->has('user_id')) : // Check if user is logged in 
+                        ?>
+                            <?php foreach ($groupedMenus as $parentMenu => $menus) : ?>
+                                <?php if ($parentMenu == 'root') : ?>
+                                    <?php foreach ($menus as $menu) : ?>
+                                        <li class="nav-item">
+                                            <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
+                                                <i class="<?= $menu->icon ?>"></i>
+                                                <p><?= $menu->menu_name ?></p>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link">
+                                            <i class="nav-icon fas fa-copy"></i>
+                                            <p>
+                                                <?= $parentMenu ?>
+                                                <i class="fas fa-angle-left right"></i>
+                                            </p>
                                         </a>
-                                    <?php endif; ?>
-                                </li>
+                                        <ul class="nav nav-treeview">
+                                            <?php foreach ($menus as $menu) : ?>
+                                                <?php
+                                                // Determine if the menu item should be hidden based on 'visible' status
+                                                $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
+                                                // Check if the user has permission to view this menu
+                                                $hasPermission = false;
+                                                foreach ($permission as $perm) {
+                                                    if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
+                                                        $hasPermission = true;
+                                                        break; // No need to continue checking once permission is found
+                                                    }
+                                                }
+                                                ?>
+                                                <li class="nav-item <?= $visibilityClass ?>">
+                                                    <?php if ($hasPermission) : ?>
+                                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
+                                                            <i class="<?= $menu->icon ?>"></i>
+                                                            <p><?= $menu->menu_name ?></p>
+                                                        </a>
+                                                    <?php endif; ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </li>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         <?php else : // If user is not logged in 
                         ?>
                             <div class="brand-text font-weight-light">
                                 <p class="sidemenu"><?= lang('app.sidemenu-alert'); ?></p>
                             </div>
-                        <?php endif; ?>
-                        </li>
                     </ul>
-                    </li>
-                    </ul>
+                <?php endif; ?>
                 </nav>
                 <!-- /.sidebar-menu -->
             </div>
@@ -194,9 +187,10 @@
             <div class="content-wrapper">
                 <!-- Main content -->
                 <section class="content">
-                    <!-- <h1 id="hehe">hehe</h1> -->
                     <div class="container-fluid">
-                        <?= $this->renderSection('content'); ?>
+                        <div class="w3-container">
+                            <?= $this->renderSection('content'); ?>
+                        </div>
                     </div><!-- /.container-fluid -->
                 </section>
                 <!-- /.content -->
@@ -299,7 +293,26 @@
             });
         });
     </script>
+
+    <!-- Script Welcome Text -->
+    <script>
+        function adjustWelcomeText() {
+            var welcomeTextElement = document.getElementById('welcome-text');
+            var username = "<?= $nama; ?>";
+            if (window.innerWidth <= 576) { // Adjust the width as needed
+                welcomeTextElement.textContent = username;
+            } else {
+                welcomeTextElement.textContent = "Welcome back, " + username;
+            }
+        }
+
+        // Run the function on page load and when the window is resized
+        window.onload = adjustWelcomeText;
+        window.onresize = adjustWelcomeText;
+    </script>
+
     <?= $this->renderSection('scripts'); ?>
+
 
 </body>
 

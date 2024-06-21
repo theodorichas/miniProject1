@@ -8,7 +8,7 @@ use App\Models\ModelgPermission;
 use CodeIgniter\Cookie\Cookie;
 
 
-class Karyawan extends general
+class Karyawan extends Home
 {
     protected $db, $builder, $ModelKaryawan, $ModelMenu, $ModelgPermission;
 
@@ -60,6 +60,7 @@ class Karyawan extends general
             $data['title'] = $fileName;
             $data['group_names'] = $this->ModelKaryawan->getGroupNames();
             $data['menus'] = $this->ModelMenu->getMenuNames();
+            $data['groupedMenus'] = groupMenusByParent($data['menus']);
             $data['nama'] = $_SESSION['nama'] ?? '';
             $data['permission'] = $permissions;
             $data['menuId'] = $menuId;

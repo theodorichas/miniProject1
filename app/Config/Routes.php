@@ -66,5 +66,9 @@ $routes->post('/resetPass', 'auth::resetPassword');
 
 //testing purpose
 $routes->get('/testing', 'home::testing');
+$routes->get('/setCookie', 'home::setCookie');
+$routes->get('/getCookie', 'Home::getCookie');
+$routes->get('/deleteCookie', 'Home::deleteCookie');
+
 
 service('auth')->routes($routes);

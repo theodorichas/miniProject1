@@ -6,7 +6,7 @@ use App\Models\ModelMenu;
 use App\Models\ModelKaryawan;
 use App\Models\ModelgPermission;
 
-class Menu extends general
+class Menu extends Home
 {
     protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission;
 
@@ -56,10 +56,11 @@ class Menu extends general
             $data['title'] = 'Menu List';
             $data['icons'] = getFontAwesomeCheatSheet();
             $data['menus'] = $this->ModelMenu->getMenuNames();
+            $data['groupedMenus'] = groupMenusByParent($data['menus']);
             $data['nama'] = $_SESSION['nama'] ?? '';
             $data['permission'] = $permissions;
             $data['menuId'] = $menuId;
-            // echo json_encode($data['permission']);
+            // echo json_encode($data['menus']);
             return view('menu/index', $data);
         }
     }

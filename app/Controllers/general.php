@@ -6,8 +6,7 @@ use app\Models\ModelKaryawan;
 use app\Models\ModelgPermission;
 use app\Models\ModelMenu;
 
-
-class general extends BaseController
+class haha extends BaseController
 {
     protected $ModelgPermission, $ModelKaryawan, $ModelMenu;
 
@@ -17,7 +16,6 @@ class general extends BaseController
         $this->ModelgPermission = new ModelgPermission();
         $this->ModelMenu = new ModelMenu();
         $this->request = \Config\Services::request();
-        helper('general_helper');
     }
 
     public function setLanguage()
@@ -62,5 +60,26 @@ class general extends BaseController
         }
         // If no matching permission is found, or file_name does not match, return false
         return false;
+    }
+
+    public function setCookie()
+    {
+        set_app_cookie('testing', 'This is just a test', 10);
+        return 'Cookie has been set';
+    }
+
+    public function getCookie()
+    {
+        $cookieValue = get_app_cookie('testing');
+        if ($cookieValue) {
+            return "Cookie Value: " . $cookieValue;
+        } else {
+            return "Cookie not found";
+        }
+    }
+    public function deleteCookie()
+    {
+        delete_app_cookie('testing');
+        return 'Cookie has been deleted';
     }
 }

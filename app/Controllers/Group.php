@@ -9,7 +9,7 @@ use App\Models\ModelgPermission;
 
 
 
-class Group extends general
+class Group extends Home
 {
 
     protected $db, $builder, $ModelGroup, $ModelMenu, $ModelKaryawan, $ModelgPermission;
@@ -57,6 +57,7 @@ class Group extends general
         } else {
             $data['title'] = "Group list";
             $data['menus'] = $this->ModelMenu->getMenuNames();
+            $data['groupedMenus'] = groupMenusByParent($data['menus']);
             $data['nama'] = $_SESSION['nama'] ?? '';
             $groupName = $_SESSION['group_name'] ?? '';
             $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);

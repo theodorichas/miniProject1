@@ -7,7 +7,7 @@ use App\Models\ModelPasswordRes;
 use Config\Services;
 use PhpParser\Node\Expr\Isset_;
 
-class Auth extends BaseController
+class Auth extends Home
 {
     protected $db, $builder, $ModelKaryawan, $ModelPasswordRes, $email;
 
@@ -73,7 +73,14 @@ class Auth extends BaseController
         $_SESSION['email'] = $user['email']; // Example: Store email
         $_SESSION['nama'] = $user['nama'];
         $_SESSION['group_name'] = $user['group_name'];
+        $_SESSION['language'] = $user['language_preference'];
 
+        // Set language preference from user data
+        $userLanguage = $user['language_preference'] ?? 'en'; // Default to 'en' if not set
+        session()->set('language', $userLanguage);
+        set_cookie('lang', $userLanguage, 20); // 1 year
+
+        // Redirect to home page
         return $this->response->setJSON(['success' => 'Login successful']);
 
         // Debug information

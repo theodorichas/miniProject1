@@ -8,7 +8,7 @@ use App\Models\ModelgPermission;
 use App\Models\ModelKaryawan;
 
 
-class gPermission extends general
+class gPermission extends Home
 {
     protected $db, $builder, $ModelMenu, $ModelgPermission, $ModelKaryawan;
 
@@ -54,6 +54,7 @@ class gPermission extends general
             $groupId = $this->request->getGet('id');
             $data['title'] = 'Group Permission list';
             $data['menus'] = $this->ModelMenu->getMenuNames();
+            $data['groupedMenus'] = groupMenusByParent($data['menus']);
             $data['group_id'] = $groupId;
             $data['nama'] = $_SESSION['nama'] ?? '';
             $groupName = $_SESSION['group_name'] ?? '';

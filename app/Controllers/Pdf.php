@@ -11,10 +11,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 
 
-class pdf extends general
+class pdf extends Home
 {
     protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $email;
-    protected $helpers = ['formatHelper', 'general_helper'];
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
@@ -24,9 +23,6 @@ class pdf extends general
         $this->ModelgPermission = new ModelgPermission();
         $this->request = \Config\Services::request();
         $this->email = \Config\Services::email();
-
-        helper('general_helper');
-        helper('formatHelper');
     }
 
     public function index()
@@ -57,6 +53,7 @@ class pdf extends general
             return view('error-page/index');
         } else {
             $data['menus'] = $this->ModelMenu->getMenuNames();
+            $data['groupedMenus'] = groupMenusByParent($data['menus']);
             // var_dump($data);
             $data['title'] = 'pdf';
             $data['nama'] = $_SESSION['nama'] ?? '';
@@ -264,19 +261,11 @@ class pdf extends general
         $filteredData = array_filter($excelData, function ($employee) {
             return !empty($employee['email']);
         });
-        function formatRupiah($value)
-        {
-            // Format the given value as Indonesian Rupiah.
-            // The number_format() function is used to format the value as a string with a specified number of decimal places,
-            // thousands separator, and decimal point.
-            // The value is formatted with no decimal places, a comma as the thousands separator, and a dot as the decimal point.
-            // The resulting string is then prefixed with "Rp.".
-            return 'Rp. ' . number_format($value, 0, ',', '.');
-        }
-
         // Load email library
         $email = \Config\Services::email();
 
+        //calling the helper
+        helper('formatrp');
         $results = [];
         foreach ($filteredData as $employee) {
             // Format salary
