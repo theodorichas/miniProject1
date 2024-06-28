@@ -30,9 +30,9 @@
                 <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <?= lang('app.button-add-menu') ?>
                 </a>
-                <a button type="button" id="btnAddParent" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <!-- <a button type="button" id="btnAddParent" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <?= lang('app.button-add-parent-menu') ?>
-                </a>
+                </a> -->
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>

@@ -24,10 +24,43 @@
     </div>
     <button type="button" id="btnModal" class="btn btn-warning"><?= lang('app.text-generate-file') ?></button>
     <button type="button" id="btnEmail" class="btn btn-info" style="display: none;">Send Paycheck</button>
+    <button type="button" id="btnAttach" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Send Attachments</button>
     <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button>
 </form>
 
-<!-- <div class="row"> -->
+<!-- Modal untuk attachments-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Send Attachments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="excelForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Enter the recipient email address</label>
+                            <input type="email" name="email" id="email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="formAttach" id="formAttachlbl" class="form-label">Select which file you want to send</label>
+                            <input class="form-control" type="file" id="formAttach" name="formAttach">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnSendFile" class="btn btn-primary">Send file</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Datatable -->
 <div class="col-12" id="dataTable">
     <div class="card">
         <div class="card-header">
@@ -99,20 +132,32 @@
                 html: '<div class="loading-spinner"></div>',
                 allowOutsideClick: false,
                 showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading()
-                }
             });
             // Check if button text is "Insert new file"
             if ($('#btnModal').text() === '<?= lang('app.text-insert-new-file') ?>') {
                 // Reset the form and show the file input
-                $('#formFile').val('').show();
-                $('#formFilelbl').show();
-                $('#dataTable').hide();
-                $('#btnPaycheck').hide();
-                $('#btnEmail').hide();
-                $('#btnModal').text('Generate List');
+                // Show confirmation dialog
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to insert a new file?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, insert it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to the desired page
+                        window.location.href = '<?= base_url('/pdf') ?>';
+                    }
+                });
                 return;
+                Swal.fire({
+                    title: 'Processing...',
+                    html: '<div class="loading-spinner"></div>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                });
             }
 
             if (!fileInput.files || !fileInput.files[0]) {
@@ -217,7 +262,6 @@
                 });
             }
         });
-
         $('#btnEmail').click(function() {
             var formData = new FormData();
             formData.append('formFile', $('#formFile')[0].files[0]);
@@ -270,6 +314,39 @@
                     console.error('Error:', error);
                 }
             });
+        });
+        $('#btnSendFile').click(function() {
+            var fileInput = document.getElementById('formAttach');
+            var emailInput = document.getElementById('email').value;
+            var formData = new FormData();
+            formData.append('formAttach', fileInput.files[0]);
+            formData.append('email', emailInput);
+            $.ajax({
+                url: '<?= base_url('/sendAttach') ?>',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Raw Response:', response);
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'The file has been sent successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    // Add error handling here
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'There was an error sending the file.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
         });
     });
 

@@ -162,6 +162,7 @@ class pdf extends Home
     public function read()
     {
         $uploadFile = $this->request->getFile('formFile');
+
         if (!$uploadFile) {
             // Handle case where no file is uploaded
             echo json_encode(["error" => "No file uploaded."]);
@@ -215,32 +216,6 @@ class pdf extends Home
 
         return $data;
     }
-    // public function sendEmail()
-    // {
-    //     $uploadFile = $this->request->getFile('formFile');
-    //     if (!$uploadFile->isValid()) {
-    //         return $this->response->setJSON(['error' => 'No file uploaded or file is invalid.']);
-    //     }
-
-    //     // Read data from Excel file
-    //     $excelData = $this->readExcelDataPC($uploadFile);
-
-    //     // Load email library
-    //     $email = \Config\Services::email();
-    //     foreach ($excelData as $employee) {
-
-    //         $email->setTo($employee['email']);
-    //         $email->setFrom('testing.magang@gmail.com', 'Arona');
-    //         $email->setSubject('Your Paycheck/Invoice');
-    //         $email->setMessage('<p>Yes it has been send my lord</p>');
-
-    //         if (!$email->send()) {
-    //             $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
-    //         } else {
-    //             $results[] = ['email' => $employee['email'], 'status' => 'success', 'message' => 'A verification link has been sent to your email'];
-    //         }
-    //     }
-    // }
 
     public function sendEmail()
     {
@@ -253,6 +228,10 @@ class pdf extends Home
             ob_end_clean();
             return $this->response->setJSON(['error' => 'No file uploaded or file is invalid.']);
         }
+        $newName = $uploadFile->getRandomName();
+        $uploadFile->move(WRITEPATH . 'uploads', $newName);
+        $filePath = WRITEPATH . 'uploads/' . $newName;
+
 
         // Read data from Excel file
         $excelData = $this->readExcelDataPC($uploadFile);
@@ -277,6 +256,8 @@ class pdf extends Home
             $email->setFrom('testing.magang@gmail.com', 'Arona');
             $email->setSubject('Your Paycheck/Invoice "' . $employee['name'] . '"');
             $email->setMessage($message);
+            // Attach a file
+            $email->attach($filePath, 'attachment');
 
             if (!$email->send()) {
                 $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
@@ -288,5 +269,30 @@ class pdf extends Home
         // Clean the buffer and return JSON response
         ob_end_clean();
         return $this->response->setJSON(['results' => $results]);
+    }
+
+    public function sendAttach()
+    {
+        $uploadFile = $this->request->getFile('formAttach');
+        $email = $this->request->getPost('email');
+
+        $emailService = \Config\Services::email();
+
+        if ($uploadFile && $uploadFile->isValid() && !$uploadFile->hasMoved()) {
+            $newName = $uploadFile->getRandomName();
+            $uploadFile->move(WRITEPATH . 'uploads', $newName);
+            $filePath = WRITEPATH . 'uploads/' . $newName;
+
+            $emailService->setTo($email);
+            $emailService->setFrom('testing.magang@gmail.com', 'Arona');
+            $emailService->setSubject('Testing attachment');
+            $emailService->setMessage("huehuehuehuehuheu");
+            $emailService->attach($filePath, 'attachment');
+
+            if ($emailService->send()) {
+                echo "Email sent to: " . $email . "\n";
+                echo "File: " . $uploadFile->getName() . "\n";
+            }
+        }
     }
 }
