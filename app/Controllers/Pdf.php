@@ -142,52 +142,6 @@ class pdf extends Home
         return $data;
     }
 
-    protected function generateHtmlFromData($data)
-    {
-        // Generate HTML content from the data
-        // Example: Construct HTML table with data
-        $html = '<table border="1" style="margin: 0 auto; text-align: center;">
-                                                              ';
-        foreach ($data as $row) {
-            $html .= '<tr>';
-            foreach ($row as $cell) {
-                $html .= '<td>' . $cell . '</td>';
-            }
-            $html .= '</tr>';
-        }
-        $html .= '</table>';
-
-        return $html;
-    }
-    public function read()
-    {
-        $uploadFile = $this->request->getFile('formFile');
-
-        if (!$uploadFile) {
-            // Handle case where no file is uploaded
-            echo json_encode(["error" => "No file uploaded."]);
-        } else {
-            // Read data from Excel file
-            $excelData = $this->readExcelData($uploadFile);
-
-            // Return the data in JSON format
-            echo json_encode($excelData);
-        }
-    }
-    public function readPC()
-    {
-        $uploadFile = $this->request->getFile('formFile');
-        if (!$uploadFile) {
-            // Handle case where no file is uploaded
-            echo json_encode(["error" => "No file uploaded."]);
-        } else {
-            // Read data from Excel file
-            $excelData = $this->readExcelDataPC($uploadFile);
-
-            // Return the data in JSON format
-            echo json_encode($excelData);
-        }
-    }
     protected function readExcelDataPC($file)
     {
         $spreadsheet = IOFactory::load($file->getTempName());
@@ -216,30 +170,59 @@ class pdf extends Home
 
         return $data;
     }
+    protected function generateHtmlFromData($data)
+    {
+        // Generate HTML content from the data
+        // Example: Construct HTML table with data
+        $html = '<table border="1" style="margin: 0 auto; text-align: center;">
+                                                              ';
+        foreach ($data as $row) {
+            $html .= '<tr>';
+            foreach ($row as $cell) {
+                $html .= '<td>' . $cell . '</td>';
+            }
+            $html .= '</tr>';
+        }
+        $html .= '</table>';
+
+        return $html;
+    }
+    public function read()
+    {
+        $uploadFile = $this->request->getFile('formFile');
+
+        if (!$uploadFile) {
+            // Handle case where no file is uploaded
+            echo json_encode(["error" => "No file uploaded."]);
+        } else {
+            // Read data from Excel file
+            $excelData = $this->readExcelData($uploadFile);
+            // Return the data in JSON format
+            echo json_encode($excelData);
+        }
+    }
+
+
 
     public function sendEmail()
-    {
+    {asdasdasd
         // Capture output to prevent any unexpected output
         ob_start();
-
         $uploadFile = $this->request->getFile('formFile');
+        echo $uploadFile;
         if (!$uploadFile->isValid()) {
             // Clean the buffer
             ob_end_clean();
             return $this->response->setJSON(['error' => 'No file uploaded or file is invalid.']);
         }
-        $newName = $uploadFile->getRandomName();
-        $uploadFile->move(WRITEPATH . 'uploads', $newName);
-        $filePath = WRITEPATH . 'uploads/' . $newName;
-
 
         // Read data from Excel file
         $excelData = $this->readExcelDataPC($uploadFile);
-
         // Filter out rows with empty email addresses
         $filteredData = array_filter($excelData, function ($employee) {
             return !empty($employee['email']);
         });
+
         // Load email library
         $email = \Config\Services::email();
 
@@ -257,7 +240,7 @@ class pdf extends Home
             $email->setSubject('Your Paycheck/Invoice "' . $employee['name'] . '"');
             $email->setMessage($message);
             // Attach a file
-            $email->attach($filePath, 'attachment');
+            $email->attach('C:\Users\theod\Downloads\Hoshino.jpeg');
 
             if (!$email->send()) {
                 $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
