@@ -24,11 +24,12 @@
     </div>
     <button type="button" id="btnModal" class="btn btn-warning"><?= lang('app.text-generate-file') ?></button>
     <button type="button" id="btnEmail" class="btn btn-info" style="display: none;">Send Paycheck</button>
-    <button type="button" id="btnAttach" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Send Attachments</button>
-    <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button>
+    <!-- <button type="button" id="btnAttach" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Send Attachments</button> -->
+    <button type="button" id="btnTesting" class="btn btn-danger" data-toggle="modal" style="display: none;" data-target="#exampleModal">Send Files</button>
+    <!-- <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button> -->
 </form>
 
-<!-- Modal untuk attachments-->
+<!-- Modal untuk attachments
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -54,6 +55,32 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="btnSendFile" class="btn btn-primary">Send file</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> -->
+<!-- Modal untuk attachments untuk-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Send Attachments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="excelForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="formAttach" id="formAttachlbl" class="form-label">Select which file you want to send</label>
+                            <input class="form-control" type="file" id="formAttach" name="formAttach">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnSendFileTesting" class="btn btn-primary">Send file</button>
                     </div>
                 </form>
             </div>
@@ -248,6 +275,7 @@
                         $('#dataTable').show();
                         $('#btnPaycheck').show();
                         $('#btnEmail').show();
+                        $('#btnTesting').show();
 
                     },
                     error: function(xhr, status, error) {
@@ -348,6 +376,48 @@
                 }
             })
         });
+        $('#btnSendFileTesting').click(function() {
+            var fileInput = document.getElementById('formAttach');
+            var formData = new FormData();
+            formData.append('formFile', $('#formFile')[0].files[0]);
+            formData.append('formAttach', fileInput.files[0]);
+            Swal.fire({
+                title: 'Processing...',
+                html: '<div class="loading-spinner"></div>',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            $.ajax({
+                url: '<?= base_url('/sendAttachTesting') ?>',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Raw Response:', response);
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'The file has been sent successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    // Add error handling here
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'There was an error sending the file.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+
+        })
     });
 
 

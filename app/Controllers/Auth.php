@@ -240,11 +240,16 @@ class Auth extends Home
                 'token' => $token,
                 'created_at' => date('Y-m-d H:i:s'),
             ];
+            // Prepare email content
+            $emailContent = view('template/reset_pass', [
+                'token' => $token,
+            ]);
             $this->ModelPasswordRes->insertData($data);
             $this->email->setFrom('testing.magang@gmail.com', 'Arona');
             $this->email->setTo($email);
             $this->email->setSubject('Ohayou Sensei');
-            $this->email->setMessage('<p>Click this link to reset your password:</p> <a href="' . site_url('/resetPassForm/' . $token) . '">Password Reset</a>');
+            // $this->email->setMessage('<p>Click this link to reset your password:</p> <a href="' . site_url('/resetPassForm/' . $token) . '">Password Reset</a>');
+            $this->email->setMessage($emailContent);
             if (!$this->email->send()) {
                 return $this->response->setJSON(['error' => true, 'message' => 'There is an error!! Verification has not been sent']);
             } else {

@@ -202,10 +202,8 @@ class pdf extends Home
         }
     }
 
-
-
     public function sendEmail()
-    {asdasdasd
+    {
         // Capture output to prevent any unexpected output
         ob_start();
         $uploadFile = $this->request->getFile('formFile');
@@ -277,5 +275,44 @@ class pdf extends Home
                 echo "File: " . $uploadFile->getName() . "\n";
             }
         }
+    }
+
+    public function sendAttachTesting()
+    {
+        //getting the post data
+        $uploadFile = $this->request->getFile('formFile');
+        $uploadAttach = $this->request->getFile('formAttach');
+
+        //moving the file to a folder
+        $newName = $uploadAttach->getRandomName();
+        $uploadAttach->move(WRITEPATH . 'uploads', $newName);
+        $filePath = WRITEPATH . 'uploads/' . $newName;
+
+        // Read data from Excel file
+        $excelData = $this->readExcelDataPC($uploadFile);
+        // Filter out rows with empty email addresses
+        $filteredData = array_filter($excelData, function ($employee) {
+            return !empty($employee['email']);
+        });
+
+        //load the email library
+        $email = \Config\Services::email();
+
+        //Making an empty variable
+        $results = [];
+        foreach ($filteredData as $employee) {
+            $email->setTo($employee['email']);
+            $email->setFrom('testing.magang@gmail.com', 'Arona');
+            $email->setSubject('Testing "' . $employee['name'] . '"');
+            $email->setMessage('geghe');
+            $email->attach($filePath, 'attachment');
+
+            if (!$email->send()) {
+                $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
+            } else {
+                $results[] = ['email' => $employee['email'], 'status' => 'success', 'message' => 'Paycheck has been sent to employees'];
+            }
+        }
+        return $this->response->setJSON(['results' => $results]);
     }
 }
