@@ -104,8 +104,15 @@
         $('#btnModal').click(function() {
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
-                // Show the loading screen
-                $('#loadingScreen').show();
+                Swal.fire({
+                    title: 'Processing...',
+                    html: '<div class="loading-spinner"></div>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
                 // AJAX request
                 $.ajax({
                     method: 'POST',

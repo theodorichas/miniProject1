@@ -23,14 +23,14 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title"><?= lang('app.card-title-user') ?></h3>
+                <h3 class="card-title"><?= getTranslation('card-title-user') ?></h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
                 <!-- Tombol Add Users -->
                 <div class="btn-addKarywan">
                     <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <?= lang('app.button-add-user') ?>
+                        <?= getTranslation('button-add-user') ?>
                     </a>
                 </div>
                 <!-- Tombol Import Data -->
@@ -40,12 +40,12 @@
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col"><?= lang('app.text-name') ?></th>
-                            <th scope="col"><?= lang('app.text-phone') ?></th>
-                            <th scope="col"><?= lang('app.text-address') ?></th>
-                            <th scope="col"><?= lang('app.text-email') ?></th>
-                            <th scope="col"><?= lang('app.text-group-name') ?></th>
-                            <th scope="col"><?= lang('app.text-action') ?></th>
+                            <th scope="col"><?= getTranslation('text-name') ?></th>
+                            <th scope="col"><?= getTranslation('text-phone') ?></th>
+                            <th scope="col"><?= getTranslation('text-address') ?></th>
+                            <th scope="col"><?= getTranslation('text-email') ?></th>
+                            <th scope="col"><?= getTranslation('text-group-name') ?></th>
+                            <th scope="col"><?= getTranslation('text-action') ?></th>
                         </tr>
                     </thead>
                 </table>
@@ -70,28 +70,28 @@
                     <input type="hidden" name="userId" id="id" value="">
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="nama" class="form-label"><?= lang('app.text-name') ?></label>
+                            <label for="nama" class="form-label"><?= getTranslation('text-name') ?></label>
                             <input type="text" name="nama" id="inputNama" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="telp" class="form-label"><?= lang('app.text-phone') ?></label>
+                            <label for="telp" class="form-label"><?= getTranslation('text-phone') ?></label>
                             <input type="text" name="telp" id="inputTelp" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="alamat" class="form-label"><?= lang('app.text-address') ?></label>
+                            <label for="alamat" class="form-label"><?= getTranslation('text-address') ?></label>
                             <input type="text" name="alamat" id="inputAlamat" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="email" class="form-label"><?= lang('app.text-email') ?></label>
+                            <label for="email" class="form-label"><?= getTranslation('text-email') ?></label>
                             <input type="email" name="email" id="inputEmail" class="form-control">
 
                         </div>
@@ -107,7 +107,7 @@
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="groupName" class="form-label"><?= lang('app.text-group-name') ?></label>
+                            <label for="groupName" class="form-label"><?= getTranslation('text-group-name') ?></label>
                             <select name="groupName" id="inputGroupname" class="form-select">
                                 <option value="">Select Group</option>
                                 <?php foreach ($group_names as $group_name) : ?>
@@ -178,16 +178,16 @@
             }, {
                 "data": null,
                 "render": function(data, type, full, meta) {
-                    var statusText = full.is_verified == 1 ? '<?= lang('app.button-status-de-active') ?>' : '<?= lang('app.button-status-active') ?>';
+                    var statusText = full.is_verified == 1 ? '<?= getTranslation('button-status-de-active') ?>' : '<?= getTranslation('button-status-active') ?>';
                     var buttons = '';
                     // Conditionally render Update button based on edit permission
                     if (karyawanPermissions.edit == 1) {
-                        buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= lang('app.button-update') ?></button>';
+                        buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.user_id + ', \'' + full.nama + '\', \'' + full.telp + '\', \'' + full.alamat + '\', \'' + full.email + '\', \'' + full.password + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>';
                     }
 
                     // Conditionally render Delete button based on delete permission
                     if (karyawanPermissions.delete == 1) {
-                        buttons += '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.user_id + ')"><?= lang('app.button-delete') ?></button>';
+                        buttons += '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.user_id + ')"><?= getTranslation('button-delete') ?></button>';
                     }
 
                     // Render status button always
@@ -230,27 +230,27 @@
             },
             messages: {
                 nama: {
-                    required: "<?= lang('app.text-required-name') ?>"
+                    required: "<?= getTranslation('text-required-name') ?>"
                 },
                 telp: {
-                    required: "<?= lang('app.text-required-phone') ?>",
-                    minlength: "<?= lang('app.text-required-phone-minlen') ?>"
+                    required: "<?= getTranslation('text-required-phone') ?>",
+                    minlength: "<?= getTranslation('text-required-phone-minlen') ?>"
                 },
                 alamat: {
-                    required: "<?= lang('app.text-required-address') ?>",
+                    required: "<?= getTranslation('text-required-address') ?>",
                 },
 
                 email: {
-                    required: "<?= lang('app.text-required-email') ?>",
-                    email: "<?= lang('app.text-required-email-min') ?>"
+                    required: "<?= getTranslation('text-required-email') ?>",
+                    email: "<?= getTranslation('text-required-email-min') ?>"
                 },
 
                 password: {
-                    required: "<?= lang('app.text-required-password') ?>",
-                    minlength: "<?= lang('app.text-required-password-min') ?>",
+                    required: "<?= getTranslation('text-required-password') ?>",
+                    minlength: "<?= getTranslation('text-required-password-min') ?>",
                 },
                 groupName: {
-                    required: "<?= lang('app.text-required-group-name') ?>",
+                    required: "<?= getTranslation('text-required-group-name') ?>",
                 }
             },
             errorElement: 'span',
@@ -271,8 +271,8 @@
             $('#quickForm').removeClass('error invalid-feedback');
         });
         $('#btnAdd').click(function() {
-            $('#mTitle').text('<?= lang('app.text-title-user-modal') ?>');
-            $('#btnModal').text('<?= lang('app.button-add-modal') ?>');
+            $('#mTitle').text('<?= getTranslation('title-add-user-modal') ?>');
+            $('#btnModal').text('<?= getTranslation('button-add-modal') ?>');
             $('#id').val('0');
             $('#togglePassword').show();
             togglePassword();
@@ -318,8 +318,8 @@
     })
 
     function UpdateRecord(id, nama, telp, alamat, email, password, group_name) {
-        $('#mTitle').text('<?= lang('app.text-title-update-modal') ?>');
-        $('#btnModal').text('<?= lang('app.button-update-modal') ?>');
+        $('#mTitle').text('<?= getTranslation('title-update-user-modal') ?>');
+        $('#btnModal').text('<?= getTranslation('button-update-modal') ?>');
         // Populate the modal fields with the existing data
         $("#id").val(id);
         console.log("Id yang didapat dari tombol update: ", id);
@@ -335,14 +335,14 @@
 
     function deleteRecord(id) {
         Swal.fire({
-            title: "<?= lang('app.text-swal-title-delete') ?>,",
-            text: "<?= lang('app.text-swal-warning-delete') ?>,",
+            title: "<?= getTranslation('text-swal-menu-title-delete') ?>",
+            text: "<?= getTranslation('text-swal-warning-delete') ?>",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            cancelButtonText: "<?= lang('app.button-no') ?>",
-            confirmButtonText: "<?= lang('app.text-swal-confirm-delete') ?>",
+            cancelButtonText: "<?= getTranslation('button-no') ?>",
+            confirmButtonText: "<?= getTranslation('text-swal-confirm-delete') ?>",
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
@@ -357,8 +357,8 @@
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: '<?= lang('app.text-swal-deleted-title') ?>',
-                                text: '<?= lang('app.text-swal-deleted-text') ?>',
+                                title: '<?= getTranslation('text-swal-deleted-title') ?>',
+                                text: '<?= getTranslation('text-swal-user-deleted-text') ?>',
                                 showConfirmButton: false,
                                 timer: 1500
                             });
@@ -390,11 +390,11 @@
 
     function statusRecord(id, isVerified) {
         Swal.fire({
-            title: "<?= lang('app.text-swal-status-user-title') ?>",
+            title: "<?= getTranslation('text-swal-user-status-title') ?>",
             icon: 'info',
             showDenyButton: true,
-            confirmButtonText: "<?= lang('app.button-yes') ?>",
-            denyButtonText: "<?= lang('app.button-no') ?>",
+            confirmButtonText: "<?= getTranslation('button-yes') ?>",
+            denyButtonText: "<?= getTranslation('button-no') ?>",
             allowOutsideClick: false,
         }).then((result) => {
             if (result.isConfirmed) {
@@ -410,8 +410,8 @@
                         if (response.success) {
                             Swal.fire({
                                 icon: 'info',
-                                title: '<?= lang('app.text-swal-title') ?>',
-                                text: '<?= lang('app.text-swal-status-user-message') ?>',
+                                title: '<?= getTranslation('text-swal-title') ?>',
+                                text: '<?= getTranslation('text-swal-user-status-message') ?>',
                                 showConfirmButton: false,
                                 timer: 1500
                             });

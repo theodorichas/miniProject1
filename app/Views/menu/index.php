@@ -22,29 +22,26 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">DataTable Menu</h3>
+                <h3 class="card-title"><?= getTranslation('card-title-menu') ?></h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
                 <!-- Button trigger modal -->
                 <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    <?= lang('app.button-add-menu') ?>
+                    <?= getTranslation('button-add-menu') ?>
                 </a>
-                <!-- <a button type="button" id="btnAddParent" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    <?= lang('app.button-add-parent-menu') ?>
-                </a> -->
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col"><?= lang('app.text-menu') ?></th>
-                            <th scope="col"><?= lang('app.text-menu-page') ?></th>
-                            <th scope="col"><?= lang('app.text-menu-file') ?></th>
-                            <th scope="col"><?= lang('app.text-menu-parent') ?></th>
-                            <th scope="col"><?= lang('app.text-menu-icon') ?></th>
-                            <th scope="col"><?= lang('app.text-menu-note') ?></th>
-                            <th scope="col"><?= lang('app.text-menu-order') ?></th>
-                            <th scope="col"><?= lang('app.text-menu-visible') ?></th>
-                            <th scope="col"><?= lang('app.text-action') ?></th>
+                            <th scope="col"><?= getTranslation('text-menu') ?></th>
+                            <th scope="col"><?= getTranslation('text-menu-page') ?></th>
+                            <th scope="col"><?= getTranslation('text-menu-file') ?></th>
+                            <th scope="col"><?= getTranslation('text-menu-parent') ?></th>
+                            <th scope="col"><?= getTranslation('text-menu-icon') ?></th>
+                            <th scope="col"><?= getTranslation('text-menu-note') ?></th>
+                            <th scope="col"><?= getTranslation('text-menu-order') ?></th>
+                            <th scope="col"><?= getTranslation('text-menu-visible') ?></th>
+                            <th scope="col"><?= getTranslation('text-action') ?></th>
                         </tr>
                     </thead>
                 </table>
@@ -69,35 +66,34 @@
                     <input type="hidden" name="menu_id" id="menu_id" value="">
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="menu_name" class="form-label"><?= lang('app.text-menu') ?></label>
+                            <label for="menu_name" class="form-label"><?= getTranslation('text-menu') ?></label>
                             <input type="text" name="menu_name" id="menu_name" class="form-control">
-
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="page_name" class="form-label"><?= lang('app.text-menu-page') ?></label>
+                            <label for="page_name" class="form-label"><?= getTranslation('text-menu-page') ?></label>
                             <input type="text" name="page_name" id="page_name" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="file_name" class="form-label"><?= lang('app.text-menu-file') ?></label>
+                            <label for="file_name" class="form-label"><?= getTranslation('text-menu-file') ?></label>
                             <input type="text" name="file_name" id="file_name" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="parent_menu" class="form-label"><?= lang('app.text-menu-parent') ?></label>
+                            <label for="parent_menu" class="form-label"><?= getTranslation('text-menu-parent') ?></label>
                             <input type="text" name="parent_menu" id="parent_menu" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="icon" class="form-label"><?= lang('app.text-menu-icon') ?></label>
+                            <label for="icon" class="form-label"><?= getTranslation('text-menu-icon') ?></label>
                             <select class="form-select" name="icon" id="icon">
                                 <option value="">Select an Icon</option>
                                 <?php foreach ($icons as $icon) : ?>
@@ -111,21 +107,21 @@
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="note" class="form-label"><?= lang('app.text-menu-note') ?></label>
+                            <label for="note" class="form-label"><?= getTranslation('text-menu-note') ?></label>
                             <input type="text" name="note" id="note" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="order_no" class="form-label"><?= lang('app.text-menu-order') ?></label>
+                            <label for="order_no" class="form-label"><?= getTranslation('text-menu-order') ?></label>
                             <input type="number" name="order_no" id="order_no" class="form-control">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="visible" class="form-label"><?= lang('app.text-menu-visible') ?></label>
+                            <label for="visible" class="form-label"><?= gettranslation('text-menu-visible') ?></label>
                             <div class="form-check form-switch">
                                 <label class="form-check-label" for="visible"></label>
                                 <input type="checkbox" class="form-check-input" name="visible" id="visible">
@@ -210,12 +206,12 @@
 
                         // Conditionally render Update button based on edit permission
                         if (karyawanPermissions.edit == 1) {
-                            buttons += buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= lang('app.button-update') ?></button>';
+                            buttons += buttons += '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.menu_id + ', \'' + full.menu_name + '\', \'' + full.page_name + '\', \'' + full.file_name + '\', \'' + full.parent_menu + '\', \'' + full.icon + '\', \'' + full.note + '\', \'' + full.order_no + '\', \'' + full.visible + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>';
                         }
 
                         // Conditionally render Delete button based on delete permission
                         if (karyawanPermissions.delete == 1) {
-                            buttons += '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.menu_id + ')"><?= lang('app.button-delete') ?></button>';
+                            buttons += '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.menu_id + ')"><?= getTranslation('button-delete') ?></button>';
                         }
 
                         return buttons;
@@ -257,25 +253,25 @@
             },
             messages: {
                 menu_name: {
-                    required: "<?= lang('app.text-required-menu-name') ?>"
+                    required: "<?= getTranslation('text-required-menu-name') ?>"
                 },
                 page_name: {
-                    required: "<?= lang('app.text-required-menu-page') ?>",
+                    required: "<?= getTranslation('text-required-menu-page') ?>",
                 },
                 file_name: {
-                    required: "<?= lang('app.text-required-menu-file') ?>",
+                    required: "<?= getTranslation('text-required-menu-file') ?>",
                 },
                 parent_menu: {
-                    required: "<?= lang('app.text-required-menu-parent') ?>",
+                    required: "<?= getTranslation('text-required-menu-parent') ?>",
                 },
                 icon: {
-                    required: "<?= lang('app.text-required-menu-icon') ?>",
+                    required: "<?= getTranslation('text-required-menu-icon') ?>",
                 },
                 note: {
-                    required: "<?= lang('app.text-required-menu-note') ?>",
+                    required: "<?= getTranslation('text-required-menu-note') ?>",
                 },
                 order_no: {
-                    required: "<?= lang('app.text-required-menu-order') ?>",
+                    required: "<?= getTranslation('text-required-menu-order') ?>",
                 }
             },
             errorElement: 'span',
@@ -296,8 +292,8 @@
             $('#quickForm').removeClass('error invalid-feedback');
         });
         $('#btnAdd').click(function() {
-            $('#mTitle').text('<?= lang('app.button-add-menu') ?>');
-            $('#btnModal').text('<?= lang('app.button-add-modal') ?>');
+            $('#mTitle').text('<?= getTranslation('button-add-menu') ?>');
+            $('#btnModal').text('<?= getTranslation('button-add-modal') ?>');
             $('#id').val('0');
         })
         // Add Parent
@@ -350,8 +346,8 @@
     })
 
     function UpdateRecord(menu_id, menu_name, page_name, file_name, parent_menu, icon, note, order_no, visible) {
-        $('#mTitle').text('<?= lang('app.text-title-modal-group-update') ?>');
-        $('#btnModal').text('<?= lang('app.button-update') ?>');
+        $('#mTitle').text('<?= getTranslation('title-update-menu-modal') ?>');
+        $('#btnModal').text('<?= getTranslation('button-update-modal') ?>');
         // Populate the modal fields with the existing data
         $("#menu_id").val(menu_id);
         console.log("Id yang didapat dari tombol update: ", menu_id);
@@ -371,13 +367,13 @@
 
     function deleteRecord(menu_id) {
         Swal.fire({
-            title: "<?= lang('app.text-swal-title-delete') ?>",
-            text: "<?= lang('app.text-swal-warning-delete') ?>",
+            title: "<?= getTranslation('text-swal-deleted-title') ?>",
+            text: "<?= getTranslation('text-swal-warning-delete') ?>",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "<?= lang('app.text-swal-confirm-delete') ?>"
+            confirmButtonText: "<?= getTranslation('text-swal-confirm-delete') ?>"
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
@@ -392,8 +388,8 @@
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: '<?= lang('app.text-swal-deleted-title') ?>',
-                                text: '<?= lang('app.text-swal-deleted-text-menu') ?>',
+                                title: '<?= getTranslation('text-swal-deleted-title') ?>',
+                                text: '<?= getTranslation('text-swal-menu-text-delete') ?>',
                                 showConfirmButton: false,
                                 timer: 1500
                             });

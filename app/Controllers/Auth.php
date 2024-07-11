@@ -6,6 +6,8 @@ use App\Models\ModelKaryawan;
 use App\Models\ModelPasswordRes;
 use Config\Services;
 use PhpParser\Node\Expr\Isset_;
+use config\Email;
+
 
 class Auth extends Home
 {
@@ -166,10 +168,16 @@ class Auth extends Home
     //register verification link
     private function sendEmailverif($email, $token)
     {
-        $this->email->setFrom('testing.magang@gmail.com', 'Arona');
+        $message = view('template/regis_temp', [
+            'token' => $token
+        ]);
+        //load the email config
+        $emailConfig = new Email();
+        $this->email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
         $this->email->setTo($email);
         $this->email->setSubject('Ohayou Sensei');
-        $this->email->setMessage('<p>Click the link below to verify your email:</p> <a href="' . site_url('/verify/' . $token) . '">Verify Email</a>');
+        // $this->email->setMessage('<p>Click the link below to verify your email:</p> <a href="' . site_url('/verify/' . $token) . '">Verify Email</a>');
+        $this->email->setMessage($message);
         if (!$this->email->send()) {
             return $this->response->setJSON(['error' => true, 'message' => 'There is an error!! Verification has not been sent']);
         } else {
@@ -244,8 +252,10 @@ class Auth extends Home
             $emailContent = view('template/reset_pass', [
                 'token' => $token,
             ]);
+
+            $emailConfig = new Email();
             $this->ModelPasswordRes->insertData($data);
-            $this->email->setFrom('testing.magang@gmail.com', 'Arona');
+            $this->email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
             $this->email->setTo($email);
             $this->email->setSubject('Ohayou Sensei');
             // $this->email->setMessage('<p>Click this link to reset your password:</p> <a href="' . site_url('/resetPassForm/' . $token) . '">Password Reset</a>');

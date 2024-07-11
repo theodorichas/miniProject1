@@ -77,7 +77,7 @@
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="<?= base_url('/change-language/en') ?>">English/En</a>
-                        <a class="dropdown-item" href="<?= base_url('/change-language/id') ?>">Indonesian/Id</a>
+                        <a class="dropdown-item" href="<?= base_url('/change-language/indo') ?>">Indonesian/Id</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">

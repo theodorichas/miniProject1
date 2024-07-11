@@ -88,7 +88,7 @@
     </div>
 </div>
 <!-- Datatable -->
-<div class="col-12" id="dataTable">
+<div class="col-12" id="dataTable" style="display: none;">
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">

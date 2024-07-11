@@ -8,6 +8,7 @@ use App\Models\ModelgPermission;
 use TCPDF;
 use DateTime;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use config\Email;
 
 
 
@@ -259,13 +260,15 @@ class pdf extends Home
 
         $emailService = \Config\Services::email();
 
+        $emailConfig = new Email();
+
         if ($uploadFile && $uploadFile->isValid() && !$uploadFile->hasMoved()) {
             $newName = $uploadFile->getRandomName();
             $uploadFile->move(WRITEPATH . 'uploads', $newName);
             $filePath = WRITEPATH . 'uploads/' . $newName;
 
             $emailService->setTo($email);
-            $emailService->setFrom('testing.magang@gmail.com', 'Arona');
+            $emailService->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
             $emailService->setSubject('Testing attachment');
             $emailService->setMessage("huehuehuehuehuheu");
             $emailService->attach($filePath, 'attachment');
@@ -298,11 +301,14 @@ class pdf extends Home
         //load the email library
         $email = \Config\Services::email();
 
+        //load the email config
+        $emailConfig = new Email();
         //Making an empty variable
         $results = [];
         foreach ($filteredData as $employee) {
             $email->setTo($employee['email']);
-            $email->setFrom('testing.magang@gmail.com', 'Arona');
+            // $email->setFrom('testing.magang@gmail.com', 'Arona');
+            $email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
             $email->setSubject('Testing "' . $employee['name'] . '"');
             $email->setMessage('geghe');
             $email->attach($filePath, 'attachment');
