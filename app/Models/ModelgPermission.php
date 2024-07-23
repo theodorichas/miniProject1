@@ -96,4 +96,11 @@ class ModelgPermission extends Model
         $query = $builder->get();
         return $query->getResult();
     }
+
+    public function deleteByMenuId($menu_id)
+    {
+        $builder = $this->db->table('group_permission');
+        $builder->where('menu_id', $menu_id);
+        $builder->delete();
+    }
 }

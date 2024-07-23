@@ -92,11 +92,12 @@ class Home extends BaseController
 
     public function testing()
     {
-        if (!function_exists('set_app_cookie') || !function_exists('get_app_cookie') || !function_exists('delete_app_cookie')) {
-            echo "Gagal";
-        } else {
-            echo "Berhasil";
-        }
+        // if (!function_exists('set_app_cookie') || !function_exists('get_app_cookie') || !function_exists('delete_app_cookie')) {
+        //     echo "Gagal";
+        // } else {
+        //     echo "Berhasil";
+        // }
+        return view('testing/index');
     }
 
     public function setCookie()
@@ -105,18 +106,22 @@ class Home extends BaseController
         return 'Cookie has been set';
     }
 
-    // public function getCookie()
-    // {
-    //     $cookieValue = get_cookie('testing');
-    //     if ($cookieValue) {
-    //         return "Cookie Value: " . $cookieValue;
-    //     } else {
-    //         return "Cookie not found";
-    //     }
-    // }
     public function deleteCookie()
     {
         delete_cookie('language_preference');
         return 'Cookie has been deleted';
+    }
+
+    public function addLanguage()
+    {
+        $this->setLanguage();
+        $data['title'] = 'Home';
+        $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['nama'] = $_SESSION['nama'] ?? '';
+        $data['groupedMenus'] = groupMenusByParent($data['menus']);
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        return view('language/index', $data);
     }
 }

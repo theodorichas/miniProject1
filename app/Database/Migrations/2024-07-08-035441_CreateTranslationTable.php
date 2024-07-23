@@ -9,20 +9,20 @@ class CreateTranslationsTable extends Migration
     public function up()
     {
         $this->forge->addField([
-            'id'          => [
+            'langId'          => [
                 'type'           => 'INT',
                 'constraint'     => 11,
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
-            'key'       => [
+            'langKey'       => [
                 'type'       => 'VARCHAR',
                 'constraint' => '255',
             ],
-            'en' => [
+            'langEn' => [
                 'type'       => 'TEXT',
             ],
-            'indo'       => [
+            'langIndo'       => [
                 'type'       => 'TEXT',
             ],
         ]);

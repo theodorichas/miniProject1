@@ -322,7 +322,7 @@
                     if (response.status == 1) {
                         Swal.fire({
                             icon: 'error',
-                            title: '<?= lang('app.text-swal-title-error') ?>',
+                            title: '<?= getTranslation('text-swal-title-error') ?>',
                             showConfirmButton: false,
                             timer: 1500,
                         });
@@ -330,7 +330,7 @@
                     } else {
                         Swal.fire({
                             icon: 'success',
-                            title: '<?= lang('app.text-swal-title-success') ?>',
+                            title: '<?= getTranslation('text-swal-title-success') ?>',
                             showConfirmButton: false,
                             timer: 1500,
                         });

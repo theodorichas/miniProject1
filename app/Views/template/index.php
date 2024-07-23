@@ -78,6 +78,7 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="<?= base_url('/change-language/en') ?>">English/En</a>
                         <a class="dropdown-item" href="<?= base_url('/change-language/indo') ?>">Indonesian/Id</a>
+                        <a class="dropdown-item" href="<?= base_url('/addLanguage') ?>"> +Add language</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -109,63 +110,35 @@
 
             <!-- Sidebar -->
             <div class="sidebar" id='sidebar'>
-                <!-- Sidebar user panel (optional) -->
-                <!-- <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="asset/AdminLTE/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-                    </div>
-                    <div class="info">
-                        <a href="#" class="d-block">Alexander Pierce</a>
-                    </div>
-                </div> -->
-                <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <?php if (session()->has('user_id')) : // Check if user is logged in 
                         ?>
-                            <?php foreach ($groupedMenus as $parentMenu => $menus) : ?>
-                                <?php if ($parentMenu == 'root') : ?>
-                                    <?php foreach ($menus as $menu) : ?>
-                                        <li class="nav-item">
-                                            <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
-                                                <i class="<?= $menu->icon ?>"></i>
-                                                <p><?= $menu->menu_name ?></p>
-                                            </a>
-                                        </li>
-                                    <?php endforeach; ?>
-                                <?php else : ?>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="nav-icon fas fa-copy"></i>
-                                            <p>
-                                                <?= $parentMenu ?>
-                                                <i class="fas fa-angle-left right"></i>
-                                            </p>
+                            <?php foreach ($menus as $menu) : ?>
+                                <?php
+                                // Determine if the menu item should be hidden based on 'visible' status
+                                $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
+
+                                // Debug: Print the visibility value
+                                echo 'Menu ID: ' . $menu->menu_id . ' - Visible: ' . $menu->visible . '<br>';
+
+                                // Check if the user has permission to view this menu
+                                $hasPermission = false;
+                                foreach ($permission as $perm) {
+                                    if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
+                                        $hasPermission = true;
+                                        break; // No need to continue checking once permission is found
+                                    }
+                                }
+                                ?>
+                                <?php if ($hasPermission) : ?>
+                                    <li class="nav-item <?= $visibilityClass ?>">
+                                        <!-- Debug: Print the applied visibility class -->
+                                        <?php echo 'Visibility Class: ' . $visibilityClass . '<br>'; ?>
+                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
+                                            <i class="<?= $menu->icon ?>"></i>
+                                            <p><?= $menu->menu_name ?></p>
                                         </a>
-                                        <ul class="nav nav-treeview">
-                                            <?php foreach ($menus as $menu) : ?>
-                                                <?php
-                                                // Determine if the menu item should be hidden based on 'visible' status
-                                                $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
-                                                // Check if the user has permission to view this menu
-                                                $hasPermission = false;
-                                                foreach ($permission as $perm) {
-                                                    if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
-                                                        $hasPermission = true;
-                                                        break; // No need to continue checking once permission is found
-                                                    }
-                                                }
-                                                ?>
-                                                <li class="nav-item <?= $visibilityClass ?>">
-                                                    <?php if ($hasPermission) : ?>
-                                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
-                                                            <i class="<?= $menu->icon ?>"></i>
-                                                            <p><?= $menu->menu_name ?></p>
-                                                        </a>
-                                                    <?php endif; ?>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
                                     </li>
                                 <?php endif; ?>
                             <?php endforeach; ?>
@@ -174,13 +147,14 @@
                             <div class="brand-text font-weight-light">
                                 <p class="sidemenu"><?= lang('app.sidemenu-alert'); ?></p>
                             </div>
+                        <?php endif; ?>
                     </ul>
-                <?php endif; ?>
                 </nav>
                 <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
         </aside>
+
 
         <!-- Content Wrapper. Contains page content -->
         <?php if (session()->has('user_id')) : ?>
@@ -310,6 +284,8 @@
         window.onload = adjustWelcomeText;
         window.onresize = adjustWelcomeText;
     </script>
+
+
 
     <?= $this->renderSection('scripts'); ?>
 

@@ -131,6 +131,7 @@ class Menu extends Home
     public function delete()
     {
         $menu_id = $this->request->getPost('menu_id');
+        $this->ModelgPermission->deleteByMenuId($menu_id);
         $this->ModelMenu->delete_dataMenu($menu_id);
         return $this->response->setJSON(['success' => 'Data successfully deleted']);
     }

@@ -227,6 +227,47 @@ class TranslationsSeeder extends Seeder
                 'indo'    => 'Visibilitas',
             ],
 
+            // <--- Group --->
+            [
+                'key' => 'card-title-group',
+                'en'  => 'Group DataTable',
+                'indo'    => 'DataTable Group',
+            ],
+            [
+                'key' => 'button-add-group',
+                'en'  => 'Add Group',
+                'indo'    => 'Tambah Group',
+            ],
+            [
+                'key' => 'text-group-code',
+                'en'  => 'Group Code',
+                'indo'    => 'Kode Group',
+            ],
+            [
+                'key' => 'text-group-name',
+                'en'  => 'Group Name',
+                'indo'    => 'Nama Group',
+            ],
+            [
+                'key' => 'button-group-permission',
+                'en'  => 'Permissions',
+                'indo'    => 'Hak Akses',
+            ],
+
+            // <--- Permission --->
+            [
+                'key' => 'text-group-id',
+                'en'  => 'Group ID',
+                'indo'    => 'ID Group',
+            ],
+            [
+                'key' => 'text-group-view',
+                'en'  => 'View',
+                'indo'    => 'Lihat',
+            ],
+
+
+
 
             // <--- Modal --->
             [
@@ -273,6 +314,26 @@ class TranslationsSeeder extends Seeder
                 'key' => 'title-update-menu-modal',
                 'en'  => 'Update Menu',
                 'indo'    => 'Perbahurui Menu',
+            ],
+
+            //Group Modal
+            //Update dan Perbaharui Group
+            [
+                'key' => 'title-update-group-modal',
+                'en'  => 'Update Group',
+                'indo'    => 'Perbahurui Group',
+            ],
+
+            //delete dan hapus Group
+            [
+                'key' => 'title-delete-group-modal',
+                'en'  => 'Delete Group',
+                'indo'    => 'Hapus Group',
+            ],
+            [
+                'key' => 'button-delete-group-modal',
+                'en'  => 'Delete',
+                'indo'    => 'Hapus',
             ],
 
 
@@ -362,6 +423,28 @@ class TranslationsSeeder extends Seeder
             ],
             [
                 'key' => 'text-required-menu-order',
+                'en'  => "This field cannot be empty!",
+                'indo'    => "field ini tidak boleh kosong!",
+            ],
+
+            //Required -> group
+            [
+                'key' => 'text-required-group-code',
+                'en'  => "This field cannot be empty!",
+                'indo'    => "field ini tidak boleh kosong!",
+            ],
+            [
+                'key' => 'text-required-group-code-min',
+                'en'  => "Please enter a value greater than Zero!",
+                'indo'    => "Silahkan masukkan angka yang lebih dari nol!",
+            ],
+            [
+                'key' => 'text-required-group-name',
+                'en'  => "This field cannot be empty!",
+                'indo'    => "field ini tidak boleh kosong!",
+            ],
+            [
+                'key' => 'tes',
                 'en'  => "This field cannot be empty!",
                 'indo'    => "field ini tidak boleh kosong!",
             ],

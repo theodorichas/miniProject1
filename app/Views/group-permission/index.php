@@ -32,7 +32,7 @@
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col"><?= lang('app.text-group-id') ?></th>
+                            <th scope="col"><?= getTranslation('text-group-id') ?></th>
                             <th scope="col"><?= lang('app.text-view') ?></th>
                             <th scope="col"><?= lang('app.text-edit') ?></th>
                             <th scope="col"><?= lang('app.text-delete') ?></th>

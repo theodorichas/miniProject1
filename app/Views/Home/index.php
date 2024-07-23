@@ -81,4 +81,5 @@
 <!-- /.row -->
 <?= $this->endSection('content'); ?>
 <?= $this->section('scripts'); ?>
+
 <?= $this->endSection('scripts'); ?>

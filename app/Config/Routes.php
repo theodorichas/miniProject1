@@ -72,4 +72,15 @@ $routes->get('/getCookie', 'Home::getCookie');
 $routes->get('/deleteCookie', 'Home::deleteCookie');
 
 
+
+//language
+$routes->get('/addLanguage', 'language::index');
+$routes->post('/langdtb', 'language::langdtb');
+$routes->add('/lang/langAdd', 'language::updateAdd');
+$routes->post('/language/delete', 'language::delete');
+
+
+
+
+
 service('auth')->routes($routes);

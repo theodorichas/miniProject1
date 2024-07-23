@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')  ?>">
-
 <!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <!-- SweetAlert2 -->
@@ -25,19 +24,20 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title"><?= getTranslation('card-title-group') ?></h3>
+                <h3 class="card-title"><?= getTranslation('card-title-language') ?></h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
                 <!-- Button trigger modal -->
                 <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    <?= getTranslation('button-add-group') ?>
+                    <?= getTranslation('button-add-lang') ?>
                 </a>
                 <table id="example" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th scope="col"><?= getTranslation('text-group-code') ?></th>
-                            <th scope="col"><?= getTranslation('text-group-name') ?></th>
+                            <th scope="col"><?= getTranslation('text-lang-key') ?></th>
+                            <th scope="col"><?= getTranslation('text-lang-en') ?></th>
+                            <th scope="col"><?= getTranslation('text-lang-indo') ?></th>
                             <th scope="col"><?= getTranslation('text-action') ?></th>
                         </tr>
                     </thead>
@@ -60,19 +60,24 @@
             <div class="modal-body" id="modal-addK">
                 <form name="formGroup" id="quickForm">
                     <?= csrf_field(); ?>
-                    <input type="hidden" name="groupId" id="id" value="">
+                    <input type="hidden" name="langId" id="langId" value="">
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="groupcode" class="form-label"><?= getTranslation('text-group-code') ?></label>
-                            <input type="number" name="groupCode" id="inputGroupcode" class="form-control">
+                            <label for="langKey" class="form-label"><?= getTranslation('text-lang-key') ?></label>
+                            <input type="text" name="langKey" id="langKey" class="form-control" placeholder="<?= getTranslation('text-lang-key-ph') ?>">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <label for="groupname" class="form-label"><?= getTranslation('text-group-name') ?></label>
-                            <input type="text" name="groupName" id="inputGroupname" class="form-control">
-
+                            <label for="langValueEn" class="form-label"><?= getTranslation('text-lang-key-en') ?></label>
+                            <input type="text" name="langValueEn" id="langValueEn" class="form-control" placeholder="<?= getTranslation('text-lang-key-en-ph') ?>">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="langValueIndo" class="form-label"><?= getTranslation('text-lang-key-indo') ?></label>
+                            <input type="text" name="langValueIndo" id="langValueIndo" class="form-control" placeholder="<?= getTranslation('text-lang-key-indo-ph') ?>">
                         </div>
                     </div>
                     <button type="button" id="btnModal" name="update" class="btn btn-primary"></button>
@@ -81,7 +86,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Merupakan extensi dari scripts yang ada pada view template -->
 <?= $this->section('scripts'); ?>
@@ -118,21 +122,21 @@
             'processing': true,
             'serverSide': false,
             'serverMethod': 'post',
-            "ajax": "<?= site_url('groupdtb') ?>",
+            "ajax": "<?= site_url('langdtb') ?>",
             "columns": [{
-                "data": "group_code"
+                "data": "key",
             }, {
-                "data": "group_name"
+                "data": "en",
+            }, {
+                "data": "indo",
             }, {
                 "data": null,
                 "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.group_id + ', \'' + full.group_code + '\', \'' + full.group_name + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
-                        '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.group_id + ')"><?= getTranslation('button-delete') ?></button>' +
-                        '<button class="btn btn-info action-btn"onclick="gPermission(' + full.group_id + ')"><?= getTranslation('button-group-permission') ?></button>';
+                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.langId + ', \'' + full.key + '\', \'' + full.en + '\', \'' + full.indo + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
+                        '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.langId + ')"><?= getTranslation('button-delete') ?></button>';
                 },
                 "defaultContent": ""
             }],
-            'order': [0, 'asc'],
         });
     });
 </script>
@@ -141,22 +145,26 @@
     $(document).ready(function() {
         $('#quickForm').validate({
             rules: {
-                groupCode: {
-                    required: true,
-                    min: 1,
+                langKey: {
+                    required: true
                 },
-                groupName: {
-                    required: true,
+                langValueEn: {
+                    required: true
                 },
+                langValueIndo: {
+                    required: true
+                }
             },
             messages: {
-                groupCode: {
-                    required: "<?= getTranslation('text-required-group-code') ?>",
-                    min: "<?= getTranslation('text-required-group-code-min') ?>"
+                langKey: {
+                    required: "This field cannot be empty"
                 },
-                groupName: {
-                    required: "<?= getTranslation('text-required-group-name') ?>",
+                langValueEn: {
+                    required: "This field cannot be empty"
                 },
+                langValueIndo: {
+                    required: "This field cannot be empty!!"
+                }
             },
             errorElement: 'span',
             errorPlacement: function(error, element) {
@@ -176,10 +184,10 @@
             $('#quickForm').removeClass('error invalid-feedback');
         });
         $('#btnAdd').click(function() {
-            $('#mTitle').text('<?= getTranslation('button-add-group') ?>');
-            $('#btnModal').text('<?= getTranslation('button-add-modal') ?>');
-            $('#id').val('0');
-        })
+            $('#mTitle').text('Add Language');
+            $('#btnModal').text('Add language');
+            $('#langId').val('0');
+        });
         $('#btnModal').click(function() {
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
@@ -187,46 +195,50 @@
             $.ajax({
                 method: 'POST',
                 type: 'JSON',
-                url: '<?= base_url("group/updateAdd") ?>',
+                url: '<?= base_url("lang/langAdd") ?>',
                 data: formData,
                 success: function(response) {
-                    if (response.status == 1) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '<?= getTranslation('text-swal-title-error') ?>',
-                            showConfirmButton: false,
-                            timer: 1500,
-                        });
-
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '<?= getTranslation('text-swal-title-success') ?>',
-                            showConfirmButton: false,
-                            timer: 1500,
-                        });
-                        $('#example').DataTable().ajax.reload();
-                        $('#exampleModal').modal('hide');
-                    }
+                    Swal.fire({
+                        title: "Data has been added/updated",
+                        icon: "success",
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: "Ok"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $('#example').DataTable().ajax.reload();
+                            $('#exampleModal').modal('hide');
+                            location.reload();
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log('AJAX request failed!');
+                    console.log('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request. Please try again later.',
+                        icon: 'error'
+                    });
                 }
             });
-        })
-    })
+        });
+    });
 
-    function UpdateRecord(id, group_code, group_name) {
-        $('#mTitle').text('<?= getTranslation('title-update-group-modal') ?>');
+    function UpdateRecord(langId, langKey, langValueEn, langValueIndo) {
+        $('#mTitle').text('<?= getTranslation('title-update-menu-modal') ?>');
         $('#btnModal').text('<?= getTranslation('button-update-modal') ?>');
         // Populate the modal fields with the existing data
-        $("#id").val(id);
-        console.log("Id yang didapat dari tombol update: ", id);
-        $('#inputGroupcode').val(group_code);
-        $('#inputGroupname').val(group_name);
+        $("#langId").val(langId);
+        console.log("Id yang didapat dari tombol update: ", langId);
+        $('#langKey').val(langKey);
+        $('#langValueEn').val(langValueEn);
+        $('#langValueIndo').val(langValueIndo);
     }
 
-    function deleteRecord(id) {
+    function deleteRecord(langId) {
         Swal.fire({
-            title: "<?= getTranslation('text-swal-title-delete') ?>,",
-            text: "<?= getTranslation('text-swal-warning-delete') ?>,",
+            title: "<?= getTranslation('text-swal-menu-title-delete') ?>",
+            text: "<?= getTranslation('text-swal-warning-delete') ?>",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -236,24 +248,25 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '<?= site_url('group/delete') ?>',
+                    url: '<?= site_url('language/delete') ?>',
                     method: 'POST',
                     type: 'JSON',
                     data: {
-                        'groupId': id
+                        'langId': langId
                     },
                     success: function(response) {
                         console.log(response)
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: '<?= getTranslation('app.text-swal-deleted-title') ?>',
-                                text: '<?= getTranslation('app.text-swal-deleted-text-group') ?>',
+                                title: '<?= getTranslation('text-swal-deleted-title') ?>',
+                                text: '<?= getTranslation('text-swal-user-deleted-text') ?>',
                                 showConfirmButton: false,
                                 timer: 1500
                             });
                             // Reload the DataTable or update the row accordingly
                             $('#example').DataTable().ajax.reload();
+                            location.reload();
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -275,13 +288,12 @@
                 });
             }
         });
-    }
-
-    function gPermission(group_id) {
-        console.log('Group ID:', group_id); // Log the group_id value
-        window.location.href = '<?= base_url('/gPermission') ?>?id=' + group_id;
+        console.log("Id yang didapat dari tombol update: ", langId);
     }
 </script>
+
+
+
 
 
 <?= $this->endSection('scripts'); ?>
