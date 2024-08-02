@@ -40,6 +40,12 @@ class Group extends Home
         // Extract the menu_id from the URI
         $fileName = end($segments); // Assuming the menu_id is at the end of the URI path
 
+        // Retrieve the menu_id from the URI
+        $menuId = $this->ModelMenu->getMenuIdbyURI($fileName);
+
+        // Retrieve Page Name from menuId
+        $pageName = $this->ModelMenu->getMenuPageName($menuId);
+
         // Retrieve user's group name from session
         $groupName = session()->get('group_name');
 
@@ -55,7 +61,7 @@ class Group extends Home
         if (!$hasPermission) {
             return view('error-page/index');
         } else {
-            $data['title'] = "Group list";
+            $data['title'] = $pageName;
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['groupedMenus'] = groupMenusByParent($data['menus']);
             $data['nama'] = $_SESSION['nama'] ?? '';

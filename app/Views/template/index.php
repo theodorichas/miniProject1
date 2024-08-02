@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html> -->
+<!DOCTYPE html>
 <html lang="<?= session()->get('language') ?? 'en' ?>">
 
 <head>
@@ -14,7 +14,6 @@
 
     <!-- CSS W3S -->
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -120,7 +119,7 @@
                                 $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
 
                                 // Debug: Print the visibility value
-                                echo 'Menu ID: ' . $menu->menu_id . ' - Visible: ' . $menu->visible . '<br>';
+                                // echo 'Menu ID: ' . $menu->menu_id . ' - Visible: ' . $menu->visible . '<br>';
 
                                 // Check if the user has permission to view this menu
                                 $hasPermission = false;
@@ -134,7 +133,7 @@
                                 <?php if ($hasPermission) : ?>
                                     <li class="nav-item <?= $visibilityClass ?>">
                                         <!-- Debug: Print the applied visibility class -->
-                                        <?php echo 'Visibility Class: ' . $visibilityClass . '<br>'; ?>
+                                        <!-- <?php echo 'Visibility Class: ' . $visibilityClass . '<br>'; ?> -->
                                         <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
                                             <i class="<?= $menu->icon ?>"></i>
                                             <p><?= $menu->menu_name ?></p>

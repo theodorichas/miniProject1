@@ -154,7 +154,7 @@
 <script>
     $(document).ready(function() {
         // Pass PHP permissions to JavaScript
-        var menuId = <?= $menuId->menu_id ?>;
+        var menuId = <?= $menuId ?>;
         var permissions = <?= json_encode($permission) ?>;
         var karyawanPermissions = permissions.find(p => p.menu_id == menuId);
         $('#example').DataTable({

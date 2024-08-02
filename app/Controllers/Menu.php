@@ -38,6 +38,9 @@ class Menu extends Home
         // Retrieve the menu_id from the URI
         $menuId = $this->ModelMenu->getMenuIdbyURI($fileName);
 
+        // Retrieve Page Name from menuId
+        $pageName = $this->ModelMenu->getMenuPageName($menuId);
+
         // Retrieve user's group name from session
         $groupName = session()->get('group_name');
 
@@ -53,7 +56,7 @@ class Menu extends Home
         if (!$hasPermission) {
             return view('error-page/index');
         } else {
-            $data['title'] = 'Menu List';
+            $data['title'] = $pageName;
             $data['icons'] = getFontAwesomeCheatSheet();
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['groupedMenus'] = groupMenusByParent($data['menus']);

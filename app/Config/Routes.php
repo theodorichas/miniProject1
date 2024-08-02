@@ -67,6 +67,7 @@ $routes->post('/resetPass', 'auth::resetPassword');
 
 //testing purpose
 $routes->get('/testing', 'home::testing');
+$routes->get('/testing2', 'home::testing2');
 $routes->get('/setCookie', 'home::setCookie');
 $routes->get('/getCookie', 'Home::getCookie');
 $routes->get('/deleteCookie', 'Home::deleteCookie');
@@ -79,6 +80,12 @@ $routes->post('/langdtb', 'language::langdtb');
 $routes->add('/lang/langAdd', 'language::updateAdd');
 $routes->post('/language/delete', 'language::delete');
 
+
+//templates
+$routes->get('/templates', 'template::index');
+$routes->post('/templatedtb', 'template::templatedtb');
+$routes->add('/template/templateAdd', 'template::templateAdd');
+$routes->post('/template/delete', 'template::delete');
 
 
 

@@ -7,11 +7,12 @@ use App\Models\ModelMenu;
 use App\Models\ModelgPermission;
 use App\Models\ModelGroup;
 use App\Models\ModelLanguage;
+use App\Models\ModelTemplates;
 
 
-class language extends Home
+class template extends Home
 {
-    protected $db, $builder, $ModelGroup, $ModelMenu, $ModelKaryawan, $ModelgPermission, $ModelLanguage;
+    protected $db, $builder, $ModelGroup, $ModelMenu, $ModelKaryawan, $ModelgPermission, $ModelLanguage, $ModelTemplates;
 
     public function __construct()
     {
@@ -22,6 +23,7 @@ class language extends Home
         $this->ModelgPermission = new ModelgPermission();
         $this->ModelMenu = new ModelMenu();
         $this->ModelLanguage = new ModelLanguage();
+        $this->ModelTemplates = new ModelTemplates();
         $this->request = \Config\Services::request();
         helper('general_helper');
     }
@@ -55,36 +57,32 @@ class language extends Home
         // Retrieve permissions for the group
         $permissions = $this->ModelgPermission->get_permission($groupId);
 
-
         // Check if the user has permission for the current route
         $hasPermission = $this->userPermission($permissions, $fileName);
 
-        if (!$hasPermission) {
-            return view('error-page/index');
-        } else {
-            // Proceed to load the view
-            $data['title'] = $pageName;
-            $data['group_names'] = $this->ModelKaryawan->getGroupNames();
-            $data['menus'] = $this->ModelMenu->getMenuNames();
-            $data['groupedMenus'] = groupMenusByParent($data['menus']);
-            $data['nama'] = $_SESSION['nama'] ?? '';
-            $data['permission'] = $permissions;
-            $data['menuId'] = $menuId;
-            // echo json_encode($routes); -> To see where the routes comin
-            // echo json_encode($data['permission']);
-            return view('language/index', $data);
-        }
+
+        // Proceed to load the view
+        $data['title'] = $pageName;
+        $data['group_names'] = $this->ModelKaryawan->getGroupNames();
+        $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['groupedMenus'] = groupMenusByParent($data['menus']);
+        $data['nama'] = $_SESSION['nama'] ?? '';
+        $data['permission'] = $permissions;
+        $data['menuId'] = $menuId;
+        // echo json_encode($routes); -> To see where the routes comin
+        // echo json_encode($data['permission']);
+        return view('template/datatable', $data);
     }
 
-    public function langdtb()
+    public function templatedtb()
     {
         $param['draw'] = isset($_REQUEST['draw']) ? $_REQUEST['draw'] : '';
         $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : '';
         $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : '';
         $search_value = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : '';
 
-        $data = $this->ModelLanguage->searchAndDisplay($search_value, $start, $length);
-        $total_count = $this->ModelLanguage->searchAndDisplay($search_value, null, null, true);
+        $data = $this->ModelTemplates->searchAndDisplay($search_value, $start, $length);
+        $total_count = $this->ModelTemplates->searchAndDisplay($search_value, null, null, true);
 
         $json_data = array(
             'draw' => intval($param['draw']),
@@ -96,33 +94,35 @@ class language extends Home
         echo json_encode($json_data);
     }
 
-    public function updateAdd()
+    public function templateAdd()
     {
-        $langId = intval($this->request->getPost('langId'));
-        $langKey = $this->request->getPost('langKey');
-        $langValueEn = $this->request->getPost('langValueEn');
-        $langValueIndo = $this->request->getPost('langValueIndo');
+        $template_id = intval($this->request->getPost('template_id'));
+        $template_name = $this->request->getPost('template_name');
+        $template_subject = $this->request->getPost('template_subject');
+        $template_body = $this->request->getPost('template_body');
 
         $data = [
-            'langId' => $langId,
-            'key' => $langKey,
-            'en' => $langValueEn,
-            'indo' => $langValueIndo,
+            'template_id' => $template_id,
+            'template_name' => $template_name,
+            'template_subject' => $template_subject,
+            'template_body' => $template_body,
         ];
 
-        var_dump($data);
-        if ($langId > 0) {
-            $this->ModelLanguage->update_lang($langId, $data);
+        if ($template_id > 0) {
+            $data['updated_at'] = date('Y-m-d H:i:s');
+            $this->ModelTemplates->update_template($data, $template_id);
         } else {
-            $this->ModelLanguage->add_lang($data);
+            $data['created_at'] = date('Y-m-d H:i:s');
+            $this->ModelTemplates->add_template($data);
         }
     }
 
+
+
     public function delete()
     {
-        $langId = $this->request->getPost('langId');
-        // die();
-        $this->ModelLanguage->delete_lang($langId);
+        $template_id = $this->request->getPost('template_id');
+        $this->ModelTemplates->delete_template($template_id);
         return $this->response->setJSON(['success' => true, 'message' => 'Data successfully deleted']);
     }
 }

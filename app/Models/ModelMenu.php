@@ -80,7 +80,24 @@ class ModelMenu extends Model
     {
         $builder = $this->db->table('menu');
         $builder->select('menu_id');
-        $builder->where('menu_name', $fileName);
-        return $builder->get()->getFirstRow();
+        $builder->where('file_name', $fileName);
+        $result = $builder->get()->getFirstRow();
+
+        // Ensure $result is an object and has the property 'menu_id'
+        return $result ? $result->menu_id : null;
+    }
+
+    public function getMenuPageName($menuId)
+    {
+        $builder = $this->db->table('menu');
+        $builder->select('page_name');
+        $builder->where('menu_id', $menuId);
+        $result = $builder->get()->getFirstRow();
+
+        // Ensure $result is an object and has the property 'page_name'
+        if ($result && isset($result->page_name)) {
+            return $result->page_name;
+        }
+        return null;
     }
 }

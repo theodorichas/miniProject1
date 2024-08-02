@@ -40,6 +40,9 @@ class Karyawan extends Home
         // Retrieve the menu_id from the URI
         $menuId = $this->ModelMenu->getMenuIdbyURI($fileName);
 
+        // Retrieve Page Name from menuId
+        $pageName = $this->ModelMenu->getMenuPageName($menuId);
+
         // Retrieve user's group name from session
         $groupName = session()->get('group_name');
 
@@ -57,7 +60,7 @@ class Karyawan extends Home
             return view('error-page/index');
         } else {
             // Proceed to load the view
-            $data['title'] = $fileName;
+            $data['title'] = $pageName;
             $data['group_names'] = $this->ModelKaryawan->getGroupNames();
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['groupedMenus'] = groupMenusByParent($data['menus']);

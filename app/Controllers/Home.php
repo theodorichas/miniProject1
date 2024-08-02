@@ -99,6 +99,15 @@ class Home extends BaseController
         // }
         return view('testing/index');
     }
+    public function testing2()
+    {
+        // if (!function_exists('set_app_cookie') || !function_exists('get_app_cookie') || !function_exists('delete_app_cookie')) {
+        //     echo "Gagal";
+        // } else {
+        //     echo "Berhasil";
+        // }
+        return view('template/testing2');
+    }
 
     public function setCookie()
     {

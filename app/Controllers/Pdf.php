@@ -41,6 +41,12 @@ class pdf extends Home
         // Retrieve user's group name from session
         $groupName = session()->get('group_name');
 
+        // Retrieve the menu_id from the URI
+        $menuId = $this->ModelMenu->getMenuIdbyURI($fileName);
+
+        // Retrieve Page Name from menuId
+        $pageName = $this->ModelMenu->getMenuPageName($menuId);
+
         // Retrieve group ID by group name
         $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
 
@@ -56,7 +62,7 @@ class pdf extends Home
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['groupedMenus'] = groupMenusByParent($data['menus']);
             // var_dump($data);
-            $data['title'] = 'pdf';
+            $data['title'] = $pageName;
             $data['nama'] = $_SESSION['nama'] ?? '';
             $groupName = $_SESSION['group_name'] ?? '';
             $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);

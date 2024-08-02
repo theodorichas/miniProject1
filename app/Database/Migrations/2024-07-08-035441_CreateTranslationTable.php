@@ -26,7 +26,7 @@ class CreateTranslationsTable extends Migration
                 'type'       => 'TEXT',
             ],
         ]);
-        $this->forge->addKey('id', true);
+        $this->forge->addKey('langId', true);
         $this->forge->createTable('translations');
     }
 
