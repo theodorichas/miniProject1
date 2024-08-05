@@ -86,7 +86,7 @@ $routes->get('/templates', 'template::index');
 $routes->post('/templatedtb', 'template::templatedtb');
 $routes->add('/template/templateAdd', 'template::templateAdd');
 $routes->post('/template/delete', 'template::delete');
-
+$routes->add('/getTemplateBody', 'template::getTemplateBody');
 
 
 

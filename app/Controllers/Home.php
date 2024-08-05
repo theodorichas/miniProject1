@@ -92,20 +92,10 @@ class Home extends BaseController
 
     public function testing()
     {
-        // if (!function_exists('set_app_cookie') || !function_exists('get_app_cookie') || !function_exists('delete_app_cookie')) {
-        //     echo "Gagal";
-        // } else {
-        //     echo "Berhasil";
-        // }
-        return view('testing/index');
+        return view('template/testing');
     }
     public function testing2()
     {
-        // if (!function_exists('set_app_cookie') || !function_exists('get_app_cookie') || !function_exists('delete_app_cookie')) {
-        //     echo "Gagal";
-        // } else {
-        //     echo "Berhasil";
-        // }
         return view('template/testing2');
     }
 

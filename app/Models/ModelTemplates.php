@@ -52,10 +52,20 @@ class ModelTemplates extends Model
         return $this->delete($template_id);
     }
 
-    public function getTemplate($template_id)
+    public function getTemplates()
     {
         $builder = $this->db->table('templates');
-        $builder->where('template_id', $template_id);
-        return $builder->get()->getRow();
+        $builder->select('*');
+        $query = $builder->get()->getRowArray();
+        return $query;
+    }
+
+    public function getTemplateBody($templateId)
+    {
+        $builder = $this->db->table('templates');
+        $builder->select('template_body');
+        $builder->where('template_id', $templateId);
+        $query = $builder->get();
+        return $query->getRow();
     }
 }

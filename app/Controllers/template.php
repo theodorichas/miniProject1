@@ -116,12 +116,35 @@ class template extends Home
         }
     }
 
-
-
     public function delete()
     {
         $template_id = $this->request->getPost('template_id');
         $this->ModelTemplates->delete_template($template_id);
         return $this->response->setJSON(['success' => true, 'message' => 'Data successfully deleted']);
+    }
+
+    // public function getTemplateBody()
+    // {
+    //     $template_id = $this->request->getPost('template_id');
+    //     $data = $this->ModelTemplates->find($template_id);
+    //     return $this->response->setJSON($data);
+    // }
+
+    public function getTemplateBody()
+    {
+        $templateId = $this->request->getPost('template_id');
+        $template = $this->ModelTemplates->getTemplateBody($templateId);  // Use the updated method
+        if ($templateId) {
+
+            if ($template) {
+                return $this->response->setJSON(['template_body' => $template->template_body]);
+            } else {
+                return $this->response->setJSON(['template_body' => 'No template found.']);
+            }
+        } else {
+            return $this->response->setJSON(['template_body' => 'pepega.']);
+        }
+
+        return $this->response->setJSON(['template_body' => 'Invalid request.']);
     }
 }

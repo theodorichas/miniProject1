@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\ModelMenu;
 use App\Models\ModelKaryawan;
 use App\Models\ModelgPermission;
+use App\Models\ModelTemplates;
 use TCPDF;
 use DateTime;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -14,7 +15,7 @@ use config\Email;
 
 class pdf extends Home
 {
-    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $email;
+    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $ModelTemplates, $email;
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
@@ -22,6 +23,7 @@ class pdf extends Home
         $this->ModelMenu = new ModelMenu();
         $this->ModelKaryawan = new ModelKaryawan();
         $this->ModelgPermission = new ModelgPermission();
+        $this->ModelTemplates = new ModelTemplates();
         $this->request = \Config\Services::request();
         $this->email = \Config\Services::email();
     }
@@ -67,6 +69,7 @@ class pdf extends Home
             $groupName = $_SESSION['group_name'] ?? '';
             $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
             $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+            $data['templates'] = $this->ModelTemplates->getTemplates();
             // echo json_encode($data['permission']); -> To see the permissions
             return view('pdf/index', $data);
         }
@@ -115,7 +118,7 @@ class pdf extends Home
         exit();
     }
 
-    // Serial to date converter
+    // Function Serial to date converter
     private function excelSerialToDate($serial)
     {
         $utc_days = floor($serial - 25569);
@@ -230,14 +233,12 @@ class pdf extends Home
 
         // Load email library
         $email = \Config\Services::email();
-
         //calling the helper
         helper('formatrp');
         $results = [];
         foreach ($filteredData as $employee) {
             // Format salary
             $employee['formatted_salary'] = formatRupiah($employee['salary']);
-
             // Render email message
             $message = view('template/paycheck', ['employee' => $employee]);
             $email->setTo($employee['email']);

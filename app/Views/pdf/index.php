@@ -17,6 +17,7 @@
 <!-- Main Content -->
 <?= $this->section('content'); ?>
 
+<!-- Form submit -->
 <form id="excelForm" enctype="multipart/form-data" action="<?= base_url('/output') ?>" method="POST">
     <div class="mb-3">
         <label for="formFile" id="formFilelbl" class="form-label"><?= lang('app.text-input-excel') ?></label>
@@ -27,41 +28,11 @@
     <!-- <button type="button" id="btnAttach" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Send Attachments</button> -->
     <button type="button" id="btnTesting" class="btn btn-danger" data-toggle="modal" style="display: none;" data-target="#exampleModal">Send Files</button>
     <!-- <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button> -->
+    <button type="button" id="btnSendtoEmail" class="btn btn-secondary" data-toggle="modal" style="display: none;" data-target="#exampleModal2">Send to email</button>
+
 </form>
 
-<!-- Modal untuk attachments
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Send Attachments</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form name="excelForm" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Enter the recipient email address</label>
-                            <input type="email" name="email" id="email" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="formAttach" id="formAttachlbl" class="form-label">Select which file you want to send</label>
-                            <input class="form-control" type="file" id="formAttach" name="formAttach">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="btnSendFile" class="btn btn-primary">Send file</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> -->
-<!-- Modal untuk attachments untuk-->
+<!-- Modal untuk attachments-->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -87,6 +58,51 @@
         </div>
     </div>
 </div>
+
+<!-- Modal untuk sent to email-->
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Send testing</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="excelForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="template_name" class="form-label">Select which template you want to choose</label>
+                            <select name="template_name" id="template_name" id="inputGroupname" class="form-select">
+                                <option value="">Select Template</option>
+                                <?php foreach ($templates as $template) : ?>
+                                    <option value="<?= $template ?>"><?= $template ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="template_preview" class="form-label">Template Preview</label>
+                            <div id="template_preview" class="border p-2" style="min-height: 200px;"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="formAttach" id="formAttachlbl" class="form-label">Select which file you want to send</label>
+                            <input class="form-control" type="file" id="formAttach" name="formAttach">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnSendFileTesting" class="btn btn-primary">Send file</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Datatable -->
 <div class="col-12" id="dataTable" style="display: none;">
     <div class="card">
@@ -116,6 +132,7 @@
     </div>
     <!-- /.card -->
 </div>
+
 <!-- </div> -->
 <?= $this->endSection('content'); ?>
 
@@ -276,6 +293,7 @@
                         $('#btnPaycheck').show();
                         $('#btnEmail').show();
                         $('#btnTesting').show();
+                        $('#btnSendtoEmail').show();
 
                     },
                     error: function(xhr, status, error) {
@@ -417,17 +435,17 @@
                 }
             })
 
-        })
+        });
     });
 
-
+    // Format Rupiah
     function formatRupiah(value) {
         return 'Rp' + parseInt(value, 10).toLocaleString('id-ID', {
             minimumFractionDigits: 0
         });
     }
 
-
+    // Fungsi convert serial nomor ke tanggal pada excel
     function excelSerialToDate(serial) {
         var utc_days = Math.floor(serial - 25569);
         var utc_value = utc_days * 86400;
@@ -440,5 +458,47 @@
         return year + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
     }
 </script>
+
+<!-- Script untuk preview template -->
+<script>
+    document.getElementById('template_name').addEventListener('change', function() {
+        var templateId = this.value;
+        console.log('Template ID:', templateId);
+        if (templateId) {
+            fetchTemplate(templateId);
+        } else {
+            document.getElementById('template_preview').innerHTML = '';
+        }
+    });
+
+    function fetchTemplate(templateId) {
+        $.ajax({
+            url: '<?= base_url('/getTemplateBody') ?>',
+            type: 'POST',
+            dataType: 'json', // Ensure the server returns JSON
+            data: {
+                template_id: templateId
+            },
+            success: function(response) {
+                console.log('Raw Response:', response);
+                if (response.template_body) {
+                    document.getElementById('template_preview').innerHTML = response.template_body;
+                } else {
+                    document.getElementById('template_preview').innerHTML = 'No template found.';
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'There was an error fetching the template.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+</script>
+
 
 <?= $this->endSection('scripts'); ?>
