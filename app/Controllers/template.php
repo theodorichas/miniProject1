@@ -100,7 +100,6 @@ class template extends Home
         $template_name = $this->request->getPost('template_name');
         $template_subject = $this->request->getPost('template_subject');
         $template_body = $this->request->getPost('template_body');
-
         $data = [
             'template_id' => $template_id,
             'template_name' => $template_name,

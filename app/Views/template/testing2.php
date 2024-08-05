@@ -149,11 +149,12 @@
             plugins: [
                 'save', 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                 'anchor', 'searchreplace', 'visualblocks', 'fullscreen',
-                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount', 'autosave'
             ],
-            toolbar: 'undo redo | blocks | bold italic backcolor | ' +
-                'alignleft aligncenter alignright alignjustify | ' +
-                'bullist numlist outdent indent | removeformat | help',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | code | help',
+            autosave_ask_before_unload: true,
+            autosave_interval: '30s', // Save every 30 seconds
+            autosave_retention: '2m', // Retain saved data for 2 minutes
             setup: function(editor) {
                 editor.on('change', function() {
                     editor.save();
@@ -210,6 +211,7 @@
                 $('#template_id').val('0');
             });
             $('#btnModal').click(function() {
+                tinymce.triggerSave(); // This will save the TinyMCE content to the underlying textarea
                 if ($('#quickForm').valid()) {
                     var formData = $('#quickForm').serialize();
                 }
@@ -228,7 +230,6 @@
                             if (result.isConfirmed) {
                                 $('#example').DataTable().ajax.reload();
                                 $('#exampleModal').modal('hide');
-                                console.log(formData);
                                 location.reload();
                             }
                         });
