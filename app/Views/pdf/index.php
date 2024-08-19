@@ -28,7 +28,7 @@
     <!-- <button type="button" id="btnAttach" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Send Attachments</button> -->
     <button type="button" id="btnTesting" class="btn btn-danger" data-toggle="modal" style="display: none;" data-target="#exampleModal">Send Files</button>
     <!-- <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button> -->
-    <button type="button" id="btnSendtoEmail" class="btn btn-secondary" data-toggle="modal" style="display: none;" data-target="#exampleModal2">Send to email</button>
+    <!-- <button type="button" id="btnSendtoEmail" class="btn btn-secondary" data-toggle="modal" style="display: none;" data-target="#exampleModal2">Send to email</button> -->
 
 </form>
 
@@ -44,6 +44,21 @@
             </div>
             <div class="modal-body">
                 <form name="excelForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="template_name" class="form-label">Select which template you want to choose</label>
+                        <select name="template_name" id="template_name" class="form-select">
+                            <option value="">Select Template</option>
+                            <?php foreach ($templates as $template) : ?>
+                                <option value="<?= $template['template_id'] ?>"><?= $template['template_name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="mb-3">
+                            <label for="template_preview" class="form-label">Template Preview</label>
+                            <div id="template_preview" class="border p-2" style="min-height: 200px;"></div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="formAttach" id="formAttachlbl" class="form-label">Select which file you want to send</label>
@@ -64,29 +79,22 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Send testing</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Send Testing</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+                <h1>Testing</h1>
                 <form name="excelForm" enctype="multipart/form-data">
                     <div class="form-group">
-                        <div class="mb-3">
-                            <label for="template_name" class="form-label">Select which template you want to choose</label>
-                            <select name="template_name" id="template_name" id="inputGroupname" class="form-select">
-                                <option value="">Select Template</option>
-                                <?php foreach ($templates as $template) : ?>
-                                    <option value="<?= $template ?>"><?= $template ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="template_preview" class="form-label">Template Preview</label>
-                            <div id="template_preview" class="border p-2" style="min-height: 200px;"></div>
-                        </div>
+                        <label for="template_name" class="form-label">Select which template you want to choose</label>
+                        <select name="template_name" id="template_name" class="form-select">
+                            <option value="">Select Template</option>
+                            <?php foreach ($templates as $template) : ?>
+                                <option value="<?= $template['template_id'] ?>"><?= $template['template_name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
@@ -95,7 +103,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="btnSendFileTesting" class="btn btn-primary">Send file</button>
+                        <button type="button" id="btnSendFileToEmail" class="btn btn-primary">Send file</button>
                     </div>
                 </form>
             </div>
@@ -161,7 +169,7 @@
 <script src="<?= base_url('asset/AdminLTE/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
 <!-- Script Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-<!-- Script datatable -->
+<!-- Jquery -->
 <script>
     $(document).ready(function() {
         $('#example').DataTable({
@@ -396,8 +404,10 @@
         });
         $('#btnSendFileTesting').click(function() {
             var fileInput = document.getElementById('formAttach');
+            var templateName = $('#template_name').val(); // Get the selected template name
             var formData = new FormData();
             formData.append('formFile', $('#formFile')[0].files[0]);
+            formData.append('template_name', templateName);
             formData.append('formAttach', fileInput.files[0]);
             Swal.fire({
                 title: 'Processing...',
@@ -421,6 +431,10 @@
                         text: 'The file has been sent successfully.',
                         icon: 'success',
                         confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
                     });
                 },
                 error: function(xhr, status, error) {

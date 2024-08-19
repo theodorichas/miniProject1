@@ -52,19 +52,30 @@ class ModelTemplates extends Model
         return $this->delete($template_id);
     }
 
+    //Dipakai di pdf Controller untuk mengambil value dari templates
     public function getTemplates()
     {
         $builder = $this->db->table('templates');
         $builder->select('*');
-        $query = $builder->get()->getRowArray();
+        $query = $builder->get()->getResultArray();
         return $query;
     }
 
+    //Dipakai di pdf index view untuk mengambil template body
     public function getTemplateBody($templateId)
     {
         $builder = $this->db->table('templates');
         $builder->select('template_body');
         $builder->where('template_id', $templateId);
+        $query = $builder->get();
+        return $query->getRow();
+    }
+
+    public function fetchTemplateBody($template_name)
+    {
+        $builder = $this->db->table('templates');
+        $builder->select('template_body');
+        $builder->where('template_id', $template_name);
         $query = $builder->get();
         return $query->getRow();
     }

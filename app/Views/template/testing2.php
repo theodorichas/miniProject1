@@ -58,6 +58,10 @@
                     <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <?= getTranslation('button-add-template') ?>
                     </a>
+                    <!-- Button home -->
+                    <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" href="<?= base_url('/') ?>">
+                        <?= getTranslation('button-home') ?>
+                    </a>
                     <table id="example" class="table table-bordered table-hover">
                         <thead>
                             <tr>

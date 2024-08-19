@@ -41,6 +41,8 @@ $routes->post('/read', 'pdf::read');
 $routes->post('/send-email', 'pdf::sendEmail');
 $routes->post('/sendAttach', 'pdf::sendAttach');
 $routes->post('/sendAttachTesting', 'pdf::sendAttachTesting');
+$routes->post('/sendFileToEmail', 'pdf::sendFileToEmail');
+
 
 //gPermissions routing
 $routes->get('/gPermission', 'gpermission::index');

@@ -123,12 +123,6 @@ class template extends Home
         return $this->response->setJSON(['success' => true, 'message' => 'Data successfully deleted']);
     }
 
-    // public function getTemplateBody()
-    // {
-    //     $template_id = $this->request->getPost('template_id');
-    //     $data = $this->ModelTemplates->find($template_id);
-    //     return $this->response->setJSON($data);
-    // }
 
     public function getTemplateBody()
     {

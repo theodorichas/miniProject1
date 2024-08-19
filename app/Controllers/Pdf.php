@@ -289,11 +289,29 @@ class pdf extends Home
 
     public function sendAttachTesting()
     {
-        //getting the post data
+        // Getting the post data
         $uploadFile = $this->request->getFile('formFile');
+        $template_name = $this->request->getPost('template_name');
         $uploadAttach = $this->request->getFile('formAttach');
 
-        //moving the file to a folder
+        // Getting the template
+        $template = $this->ModelTemplates->fetchTemplateBody($template_name);
+
+        // Assuming $template is an object, extract the template body
+        if (is_object($template) && isset($template->template_body)) {
+            $templateBody = $template->template_body;
+        } else {
+            echo 'Template not found';
+            return;
+        }
+
+        // Debugging output
+        echo '<pre>';
+        print_r($templateBody);
+        echo '</pre>';
+        // die; // Uncomment this line if you want to stop execution here for debugging
+
+        // Moving the file to a folder
         $newName = $uploadAttach->getRandomName();
         $uploadAttach->move(WRITEPATH . 'uploads', $newName);
         $filePath = WRITEPATH . 'uploads/' . $newName;
@@ -305,27 +323,82 @@ class pdf extends Home
             return !empty($employee['email']);
         });
 
-        //load the email library
+        // Load the email library
         $email = \Config\Services::email();
-
-        //load the email config
         $emailConfig = new Email();
-        //Making an empty variable
+
+        // Initialize results array
         $results = [];
+
         foreach ($filteredData as $employee) {
+            $messageBody = $templateBody;
+            $messageBody = str_replace('<!--?= esc($employee[\'name\']) ?-->', esc($employee['name']), $messageBody);
+            $messageBody = str_replace('<!--?= esc($employee[\'name\']) ?-->', esc($employee['name']), $messageBody);
+
             $email->setTo($employee['email']);
-            // $email->setFrom('testing.magang@gmail.com', 'Arona');
             $email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
             $email->setSubject('Testing "' . $employee['name'] . '"');
-            $email->setMessage('geghe');
+            $email->setMessage($messageBody);
             $email->attach($filePath, 'attachment');
 
             if (!$email->send()) {
-                $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
+                $results[] = 'Error sending to ' . $employee['email'];
             } else {
-                $results[] = ['email' => $employee['email'], 'status' => 'success', 'message' => 'Paycheck has been sent to employees'];
+                $results[] = 'Success sending to ' . $employee['email'];
             }
         }
-        return $this->response->setJSON(['results' => $results]);
+
+        // Output results directly
+        echo '<pre>';
+        print_r($results);
+        echo '</pre>';
     }
+
+
+    // public function sendFileToEmail()
+    // {
+    //     //getting the post data
+    //     $uploadFile = $this->request->getFile('formFile');
+    //     $uploadAttach = $this->request->getFile('formAttach');
+    //     // Print the structure and content of $uploadAttach
+    //     echo '<pre>';
+    //     print_r($uploadAttach);
+    //     echo '</pre>';
+    //     exit(); // Stop further execution for debugging purposes
+    //     //moving the file to a folder
+    //     $newName = $uploadAttach->getRandomName();
+    //     $uploadAttach->move(WRITEPATH . 'uploads', $newName);
+    //     $filePath = WRITEPATH . 'uploads/' . $newName;
+
+    //     // Read data from Excel file
+    //     $excelData = $this->readExcelDataPC($uploadFile);
+    //     // Filter out rows with empty email addresses
+    //     $filteredData = array_filter($excelData, function ($employee) {
+    //         return !empty($employee['email']);
+    //     });
+
+    //     //load the email library
+    //     $email = \Config\Services::email();
+    //     //load the email config
+    //     $emailConfig = new Email();
+    //     //getting the template
+    //     // $template = $this->ModelTemplates->fetchTemplateBody($template_name);
+    //     //Making an empty variable
+    //     $results = [];
+    //     //sending the email
+    //     foreach ($filteredData as $employee) {
+    //         $email->setTo($employee['email']);
+    //         // $email->setFrom('testing.magang@gmail.com', 'Arona');
+    //         $email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
+    //         $email->setSubject('Testing "' . $employee['name'] . '"');
+    //         // $email->setMessage($template);
+    //         $email->attach($filePath, 'attachment');
+
+    //         if (!$email->send()) {
+    //             $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
+    //         } else {
+    //             $results[] = ['email' => $employee['email'], 'status' => 'success', 'message' => 'Paycheck has been sent to employees'];
+    //         }
+    //     }
+    // }
 }
