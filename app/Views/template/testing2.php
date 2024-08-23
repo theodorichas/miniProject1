@@ -155,7 +155,7 @@
                 'anchor', 'searchreplace', 'visualblocks', 'fullscreen',
                 'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount', 'autosave'
             ],
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | code | help',
+            toolbar: 'undo redo spellcheckdialog | formatselect | blocks fontfamily fontsize | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat typography | code | help',
             autosave_ask_before_unload: true,
             autosave_interval: '30s', // Save every 30 seconds
             autosave_retention: '2m', // Retain saved data for 2 minutes
@@ -166,6 +166,7 @@
             }
         });
     </script>
+
     <script>
         // Insert here function here
         $(document).ready(function() {

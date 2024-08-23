@@ -79,4 +79,12 @@ class ModelTemplates extends Model
         $query = $builder->get();
         return $query->getRow();
     }
+    public function fetchTemplateBodyTest($template_name)
+    {
+        $builder = $this->db->table('templates');
+        $builder->select('template_body');
+        $builder->where('template_name', $template_name);
+        $query = $builder->get();
+        return $query->getRow();
+    }
 }

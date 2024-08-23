@@ -264,6 +264,7 @@
                             }
                             return rowData;
                         });
+
                         $('#example').DataTable({
                             responsive: true,
                             lengthChange: false,
@@ -288,13 +289,37 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!!',
-                            text: 'Record has been Updated',
+                            text: 'Record has been updated!',
+                            allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: '<?= base_url('/excelToDB') ?>',
+                                    type: 'POST',
+                                    data: {
+                                        excelData: convertedData
+                                    }, // Pass the data here
+                                    success: function(response) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success!!',
+                                            text: 'Data has been inserted into the database!',
+                                        });
+                                    },
+                                    error: function(xhr, status, error) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error!',
+                                            text: 'Failed to insert data into the database.',
+                                        });
+                                    }
+                                });
+                            }
                         });
 
                         $('#btnModal').text('<?= lang('app.text-insert-new-file') ?>');
                         $('#formFilelbl').hide();
                         $('#fileNameDisplay').text(` - ${fileName}`);
-
 
                         $('#formFile').hide();
                         $('#dataTable').show();
@@ -302,8 +327,8 @@
                         $('#btnEmail').show();
                         $('#btnTesting').show();
                         $('#btnSendtoEmail').show();
-
                     },
+
                     error: function(xhr, status, error) {
                         console.log('AJAX request failed!');
                         console.log('Error:', error);

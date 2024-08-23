@@ -4,14 +4,13 @@ namespace App\Controllers;
 
 use App\Models\ModelKaryawan;
 use App\Models\ModelPasswordRes;
-use Config\Services;
-use PhpParser\Node\Expr\Isset_;
+use App\Models\ModelTemplates;
 use config\Email;
 
 
 class Auth extends Home
 {
-    protected $db, $builder, $ModelKaryawan, $ModelPasswordRes, $email;
+    protected $db, $builder, $ModelKaryawan, $ModelPasswordRes, $ModelTemplates, $email;
 
 
     //---- Log-in ----//
@@ -21,6 +20,7 @@ class Auth extends Home
         $this->builder = $this->db->table('karyawan');
         $this->ModelKaryawan = new ModelKaryawan();
         $this->ModelPasswordRes = new ModelPasswordRes();
+        $this->ModelTemplates = new ModelTemplates();
         $this->request = \Config\Services::request();
         $this->email = \Config\Services::email();
         helper('general_helper');
@@ -166,11 +166,31 @@ class Auth extends Home
     }
 
     //register verification link
+    // private function sendEmailverif($email, $token)
+    // {
+    //     $message = view('template/regis_temp', [
+    //         'token' => $token
+    //     ]);
+    //     //load the email config
+    //     $emailConfig = new Email();
+    //     $this->email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
+    //     $this->email->setTo($email);
+    //     $this->email->setSubject('Ohayou Sensei');
+    //     // $this->email->setMessage('<p>Click the link below to verify your email:</p> <a href="' . site_url('/verify/' . $token) . '">Verify Email</a>');
+    //     $this->email->setMessage($message);
+    //     if (!$this->email->send()) {
+    //         return $this->response->setJSON(['error' => true, 'message' => 'There is an error!! Verification has not been sent']);
+    //     } else {
+    //         return $this->response->setJSON(['success' => true, 'message' => 'A verification link has been sent to your email']);;
+    //     }
+    // }
     private function sendEmailverif($email, $token)
     {
-        $message = view('template/regis_temp', [
-            'token' => $token
-        ]);
+        $templateName = "Template Register";
+        $template = $this->ModelTemplates->fetchTemplateBodyTest($templateName);
+
+        $verificationLink = '<a href="' . site_url('/verify/' . $token) . '">Verify Email</a>';
+        $message = str_replace('<li>Link</li>', $verificationLink, $template->template_body);
         //load the email config
         $emailConfig = new Email();
         $this->email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);

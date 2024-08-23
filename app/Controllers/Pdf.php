@@ -6,6 +6,7 @@ use App\Models\ModelMenu;
 use App\Models\ModelKaryawan;
 use App\Models\ModelgPermission;
 use App\Models\ModelTemplates;
+use App\Models\ModelExcel;
 use TCPDF;
 use DateTime;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -15,7 +16,7 @@ use config\Email;
 
 class pdf extends Home
 {
-    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $ModelTemplates, $email;
+    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $ModelTemplates, $ModelExcel, $email;
     public function __construct()
     {
         $this->db      = \Config\Database::connect();
@@ -24,6 +25,7 @@ class pdf extends Home
         $this->ModelKaryawan = new ModelKaryawan();
         $this->ModelgPermission = new ModelgPermission();
         $this->ModelTemplates = new ModelTemplates();
+        $this->ModelExcel = new ModelExcel();
         $this->request = \Config\Services::request();
         $this->email = \Config\Services::email();
     }
@@ -75,7 +77,7 @@ class pdf extends Home
         }
     }
 
-    //Pdf generation
+    //Pdf generation to download
     public function printPdf()
     {
         // Read data from uploaded Excel file
@@ -118,68 +120,6 @@ class pdf extends Home
         exit();
     }
 
-    // Function Serial to date converter
-    private function excelSerialToDate($serial)
-    {
-        $utc_days = floor($serial - 25569);
-        $utc_value = $utc_days * 86400;
-        $date_info = new DateTime("@$utc_value");
-
-        $year = $date_info->format('Y');
-        $month = $date_info->format('m');
-        $day = $date_info->format('d');
-
-        // Return the formatted date
-        return $year . "-" . ($month < 10 ? "0" . $month : $month) . "-" . ($day < 10 ? "0" . $day : $day);
-    }
-
-
-
-    protected function readExcelData($file)
-    {
-        $spreadsheet = IOFactory::load($file->getTempName());
-        $worksheet = $spreadsheet->getActiveSheet();
-
-        $data = [];
-        foreach ($worksheet->getRowIterator() as $row) {
-            $rowData = [];
-            foreach ($row->getCellIterator() as $cell) {
-                $rowData[] = $cell->getValue();
-            }
-            $data[] = $rowData;
-        }
-
-        return $data;
-    }
-
-    protected function readExcelDataPC($file)
-    {
-        $spreadsheet = IOFactory::load($file->getTempName());
-        $worksheet = $spreadsheet->getActiveSheet();
-
-        $data = [];
-        foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
-            // Skip the header row if there is one
-            if ($rowIndex == 1) {
-                continue;
-            }
-
-            $rowData = [];
-            foreach ($row->getCellIterator() as $cellIndex => $cell) {
-                // Assuming the columns are A for Name, B for Salary, C for Email
-                if ($cellIndex == 'A') {
-                    $rowData['name'] = $cell->getValue();
-                } elseif ($cellIndex == 'G') {
-                    $rowData['salary'] = $cell->getValue();
-                } elseif ($cellIndex == 'E') {
-                    $rowData['email'] = $cell->getValue();
-                }
-            }
-            $data[] = $rowData;
-        }
-
-        return $data;
-    }
     protected function generateHtmlFromData($data)
     {
         // Generate HTML content from the data
@@ -197,6 +137,7 @@ class pdf extends Home
 
         return $html;
     }
+
     public function read()
     {
         $uploadFile = $this->request->getFile('formFile');
@@ -210,6 +151,44 @@ class pdf extends Home
             // Return the data in JSON format
             echo json_encode($excelData);
         }
+    }
+
+    protected function readExcelData($file)
+    {
+        $spreadsheet = IOFactory::load($file->getTempName());
+        $worksheet = $spreadsheet->getActiveSheet();
+
+        $data = [];
+        foreach ($worksheet->getRowIterator() as $row) {
+            $rowData = [];
+            foreach ($row->getCellIterator() as $cell) {
+                $rowData[] = $cell->getValue();
+            }
+            $data[] = $rowData;
+        }
+        return $data;
+    }
+
+    public function excelToDB()
+    {
+        $excelData = $this->request->getPost('excelData');
+
+        foreach ($excelData as $index => $row) {
+
+            $employeeData = [
+                'nama'      => $row['nama'],
+                'nip'       => $row['nip'],
+                'tgl_lahir' => $row['tgl_lahir'], // Date already converted in JS
+                'alamat'    => $row['alamat'],
+                'email'     => $row['email'],
+                'no_telp'   => $row['wa'],
+                'salary'    => $row['salary'],
+            ];
+
+            $this->ModelExcel->insertExcel($employeeData);
+        }
+
+        return $this->response->setJSON(['status' => 'success']);
     }
 
     public function sendEmail()
@@ -331,9 +310,11 @@ class pdf extends Home
         $results = [];
 
         foreach ($filteredData as $employee) {
+            $employee['formatted_salary'] = formatRupiah($employee['salary']);
+
             $messageBody = $templateBody;
             $messageBody = str_replace('<!--?= esc($employee[\'name\']) ?-->', esc($employee['name']), $messageBody);
-            $messageBody = str_replace('<!--?= esc($employee[\'name\']) ?-->', esc($employee['name']), $messageBody);
+            $messageBody = str_replace('<!--?= esc($employee[\'formatted_salary\']) ?-->', esc($employee['formatted_salary']), $messageBody);
 
             $email->setTo($employee['email']);
             $email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
@@ -341,6 +322,8 @@ class pdf extends Home
             $email->setMessage($messageBody);
             $email->attach($filePath, 'attachment');
 
+            // Delete the database containing the end user data
+            $this->ModelExcel->deleteExcel($employee['email']);
             if (!$email->send()) {
                 $results[] = 'Error sending to ' . $employee['email'];
             } else {
@@ -354,51 +337,50 @@ class pdf extends Home
         echo '</pre>';
     }
 
+    // --- Helper Functions --- //
 
-    // public function sendFileToEmail()
-    // {
-    //     //getting the post data
-    //     $uploadFile = $this->request->getFile('formFile');
-    //     $uploadAttach = $this->request->getFile('formAttach');
-    //     // Print the structure and content of $uploadAttach
-    //     echo '<pre>';
-    //     print_r($uploadAttach);
-    //     echo '</pre>';
-    //     exit(); // Stop further execution for debugging purposes
-    //     //moving the file to a folder
-    //     $newName = $uploadAttach->getRandomName();
-    //     $uploadAttach->move(WRITEPATH . 'uploads', $newName);
-    //     $filePath = WRITEPATH . 'uploads/' . $newName;
+    //dipakai di sendAttachTesting, sendAttach, sendEmail
+    protected function readExcelDataPC($file)
+    {
+        $spreadsheet = IOFactory::load($file->getTempName());
+        $worksheet = $spreadsheet->getActiveSheet();
 
-    //     // Read data from Excel file
-    //     $excelData = $this->readExcelDataPC($uploadFile);
-    //     // Filter out rows with empty email addresses
-    //     $filteredData = array_filter($excelData, function ($employee) {
-    //         return !empty($employee['email']);
-    //     });
+        $data = [];
+        foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
+            // Skip the header row if there is one
+            if ($rowIndex == 1) {
+                continue;
+            }
 
-    //     //load the email library
-    //     $email = \Config\Services::email();
-    //     //load the email config
-    //     $emailConfig = new Email();
-    //     //getting the template
-    //     // $template = $this->ModelTemplates->fetchTemplateBody($template_name);
-    //     //Making an empty variable
-    //     $results = [];
-    //     //sending the email
-    //     foreach ($filteredData as $employee) {
-    //         $email->setTo($employee['email']);
-    //         // $email->setFrom('testing.magang@gmail.com', 'Arona');
-    //         $email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
-    //         $email->setSubject('Testing "' . $employee['name'] . '"');
-    //         // $email->setMessage($template);
-    //         $email->attach($filePath, 'attachment');
+            $rowData = [];
+            foreach ($row->getCellIterator() as $cellIndex => $cell) {
+                // Assuming the columns are A for Name, B for Salary, C for Email
+                if ($cellIndex == 'A') {
+                    $rowData['name'] = $cell->getValue();
+                } elseif ($cellIndex == 'G') {
+                    $rowData['salary'] = $cell->getValue();
+                } elseif ($cellIndex == 'E') {
+                    $rowData['email'] = $cell->getValue();
+                }
+            }
+            $data[] = $rowData;
+        }
 
-    //         if (!$email->send()) {
-    //             $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
-    //         } else {
-    //             $results[] = ['email' => $employee['email'], 'status' => 'success', 'message' => 'Paycheck has been sent to employees'];
-    //         }
-    //     }
-    // }
+        return $data;
+    }
+
+    // Function Serial to date converter, Dipakai di printPDF
+    private function excelSerialToDate($serial)
+    {
+        $utc_days = floor($serial - 25569);
+        $utc_value = $utc_days * 86400;
+        $date_info = new DateTime("@$utc_value");
+
+        $year = $date_info->format('Y');
+        $month = $date_info->format('m');
+        $day = $date_info->format('d');
+
+        // Return the formatted date
+        return $year . "-" . ($month < 10 ? "0" . $month : $month) . "-" . ($day < 10 ? "0" . $day : $day);
+    }
 }

@@ -42,6 +42,7 @@ $routes->post('/send-email', 'pdf::sendEmail');
 $routes->post('/sendAttach', 'pdf::sendAttach');
 $routes->post('/sendAttachTesting', 'pdf::sendAttachTesting');
 $routes->post('/sendFileToEmail', 'pdf::sendFileToEmail');
+$routes->post('/excelToDB', 'pdf::excelToDB');
 
 
 //gPermissions routing
