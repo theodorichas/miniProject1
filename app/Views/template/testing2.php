@@ -136,13 +136,26 @@
                 }, {
                     "data": null,
                     "render": function(data, type, full, meta) {
-                        return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.template_id + ', \'' + full.template_name + '\', \'' + full.template_subject + '\', `' + full.template_body.replace(/`/g, '\\`') + '`)" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
+                        return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.template_id + ', \'' +
+                            escapeHtml(full.template_name) + '\', \'' +
+                            escapeHtml(full.template_subject) + '\', `' +
+                            escapeHtml(full.template_body) + '`)" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
                             '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.template_id + ')"><?= getTranslation('button-delete') ?></button>';
                     },
                     "defaultContent": ""
                 }],
             });
         });
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/`/g, "&#x60;");
+        }
     </script>
     <!-- TinyMCE Script -->
     <script>
