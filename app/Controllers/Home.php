@@ -96,7 +96,14 @@ class Home extends BaseController
     }
     public function testing2()
     {
-        return view('template/testing2');
+        $this->setLanguage();
+        $data['title'] = 'Home';
+        $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['nama'] = $_SESSION['nama'] ?? '';
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        return view('template/testing2', $data);
     }
 
     public function setCookie()

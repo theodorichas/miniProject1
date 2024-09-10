@@ -1,53 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- Login -->
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= $title ?></title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="<?= base_url('asset/css/main.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome-animation.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome.min.css') ?>">
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/fontawesome-free/css/all.min.css') ?>">
-    <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css') ?>">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/dist/css/adminlte.min.css') ?>">
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') ?> ">
-</head>
-
-<body class="hold-transition register-page">
-    <div class="register-box">
+<body class="login-page">
+    <div class="login-box">
+        <!-- /.login-logo -->
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
                 <a class="h1"><b>Puka</b>System</a>
             </div>
             <div class="card-body">
-                <p class="login-box-msg">Register a new membership</p>
-                <form name="register" id="quickForm">
+                <p class="login-box-msg">Sign in to start your session</p>
+                <form name="login" id="quickForm">
                     <?= csrf_field(); ?>
-                    <!-- Username -->
-                    <input type="hidden" name="userId" id="userId" value="">
-                    <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="input-group-append">
-                                <div class="input-group-text">
-                                    <span class="fas fa-user"></span>
-                                </div>
-                            </div>
-                            <input type="text" name="nama" id="nama" class="form-control" placeholder="Full name">
-                        </div>
-                    </div>
                     <!-- Email -->
                     <div class="form-group">
                         <div class="input-group mb-3">
-                            <div class="input-group-append">
+                            <div class="input-group-prepend">
                                 <div class="input-group-text">
                                     <span class="fas fa-envelope"></span>
                                 </div>
@@ -71,25 +38,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="g-recaptcha" data-sitekey="6LeyX-IpAAAAAIbQtozzPDj7JmSMz3s6zRzopA_J"></div>
-
+                    <!-- Google Recaptcha -->
+                    <div class="recaptcha-container">
+                        <div class="g-recaptcha" data-sitekey="6LeyX-IpAAAAAIbQtozzPDj7JmSMz3s6zRzopA_J"></div>
+                    </div>
                     <div class="row">
                         <!-- /.col -->
                         <div class="col-12">
-                            <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Register</button>
+                            <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Sign In</button>
                         </div>
                         <!-- /.col -->
                     </div>
                 </form>
-                <a href="<?= base_url('/login') ?>" class="text-center">I already have a membership</a>
-                <div id="successMessage" style="display:none;">
-                    <p>Thank you! Your verification link will come shortly, please check your inbox.</p>
-                </div>
+                <p class="mb-1">
+                    <a href="<?= base_url('/forgetPassword') ?>">I forgot my password</a>
+                </p>
+                <p class="mb-0">
+                    <a href="<?= base_url('/register') ?>" class="text-center">Register a new membership</a>
+                </p>
             </div>
-            <!-- /.form-box -->
-        </div><!-- /.card -->
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
     </div>
-    <!-- /.register-box -->
+    <!-- /.login-box -->
 
     <!-- jQuery -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery/jquery.min.js') ?>"></script>
@@ -100,6 +72,7 @@
     <!-- jquery-validation -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery-validation/jquery.validate.min.js') ?>"></script>
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery-validation/additional-methods.min.js') ?>"></script>
+
     <!-- SweetAlert2 -->
     <script src="<?= base_url('asset/AdminLTE/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
     <!-- Google Captcha -->
@@ -110,29 +83,21 @@
         $(document).ready(function() {
             $('#quickForm').validate({
                 rules: {
-                    nama: {
-                        required: true,
-                    },
                     email: {
                         required: true,
                         email: true,
                     },
                     password: {
                         required: true,
-                        minlength: 8,
                     }
                 },
                 messages: {
-                    nama: {
-                        required: "'Name' cannot be empty",
-                    },
                     email: {
                         required: "'email' cannot be empty",
                         email: "Please enter a valid email address"
                     },
                     password: {
                         required: "'password' cannot be empty",
-                        minlength: "password must contain at least 8 Characters!!",
                     }
                 },
                 errorElement: 'span',
@@ -162,11 +127,12 @@
                         Swal.showLoading()
                     }
                 });
+
                 // AJAX request
                 $.ajax({
                     method: 'POST',
                     dataType: 'json', // Use dataType instead of type
-                    url: '<?= base_url("/registerAuth") ?>',
+                    url: '<?= base_url("/loginAuth") ?>',
                     data: formData,
                     success: function(response) {
                         console.log('AJAX request successful!');
@@ -174,26 +140,13 @@
 
                         // Check if authentication was successful
                         if (response.success) {
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Please Confirm',
-                                text: response.message,
-                            });
-                            $('#quickForm').hide();
-                            $('.text-center').hide();
-                            $('#successMessage').show();
-                            $('.login-box-msg').text('Your Almost there')
-                        } else if (response.error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'There has been an error/mistake',
-                                text: response.message,
-                            })
+                            // Redirect to dashboard or another page
+                            window.location.href = '/';
                         } else {
                             // Display error message if authentication failed
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Your Credintials are Invalid, Please try again!!!',
+                                title: 'Credential Invalid',
                                 text: response.message,
                             });
                             grecaptcha.reset();
@@ -233,9 +186,17 @@
         });
     </script>
 
-    <!-- Flash Data Alert -->
+    <!-- Flashdata from the Auth Controller :: Verify function-->
     <script>
         // Check for session flashdata and display the Swal alert
+        <?php if (session()->getFlashdata('success')) : ?>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '<?= session()->getFlashdata('success') ?>',
+                confirmButtonText: 'OK'
+            });
+        <?php endif; ?>
 
         <?php if (session()->getFlashdata('error')) : ?>
             Swal.fire({
@@ -248,6 +209,4 @@
     </script>
 </body>
 
-
-
-</html>
+<!--  -->

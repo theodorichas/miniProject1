@@ -38,17 +38,17 @@ class Auth extends Home
     public function loginAuth()
     {
         //Captcha
-        $recaptchaResponse = $this->request->getPost('g-recaptcha-response');
-        $secretKey = '6LeyX-IpAAAAABBr1oLv6tsAJWP1PqhunfWPrPfW';
-        $recaptchaUrl = 'https://www.google.com/recaptcha/api/siteverify';
+        // $recaptchaResponse = $this->request->getPost('g-recaptcha-response');
+        // $secretKey = '6LeyX-IpAAAAABBr1oLv6tsAJWP1PqhunfWPrPfW';
+        // $recaptchaUrl = 'https://www.google.com/recaptcha/api/siteverify';
 
         // Verify the reCAPTCHA response
-        $response = file_get_contents($recaptchaUrl . '?secret=' . $secretKey . '&response=' . $recaptchaResponse);
-        $responseKeys = json_decode($response, true);
+        // $response = file_get_contents($recaptchaUrl . '?secret=' . $secretKey . '&response=' . $recaptchaResponse);
+        // $responseKeys = json_decode($response, true);
 
-        if (!$responseKeys["success"]) {
-            return $this->response->setJSON(['error' => true, 'message' => 'Please complete the CAPTCHA']);
-        }
+        // if (!$responseKeys["success"]) {
+        //     return $this->response->setJSON(['error' => true, 'message' => 'Please complete the CAPTCHA']);
+        // }
 
         //login logic
         $email = $this->request->getPost('email');
@@ -253,6 +253,8 @@ class Auth extends Home
     //logic forget password
     public function forgetAuth()
     {
+        $templateName = "Template Reset Password";
+        $template = $this->ModelTemplates->fetchTemplateBodyTest($templateName);
         //Getting the inputted email from the form in (forget-password/index view)
         $email = $this->request->getPost('email');
         //Check to the database if the user exist within the database
@@ -269,9 +271,12 @@ class Auth extends Home
                 'created_at' => date('Y-m-d H:i:s'),
             ];
             // Prepare email content
-            $emailContent = view('template/reset_pass', [
-                'token' => $token,
-            ]);
+            $verificationLink = '<a href="' . site_url('/resetPassForm/' . $token) . '">Password Reset</a>';
+            $message = str_replace('<li>Link</li>', $verificationLink, $template->template_body);
+
+            // $emailContent = view('template/reset_pass', [
+            //     'token' => $token,
+            // ]);
 
             $emailConfig = new Email();
             $this->ModelPasswordRes->insertData($data);
@@ -279,7 +284,7 @@ class Auth extends Home
             $this->email->setTo($email);
             $this->email->setSubject('Ohayou Sensei');
             // $this->email->setMessage('<p>Click this link to reset your password:</p> <a href="' . site_url('/resetPassForm/' . $token) . '">Password Reset</a>');
-            $this->email->setMessage($emailContent);
+            $this->email->setMessage($message);
             if (!$this->email->send()) {
                 return $this->response->setJSON(['error' => true, 'message' => 'There is an error!! Verification has not been sent']);
             } else {

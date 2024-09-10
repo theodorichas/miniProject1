@@ -7,7 +7,7 @@
     <title><?= $title ?></title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="<?= base_url('asset/css/main.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('asset/css/logReg.css') ?>">
     <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome-animation.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome.min.css') ?>">
     <!-- Google Font: Source Sans Pro -->
@@ -23,94 +23,106 @@
 
 </head>
 
-<body class="hold-transition login-page">
-    <div class="login-box">
-        <!-- /.login-logo -->
-        <div class="card card-outline card-primary">
+<body class="main">
+    <div class="container" id="container">
+        <!-- Sign-up -->
+        <div class="form-container sign-up-container">
             <div class="card-header text-center">
-                <a class="h1"><b>Admin</b>LTE</a>
+                <a class="h1"><b>Puka</b>System</a>
+            </div>
+            <form name="register" id="quickFormReg">
+                <?= csrf_field(); ?>
+                <span>Please Sign-In to start your session</span>
+                <!-- Username -->
+                <div class="form-group">
+                    <div class="inputGroup">
+                        <input type="text" name="nama" id="nama" class="form-control" placeholder="Full Name">
+                    </div>
+                </div>
+                <!-- Email -->
+                <div class="form-group">
+                    <div class="inputGroup">
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Email">
+                    </div>
+                </div>
+                <!-- Password -->
+                <div class="form-group">
+                    <div class="inputGroup">
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Password">
+                        <button type="button" id="togglePassword" class="btn btn-outline-secondary position-absolute">
+                            <span class="fas fa-eye"></span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Google Recaptcha -->
+                <!-- <div class="g-recaptcha" data-sitekey="6LeyX-IpAAAAAIbQtozzPDj7JmSMz3s6zRzopA_J"></div> -->
+                <button class="button-sign-up" type="button" name="btnModalReg" id="btnModalReg">Sign Up</button>
+            </form>
+        </div>
+        <!-- Sign-in -->
+        <div class="form-container sign-in-container">
+            <div class="card-header text-center">
+                <a class="h1"><b>Puka</b>System</a>
             </div>
             <div class="card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
                 <form name="login" id="quickForm">
                     <?= csrf_field(); ?>
+                    <span>Please Sign-In to start your session</span>
                     <!-- Email -->
                     <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <span class="fas fa-envelope"></span>
-                                </div>
-                            </div>
+                        <div class="inputGroup">
                             <input type="email" name="email" id="email" class="form-control" placeholder="Email">
                         </div>
                     </div>
                     <!-- Password -->
                     <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <span class="fas fa-lock"></span>
-                                </div>
-                            </div>
+                        <div class="inputGroup">
                             <input type="password" name="password" id="password" class="form-control" placeholder="Password">
-                            <div class="input-group-append">
-                                <button type="button" id="togglePassword" class="btn btn-outline-secondary">
-                                    <span class="fas fa-eye"></span>
-                                </button>
-                            </div>
+                            <button type="button" id="togglePassword" class="btn btn-outline-secondary position-absolute">
+                                <span class="fas fa-eye"></span>
+                            </button>
                         </div>
                     </div>
                     <!-- Google Recaptcha -->
-                    <div class="g-recaptcha" data-sitekey="6LeyX-IpAAAAAIbQtozzPDj7JmSMz3s6zRzopA_J"></div>
-                    <div class="row">
-                        <div class="col-8">
-                            <!-- <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div> -->
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-12">
-                            <button type="button" name="btnModal" id="btnModal" class="btn btn-primary btn-block">Sign In</button>
-                        </div>
-                        <!-- /.col -->
-
-                    </div>
+                    <!-- <div class="g-recaptcha" data-sitekey="6LeyX-IpAAAAAIbQtozzPDj7JmSMz3s6zRzopA_J"></div> -->
+                    <button class="button-sign-in" type="button" name="btnModal" id="btnModal">Sign In</button>
+                    <a class="forgot-password" href="<?= base_url('/forgetPassword') ?>">Forgot your password?</a>
                 </form>
-                <p class="mb-1">
-                    <a href="<?= base_url('/forgetPassword') ?>">I forgot my password</a>
-                </p>
-                <p class="mb-0">
-                    <a href="<?= base_url('/register') ?>" class="text-center">Register a new membership</a>
-                </p>
             </div>
-            <!-- /.card-body -->
         </div>
-        <!-- /.card -->
+        <!-- Overlay Container -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Don't have an account?</h1>
+                    <p>Enter your credentials here to sign up</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- /.login-box -->
-
     <!-- jQuery -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery/jquery.min.js') ?>"></script>
+    <!-- Local JS -->
+    <script src="<?= base_url('asset/js/main.js') ?>"></script>
     <!-- Bootstrap 4 -->
     <script src="<?= base_url('asset/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-    <!-- AdminLTE App -->
-    <script src="<?= base_url('asset/AdminLTE/dist/js/adminlte.js') ?>"></script>
     <!-- jquery-validation -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery-validation/jquery.validate.min.js') ?>"></script>
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery-validation/additional-methods.min.js') ?>"></script>
-
     <!-- SweetAlert2 -->
     <script src="<?= base_url('asset/AdminLTE/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
     <!-- Google Captcha -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
     <!-- Jquery logics -->
     <script>
         $(document).ready(function() {
+            // Form Validation (Login)
             $('#quickForm').validate({
                 rules: {
                     email: {
@@ -130,19 +142,52 @@
                         required: "'password' cannot be empty",
                     }
                 },
-                errorElement: 'span',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.form-group').append(error);
                 },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                    $(element).css('font-size', '14px'); // Reset font size when valid
+                }
+            })
+            // Form Validation (Register)
+            $('#quickFormReg').validate({
+                rules: {
+                    nama: {
+                        required: true,
+                    },
+                    email: {
+                        required: true,
+                        email: true,
+                    },
+                    password: {
+                        required: true,
+                    }
+                },
+                messages: {
+                    nama: {
+                        required: "'Name' cannot be empty",
+                    },
+                    email: {
+                        required: "'email' cannot be empty",
+                        email: "Please enter a valid email address"
+                    },
+                    password: {
+                        required: "'password' cannot be empty",
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
                 },
                 unhighlight: function(element, errorClass, validClass) {
                     $(element).removeClass('is-invalid');
+                    $(element).css('font-size', '14px'); // Reset font size when valid
                 }
             })
         })
+        // Button sign in/login
         $('#btnModal').click(function() {
             if ($('#quickForm').valid()) {
                 var formData = $('#quickForm').serialize();
@@ -198,48 +243,84 @@
                 // Optionally, you can show the required message for empty fields here
             }
         });
+        // Button sign up/register
+        $('#btnModalReg').click(function() {
+            if ($('#quickFormReg').valid()) {
+                var formData = $('#quickFormReg').serialize();
+                console.log(formData);
+                // Show the loading screen inside a Swal
+                Swal.fire({
+                    title: 'Processing...',
+                    html: '<div class="loading-spinner"></div>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
+                // AJAX request
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'json', // Use dataType instead of type
+                    url: '<?= base_url("/registerAuth") ?>',
+                    data: formData,
+                    success: function(response) {
+                        console.log('AJAX request successful!');
+                        console.log('Response:', response);
 
-        // Password see through toggle
-        $('#togglePassword').on('click', function() {
-            // Get the password input field
-            var passwordField = $('#password');
-            var passwordFieldType = passwordField.attr('type');
-
-            // Toggle the password field type
-            if (passwordFieldType === 'password') {
-                passwordField.attr('type', 'text');
-                $(this).html('<span class="fas fa-eye-slash"></span>'); // Change icon to eye-slash
+                        // Check if authentication was successful
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Please Confirm',
+                                text: response.message,
+                            });
+                            $('#quickForm').hide();
+                            $('.text-center').hide();
+                            $('#successMessage').show();
+                            $('.login-box-msg').text('Your Almost there')
+                        } else if (response.error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'There has been an error/mistake',
+                                text: response.message,
+                            })
+                        } else {
+                            // Display error message if authentication failed
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Your Credintials are Invalid, Please try again!!!',
+                                text: response.message,
+                            });
+                            grecaptcha.reset();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX request failed!');
+                        console.log('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request. Please try again later.',
+                        });
+                        grecaptcha.reset();
+                    }
+                });
             } else {
-                passwordField.attr('type', 'password');
-                $(this).html('<span class="fas fa-eye"></span>'); // Change icon to eye
+                console.log('Data is empty or has not been filled');
+                // Optionally, you can show the required message for empty fields here
             }
         });
+
+        // document.getElementById('btnModal').addEventListener('click', function() {
+        //     const captcha = document.querySelector('.g-recaptcha');
+        //     captcha.style.display = 'block';
+        // });
+        // document.getElementById('btnModalReg').addEventListener('click', function() {
+        //     const captcha = document.querySelector('.g-recaptcha');
+        //     captcha.style.display = 'block';
+        // });
     </script>
-
-    <!-- Flashdata from the Auth Controller :: Verify function-->
-    <script>
-        // Check for session flashdata and display the Swal alert
-        <?php if (session()->getFlashdata('success')) : ?>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: '<?= session()->getFlashdata('success') ?>',
-                confirmButtonText: 'OK'
-            });
-        <?php endif; ?>
-
-        <?php if (session()->getFlashdata('error')) : ?>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '<?= session()->getFlashdata('error') ?>',
-                confirmButtonText: 'OK'
-            });
-        <?php endif; ?>
-    </script>
-
-
-
 </body>
 
 </html>
