@@ -24,18 +24,20 @@
 </head>
 
 <body class="main">
+
+    <!-- Container -->
     <div class="container" id="container">
         <!-- Sign-up -->
-        <div class="form-container sign-up-container">
+        <div class="form-container sign-up-container" id="signUpPanel">
             <div class="card-header text-center">
                 <a class="h1"><b>Puka</b>System</a>
             </div>
             <form name="register" id="quickFormReg">
                 <?= csrf_field(); ?>
-                <span>Please Sign-In to start your session</span>
+                <span>Please input your credential to continue</span>
                 <!-- Username -->
                 <div class="form-group">
-                    <div class="inputGroup">
+                    <div ctlass="inputGroup">
                         <input type="text" name="nama" id="nama" class="form-control" placeholder="Full Name">
                     </div>
                 </div>
@@ -60,7 +62,7 @@
             </form>
         </div>
         <!-- Sign-in -->
-        <div class="form-container sign-in-container">
+        <div class="form-container sign-in-container" id="signInPanel">
             <div class="card-header text-center">
                 <a class="h1"><b>Puka</b>System</a>
             </div>
@@ -94,8 +96,8 @@
         <div class="overlay-container">
             <div class="overlay">
                 <div class="overlay-panel overlay-left">
-                    <h1>Welcome Back!</h1>
-                    <p>To keep connected with us please login with your personal info</p>
+                    <h1 id="overlay-left-header">Welcome Back!</h1>
+                    <p id="overlay-left-p">To keep connected with us please login with your personal info</p>
                     <button class="ghost" id="signIn">Sign In</button>
                 </div>
                 <div class="overlay-panel overlay-right">
@@ -106,6 +108,28 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Container -->
+    <div class="container2" id="container2" style="display: none;">
+        <div class="box">
+            <h1>Success!!</h1>
+            <p> Thank you! Your verification link will come shortly, please check your inbox.</p>
+        </div>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup" style="display: none;">
+        <div class="box">
+            <div class="wave -one"></div>
+            <div class="wave -two"></div>
+            <div class="wave -three"></div>
+            <div class="title" id="popup-title">Loading!</div>
+            <p class="popup-message" id="popup-message">Checking registration status</p>
+        </div>
+        <!-- <button class="button-pop-up">Switch</button> -->
+    </div>
+
     <!-- jQuery -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery/jquery.min.js') ?>"></script>
     <!-- Local JS -->
@@ -193,16 +217,8 @@
                 var formData = $('#quickForm').serialize();
                 console.log(formData);
                 // Show the loading screen inside a Swal
-                Swal.fire({
-                    title: 'Processing...',
-                    html: '<div class="loading-spinner"></div>',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    didOpen: () => {
-                        Swal.showLoading()
-                    }
-                });
-
+                $('#popup').show();
+                // $('#container').hide();
                 // AJAX request
                 $.ajax({
                     method: 'POST',
@@ -219,11 +235,24 @@
                             window.location.href = '/';
                         } else {
                             // Display error message if authentication failed
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Credential Invalid',
-                                text: response.message,
+                            $('#popup-title').fadeOut(300, function() {
+                                $(this).text('Error!').fadeIn(300);
                             });
+                            $('.wave').css('background', 'red'); // Change wave color to error state
+                            $('.box').animate({
+                                width: '400px',
+                            }, 1000); // Slowly expand the box
+                            $('.wave').animate({
+                                width: '800px',
+                                height: '800px',
+                            }, 1000); // Slowly expand the wave
+
+                            $('#popup-message').fadeOut(300, function() {
+                                $(this).text('Credential invalid, please try again').fadeIn(300);
+                            });
+                            setTimeout(function() {
+                                window.location.href = '/login';
+                            }, 3000);
                             grecaptcha.reset();
                         }
                     },
@@ -249,15 +278,8 @@
                 var formData = $('#quickFormReg').serialize();
                 console.log(formData);
                 // Show the loading screen inside a Swal
-                Swal.fire({
-                    title: 'Processing...',
-                    html: '<div class="loading-spinner"></div>',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    didOpen: () => {
-                        Swal.showLoading()
-                    }
-                });
+                $('#popup').show();
+                $('#container').hide();
                 // AJAX request
                 $.ajax({
                     method: 'POST',
@@ -270,21 +292,39 @@
 
                         // Check if authentication was successful
                         if (response.success) {
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Please Confirm',
-                                text: response.message,
+                            $('#popup-title').fadeOut(300, function() {
+                                $(this).text('Success!').fadeIn(300);
                             });
-                            $('#quickForm').hide();
-                            $('.text-center').hide();
-                            $('#successMessage').show();
-                            $('.login-box-msg').text('Your Almost there')
+                            $('.wave').css({
+                                'background': 'green', // Update background color
+                            });
+                            $('.box').animate({
+                                width: '400px',
+                            }, 1000);
+                            $('.wave').animate({
+                                width: '800px',
+                                height: '800px',
+                            }, 1000); // Slowly expand the wave
+                            $('#popup-message').fadeOut(300, function() {
+                                $(this).text('Thank you, a verification link has been sent to your email').fadeIn(300);
+                            });
+
                         } else if (response.error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'There has been an error/mistake',
-                                text: response.message,
-                            })
+                            $('#popup-title').fadeOut(300, function() {
+                                $(this).text('Error!').fadeIn(300);
+                            });
+                            $('.wave').css('background', 'red'); // Change wave color to error state
+                            $('.box').animate({
+                                width: '400px',
+                            }, 1000); // Slowly expand the box
+                            $('.wave').animate({
+                                width: '800px',
+                                height: '800px',
+                            }, 1000); // Slowly expand the wave
+
+                            $('#popup-message').fadeOut(300, function() {
+                                $(this).text('User already exist!, please contact your supervisor').fadeIn(300);
+                            });
                         } else {
                             // Display error message if authentication failed
                             Swal.fire({
@@ -311,15 +351,42 @@
                 // Optionally, you can show the required message for empty fields here
             }
         });
+        $('.button-pop-up').click(function() {
+            if ($('#popup-title').text() === "Success!") {
+                $('#popup-title').fadeOut(300, function() {
+                    $(this).text('Error!').fadeIn(300);
+                });
+                $('.wave').css('background', 'red'); // Change wave color to error state
+                $('.box').animate({
+                    width: '400px',
+                }, 1000); // Slowly expand the box
+                $('.wave').animate({
+                    width: '800px',
+                    height: '800px',
+                }, 1000); // Slowly expand the wave
 
-        // document.getElementById('btnModal').addEventListener('click', function() {
-        //     const captcha = document.querySelector('.g-recaptcha');
-        //     captcha.style.display = 'block';
-        // });
-        // document.getElementById('btnModalReg').addEventListener('click', function() {
-        //     const captcha = document.querySelector('.g-recaptcha');
-        //     captcha.style.display = 'block';
-        // });
+                $('#popup-message').fadeOut(300, function() {
+                    $(this).text('User already exist!, please contact your supervisor').fadeIn(300);
+                });
+            } else {
+                $('#popup-title').fadeOut(300, function() {
+                    $(this).text('Success!').fadeIn(300);
+                });
+                $('.wave').css({
+                    'background': 'green', // Update background color
+                });
+                $('.box').animate({
+                    width: '400px',
+                }, 1000);
+                $('.wave').animate({
+                    width: '800px',
+                    height: '800px',
+                }, 1000); // Slowly expand the wave
+                $('#popup-message').fadeOut(300, function() {
+                    $(this).text('Thank you, a verification link has been sent to your email').fadeIn(300);
+                });
+            }
+        });
     </script>
 </body>
 

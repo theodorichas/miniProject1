@@ -340,6 +340,8 @@ footer a {
 	display: none;
 }
 
+/* ============================== End Container ============================== */
+
 /* ============================== Media Queries ============================== */
 @media (max-width: 500px) {
 	/* Login form */
@@ -382,5 +384,179 @@ footer a {
 		transition: transform 80ms ease-in;
 		transition: 0.3s;
 	}
-	/* end overlay panel right */
+	/* end overlay panel right */	
 }
+
+/* ============================= Testing ============================== */
+.container2 {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+                0 10px 10px rgba(0,0,0,0.22);
+    position: relative;
+    width: 80vw;
+    height: 80vh;
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+	.box {
+		text-align: center;
+		h1{
+			font-size: 40px;
+			font-weight: bold;
+		}
+		p{
+			color: #0056b3;
+			font-family: 'Courier New', Courier, monospace;
+			padding: 20px; /* Optional padding for readability */
+			font-size: 20px;
+		}
+	}
+}
+/* ============================= End Testing ============================== */
+
+/* ============================= popup animations ============================== */
+.popup-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+}
+  
+.box {
+	width: 300px;
+	height: 300px;
+	border-radius: 15px;
+	box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
+	background: whitesmoke;
+	position: relative;
+	overflow: hidden;
+	transform: translate3d(0, 0, 0);
+}
+.box::after {
+	content: '';
+	display: block;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	transform: translate3d(0, 0, 0);
+}
+
+.popup-message{
+	position: absolute; /* Relative to .box */
+    bottom: 10px; /* Position it near the bottom of the box */
+    left: 0;
+    width: 100%; /* Take full width of .box */
+    text-align: center; /* Center the text */
+    padding: 40px;
+    font-size: 1rem;
+    color: whitesmoke;
+    font-family: 'Courier New', Courier, monospace;
+}
+.wave {
+	opacity: 0.4;
+	position: absolute;
+	top: 3%;
+	left: 50%;
+	background: #0af;
+	width: 500px;
+	height: 500px;
+	margin-left: -250px;
+	margin-top: -250px;
+	transform-origin: 50% 48%;
+	border-radius: 43%;
+	animation: drift 3000ms infinite linear;
+	transition: background-color 1s ease;
+}
+  
+.wave.-three {
+	animation: drift 5000ms infinite linear;
+}	
+  
+.wave.-two {
+	animation: drift 7000ms infinite linear;
+	opacity: 0.1;
+	background: yellow;
+}
+
+.title {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+	line-height: 300px;
+	text-align: center;
+	color: white;
+	font-family: 'Playfair Display', serif;
+	letter-spacing: 0.4em;
+	font-size: 1.5rem;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+.message {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+	line-height: 300px;
+	text-align: center;
+	color: white;
+	text-transform: uppercase;
+	font-family: 'Playfair Display', serif;
+	letter-spacing: 0.4em;
+	font-size: 10px;
+	padding-top: 30px;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+@keyframes drift {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.box{
+	-webkit-animation: box 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+	        animation: box 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+@-webkit-keyframes box {
+	0% {
+	  -webkit-transform: scaleY(0.4);
+			  transform: scaleY(0.4);
+	  -webkit-transform-origin: 100% 0%;
+			  transform-origin: 100% 0%;
+	}
+	100% {
+	  -webkit-transform: scaleY(1);
+			  transform: scaleY(1);
+	  -webkit-transform-origin: 100% 0%;
+			  transform-origin: 100% 0%;
+	}
+}
+@keyframes box {
+	0% {
+		-webkit-transform: scaleY(0.4);
+				transform: scaleY(0.4);
+		-webkit-transform-origin: 100% 0%;
+				transform-origin: 100% 0%;
+	}
+	100% {
+		-webkit-transform: scaleY(1);
+				transform: scaleY(1);
+		-webkit-transform-origin: 100% 0%;
+				transform-origin: 100% 0%;
+	}
+}
+/* ============================= End popup animations ============================== */
+  

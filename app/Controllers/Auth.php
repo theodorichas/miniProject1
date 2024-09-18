@@ -115,17 +115,17 @@ class Auth extends Home
 
     public function registerAuth()
     {
-        $recaptchaResponse = $this->request->getPost('g-recaptcha-response');
-        $secretKey = '6LeyX-IpAAAAABBr1oLv6tsAJWP1PqhunfWPrPfW';
-        $recaptchaUrl = 'https://www.google.com/recaptcha/api/siteverify';
+        // $recaptchaResponse = $this->request->getPost('g-recaptcha-response');
+        // $secretKey = '6LeyX-IpAAAAABBr1oLv6tsAJWP1PqhunfWPrPfW';
+        // $recaptchaUrl = 'https://www.google.com/recaptcha/api/siteverify';
 
         // Verify the reCAPTCHA response
-        $response = file_get_contents($recaptchaUrl . '?secret=' . $secretKey . '&response=' . $recaptchaResponse);
-        $responseKeys = json_decode($response, true);
+        // $response = file_get_contents($recaptchaUrl . '?secret=' . $secretKey . '&response=' . $recaptchaResponse);
+        // $responseKeys = json_decode($response, true);
 
-        if (!$responseKeys["success"]) {
-            return $this->response->setJSON(['error' => true, 'message' => 'Please complete the CAPTCHA']);
-        }
+        // if (!$responseKeys["success"]) {
+        //     return $this->response->setJSON(['error' => true, 'message' => 'Please complete the CAPTCHA']);
+        // }
 
 
         $userId = intval($this->request->getPost('userId'));

@@ -14,6 +14,8 @@ $('#togglePassword').on('click', function() {
     }
 });
 
+
+
 // Toggle swtiching between sign-in and sign-up
 const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');

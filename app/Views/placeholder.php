@@ -210,3 +210,17 @@
 </body>
 
 <!--  -->
+// Swal.fire({
+// icon: 'info',
+// title: 'Please Confirm',
+// text: response.message,
+// });
+// $('#container').hide();
+// $('#popup').show();
+// $('#quickFormReg').hide();
+// $('#signInPanel').hide();
+// $('#successMessage').show();
+// $('#signIn').hide();
+// $('#overlay-left-header').text("Success!!");
+// $('#overlay-left-p').hide();
+// $('#signIn').hide();
