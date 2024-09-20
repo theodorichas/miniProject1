@@ -63,15 +63,12 @@ class template extends Home
 
         // Proceed to load the view
         $data['title'] = $pageName;
-        $data['group_names'] = $this->ModelKaryawan->getGroupNames();
         $data['menus'] = $this->ModelMenu->getMenuNames();
-        $data['groupedMenus'] = groupMenusByParent($data['menus']);
         $data['nama'] = $_SESSION['nama'] ?? '';
-        $data['permission'] = $permissions;
-        $data['menuId'] = $menuId;
-        // echo json_encode($routes); -> To see where the routes comin
-        // echo json_encode($data['permission']);
-        return view('template/datatable', $data);
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        return view('template/dataTable', $data);
     }
 
     public function templatedtb()
@@ -98,12 +95,12 @@ class template extends Home
     {
         $template_id = intval($this->request->getPost('template_id'));
         $template_name = $this->request->getPost('template_name');
-        $template_subject = $this->request->getPost('template_subject');
+        $template_note = $this->request->getPost('template_note');
         $template_body = $this->request->getPost('template_body');
         $data = [
             'template_id' => $template_id,
             'template_name' => $template_name,
-            'template_subject' => $template_subject,
+            'template_note' => $template_note,
             'template_body' => $template_body,
         ];
 

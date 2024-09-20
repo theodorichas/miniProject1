@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <title><?= $title ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.tiny.cloud/1/bjgz92ul6s7x2rivrravy9f40blvx8tr9t7mv35hb6iglejj/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
@@ -183,7 +184,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th scope="col"><?= getTranslation('text-template-name') ?></th>
-                                                        <th scope="col"><?= getTranslation('text-template-subject') ?></th>
+                                                        <th scope="col"><?= getTranslation('text-template-note') ?></th>
                                                         <th scope="col"><?= getTranslation('text-template-body') ?></th>
                                                         <th scope="col"><?= getTranslation('text-action') ?></th>
                                                     </tr>
@@ -231,8 +232,8 @@
                         </div>
                         <div class="form-group">
                             <div class="mb-3">
-                                <label for="template_subject" class="form-label"><?= getTranslation('text-template-subject') ?></label>
-                                <input type="text" name="template_subject" id="template_subject" class="form-control" placeholder="<?= getTranslation('text-lang-key-en-ph') ?>">
+                                <label for="template_note" class="form-label"><?= getTranslation('text-template-note') ?></label>
+                                <textarea name="template_note" id="template_note" class="form-control" placeholder="<?= getTranslation('text-lang-key-en-ph') ?>"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
@@ -261,7 +262,7 @@
                 "columns": [{
                     "data": "template_name",
                 }, {
-                    "data": "template_subject",
+                    "data": "template_note",
                 }, {
                     "data": "template_body",
                 }, {
@@ -269,7 +270,7 @@
                     "render": function(data, type, full, meta) {
                         return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.template_id + ', \'' +
                             escapeHtml(full.template_name) + '\', \'' +
-                            escapeHtml(full.template_subject) + '\', `' +
+                            escapeHtml(full.template_note) + '\', `' +
                             escapeHtml(full.template_body) + '`)" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
                             '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.template_id + ')"><?= getTranslation('button-delete') ?></button>';
                     },
@@ -319,7 +320,7 @@
                     template_name: {
                         required: true
                     },
-                    template_subject: {
+                    template_note: {
                         required: true
                     },
                     template_body: {
@@ -330,7 +331,7 @@
                     template_name: {
                         required: "This field cannot be empty"
                     },
-                    template_subject: {
+                    template_note: {
                         required: "This field cannot be empty"
                     },
                     template_body: {
@@ -397,14 +398,14 @@
 
         })
 
-        function UpdateRecord(template_id, template_name, template_subject, template_body) {
+        function UpdateRecord(template_id, template_name, template_note, template_body) {
             $('#mTitle').text('<?= getTranslation('title-update-menu-modal') ?>');
             $('#btnModal').text('<?= getTranslation('button-update-modal') ?>');
             // Populate the modal fields with the existing data
             $("#template_id").val(template_id);
             console.log("Id yang didapat dari tombol update: ", template_id);
             $('#template_name').val(template_name);
-            $('#template_subject').val(template_subject);
+            $('#template_note').val(template_note);
             // Set the content in TinyMCE, decoding any special characters
             tinymce.get('template_body').setContent(decodeURIComponent(template_body));
         }

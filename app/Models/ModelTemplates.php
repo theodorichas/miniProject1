@@ -8,7 +8,7 @@ class ModelTemplates extends Model
 {
     protected $table = 'templates';
     protected $primaryKey = 'template_id';
-    protected $allowedFields = ['template_name', 'template_subject', 'template_body', 'created_at', 'updated_at'];
+    protected $allowedFields = ['template_name', 'template_note', 'template_body', 'created_at', 'updated_at'];
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
@@ -21,7 +21,7 @@ class ModelTemplates extends Model
             for ($i = 0; $i < count($arr_keyword); $i++) {
                 $builder->groupStart();
                 $builder->orLike('template_name', $arr_keyword[$i]);
-                $builder->orLike('template_subject', $arr_keyword[$i]);
+                $builder->orLike('template_note', $arr_keyword[$i]);
                 $builder->orLike('template_body', $arr_keyword[$i]);
                 $builder->groupEnd();
             }

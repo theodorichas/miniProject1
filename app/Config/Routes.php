@@ -67,14 +67,10 @@ $routes->get('/resetPassForm/(:any)', 'auth::showResetPasswordForm/$1');
 $routes->post('/resetPass', 'auth::resetPassword');
 
 
-
-//testing purpose
-$routes->get('/testing', 'home::testing');
-$routes->get('/testing2', 'home::testing2');
+//Cookie
 $routes->get('/setCookie', 'home::setCookie');
 $routes->get('/getCookie', 'Home::getCookie');
 $routes->get('/deleteCookie', 'Home::deleteCookie');
-
 
 
 //language
@@ -91,6 +87,11 @@ $routes->add('/template/templateAdd', 'template::templateAdd');
 $routes->post('/template/delete', 'template::delete');
 $routes->add('/getTemplateBody', 'template::getTemplateBody');
 
+
+//testing purpose
+$routes->get('/testing', 'home::testing');
+$routes->get('/testing2', 'home::testing2');
+$routes->get('/loader', 'home::loader');
 
 
 service('auth')->routes($routes);
