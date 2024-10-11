@@ -98,12 +98,15 @@
                                 <option value="">Select an Icon</option>
                                 <?php foreach ($icons as $icon) : ?>
                                     <option value="<?= $icon ?>">
-                                        <i class="<?= $icon ?>"></i> <?= $icon ?>
+                                        <span class="material-symbols-outlined">
+                                            <?= $icon ?>
+                                        </span>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div id="selectedIconContainer"></div>
+                        <div id=" selectedIconContainer">
+                        </div>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">

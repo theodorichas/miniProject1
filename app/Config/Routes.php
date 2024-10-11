@@ -44,6 +44,11 @@ $routes->post('/sendAttachTesting', 'pdf::sendAttachTesting');
 $routes->post('/sendFileToEmail', 'pdf::sendFileToEmail');
 $routes->post('/excelToDB', 'pdf::excelToDB');
 
+//Paycheck
+$routes->get('/paycheck', 'Paycheck::index');
+$routes->post('/paycheck/read', 'Paycheck::read');
+
+
 
 //gPermissions routing
 $routes->get('/gPermission', 'gpermission::index');
@@ -88,10 +93,12 @@ $routes->post('/template/delete', 'template::delete');
 $routes->add('/getTemplateBody', 'template::getTemplateBody');
 
 
+
 //testing purpose
 $routes->get('/testing', 'home::testing');
 $routes->get('/testing2', 'home::testing2');
 $routes->get('/loader', 'home::loader');
+$routes->get('/placeholder', 'home::placeholder');
 
 
 service('auth')->routes($routes);

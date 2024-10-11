@@ -42,15 +42,17 @@
     <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/summernote/summernote-bs4.min.css') ?>">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <!-- Google material -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
-<body class="sidebar-mini layout-fixed sidebar-collapse layout-footer-fixed" style="height: auto;">
+<body class="layout-fixed" style="height: auto;">
     <div class=" wrapper">
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="asset/AdminLTE/dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
         </div>
+
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light fixed-top">
             <!-- Left navbar links -->
@@ -103,58 +105,70 @@
             </ul>
         </nav>
         <!-- /.navbar -->
+
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a href="<?= base_url('/') ?>" class="brand-link">
                 <img src="asset/AdminLTE/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-                <span class="brand-text font-weight-light">AdminLTE 3</span>
+                <span class="brand-text font-weight-light">
+                    <h4 style="display: inline;">Puka</h4>
+                    <h4 id="brand-text-system">System</h4>
+                </span>
             </a>
 
             <!-- Sidebar -->
             <div class="sidebar" id='sidebar'>
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <?php if (session()->has('user_id')) : // Check if user is logged in 
-                        ?>
+                        <?php if (session()->has('user_id')) : ?>
+                            <div class="form-inline">
+                                <div class="input-group" data-widget="sidebar-search">
+                                    <input id="search-input" class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search" oninput="filterMenu()">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-sidebar">
+                                            <i class="fas fa-search fa-fw"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <?php foreach ($menus as $menu) : ?>
                                 <?php
-                                // Determine if the menu item should be hidden based on 'visible' status
+                                // Check if the current page matches the menu item's URL
+                                $isActive = (current_url() === base_url($menu->file_name)) ? 'activeted' : '';
+
+                                // Check if menu is visible
                                 $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
 
-                                // Debug: Print the visibility value
-                                // echo 'Menu ID: ' . $menu->menu_id . ' - Visible: ' . $menu->visible . '<br>';
-
-                                // Check if the user has permission to view this menu
+                                // Check if user has permission to view the menu
                                 $hasPermission = false;
                                 foreach ($permission as $perm) {
                                     if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
                                         $hasPermission = true;
-                                        break; // No need to continue checking once permission is found
+                                        break;
                                     }
                                 }
                                 ?>
                                 <?php if ($hasPermission) : ?>
-                                    <li class="nav-item <?= $visibilityClass ?>">
-                                        <!-- Debug: Print the applied visibility class -->
-                                        <!-- <?php echo 'Visibility Class: ' . $visibilityClass . '<br>'; ?> -->
-                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
-                                            <i class="<?= $menu->icon ?>"></i>
-                                            <p><?= $menu->menu_name ?></p>
+                                    <li class="nav-item <?= $visibilityClass ?> menu-item"> <!-- Added class 'menu-item' -->
+                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link <?= $isActive ?>" id="nav-link">
+                                            <i class="material-symbols-outlined">
+                                                <?= $menu->icon ?>
+                                            </i>
+                                            <p id="menu-names"><?= $menu->menu_name ?></p> <!-- Menu name is inside a <p> -->
                                         </a>
                                     </li>
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                        <?php else : // If user is not logged in 
-                        ?>
+                        <?php else : ?>
                             <div class="brand-text font-weight-light">
                                 <p class="sidemenu"><?= lang('app.sidemenu-alert'); ?></p>
                             </div>
                         <?php endif; ?>
                     </ul>
                 </nav>
-                <!-- /.sidebar-menu -->
             </div>
+
             <!-- /.sidebar -->
         </aside>
         <?php if (session()->has('user_id')) : ?>
@@ -173,13 +187,11 @@
                                         <!-- /.card-header -->
                                         <div class="card-body">
                                             <!-- Button trigger modal -->
-                                            <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                <?= getTranslation('button-add-template') ?>
-                                            </a>
-                                            <!-- Button home -->
-                                            <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" href="<?= base_url('/') ?>">
-                                                <?= getTranslation('button-home') ?>
-                                            </a>
+                                            <?php if (session()->get('group_name') === "Admin") : ?>
+                                                <a button type="button" id="btnAdd" class="btn btn-success swalDefaultSuccess" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <?= getTranslation('button-add-template') ?>
+                                                </a>
+                                            <?php endif; ?>
                                             <table id="example" class="table table-bordered table-hover">
                                                 <thead>
                                                     <tr>
@@ -209,8 +221,8 @@
                 </h1>
             </div>
         <?php endif; ?>
-
     </div>
+
     <!-- Modal add dan edit Group (Modal dari Bootstrap)-->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -233,12 +245,13 @@
                         <div class="form-group">
                             <div class="mb-3">
                                 <label for="template_note" class="form-label"><?= getTranslation('text-template-note') ?></label>
-                                <textarea name="template_note" id="template_note" class="form-control" placeholder="<?= getTranslation('text-lang-key-en-ph') ?>"></textarea>
+                                <textarea id="template_note" name="template_note" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="mb-3">
                                 <label for="template_body" class="form-label"><?= getTranslation('text-template-body') ?></label>
+                                <i class="material-symbols-outlined" data-bs-toggle="tooltip" data-bs-placement="top" title="Enter the template body here. You can use placeholders like {name}, {email}, etc.">info</i>
                                 <textarea id="template_body" name="template_body" class="form-control"></textarea>
                             </div>
                         </div>
@@ -248,9 +261,11 @@
             </div>
         </div>
     </div>
+
     <!-- Script untuk menampilkan DataTable Server Side menggunakan AJAX -->
     <script>
         $(document).ready(function() {
+            let isAdmin = <?= session()->get('group_name') === 'Admin' ? 'true' : 'false' ?>;
             $('#example').DataTable({
                 "responsive": true,
                 "lengthChange": false,
@@ -268,14 +283,23 @@
                 }, {
                     "data": null,
                     "render": function(data, type, full, meta) {
-                        return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.template_id + ', \'' +
-                            escapeHtml(full.template_name) + '\', \'' +
-                            escapeHtml(full.template_note) + '\', `' +
-                            escapeHtml(full.template_body) + '`)" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
-                            '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.template_id + ')"><?= getTranslation('button-delete') ?></button>';
+                        if (isAdmin) { // If user is Admin, show buttons
+                            return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.template_id + ', \'' +
+                                escapeHtml(full.template_name) + '\', \'' +
+                                escapeHtml(full.template_note) + '\', `' +
+                                escapeHtml(full.template_body) + '`)" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
+                                '<button class="btn btn-danger action-btn" onclick="deleteRecord(' + full.template_id + ')"><?= getTranslation('button-delete') ?></button>';
+                        } else {
+                            // If user is not Admin, show text
+                            return '<span>No actions available, only Admin can perform these actions. Please contact admin if you want to make changes</span>';
+                        }
                     },
                     "defaultContent": ""
                 }],
+                columnDefs: [{
+                    targets: [3],
+                    visible: false
+                }, ]
             });
         });
 
@@ -286,9 +310,12 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;")
-                .replace(/`/g, "&#x60;");
+                .replace(/`/g, "&#x60;")
+                .replace(/\n/g, "\\n") // Handle newlines
+                .replace(/\r/g, "\\r"); // Handle carriage returns
         }
     </script>
+
     <!-- TinyMCE Script -->
     <script>
         tinymce.init({
@@ -310,8 +337,29 @@
                 });
             }
         });
+
+        tinymce.init({
+            selector: '#template_note',
+            height: 500,
+            menubar: false,
+            plugins: [
+                'save', 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount', 'autosave'
+            ],
+            toolbar: 'undo redo spellcheckdialog | formatselect | blocks fontfamily fontsize | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat typography | code | help',
+            autosave_ask_before_unload: true,
+            autosave_interval: '30s', // Save every 30 seconds
+            autosave_retention: '2m', // Retain saved data for 2 minutes
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+            }
+        });
     </script>
 
+    <!-- Script Validation and AJAX -->
     <script>
         // Insert here function here
         $(document).ready(function() {
@@ -405,7 +453,7 @@
             $("#template_id").val(template_id);
             console.log("Id yang didapat dari tombol update: ", template_id);
             $('#template_name').val(template_name);
-            $('#template_note').val(template_note);
+            tinymce.get('template_note').setContent(decodeURIComponent(template_note));
             // Set the content in TinyMCE, decoding any special characters
             tinymce.get('template_body').setContent(decodeURIComponent(template_body));
         }
@@ -466,8 +514,6 @@
             console.log("Id yang didapat dari tombol update: ", template_id);
         }
     </script>
-
-
     <!-- jQuery -->
     <script src="<?= base_url('asset/AdminLTE/plugins/jquery/jquery.min.js') ?>"></script>
     <!-- jQuery UI 1.11.4 -->
@@ -521,6 +567,88 @@
     <script src="<?= base_url('asset/AdminLTE/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
     <!-- Script Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</body>
+    <!-- Script Ganti Theme -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const lightMode = document.getElementById('lightMode');
+            const darkMode = document.getElementById('darkMode');
+
+            // Function to set the theme
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    body.classList.add('dark-mode');
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-lightbulb');
+                    themeText.textContent = 'Dark Mode';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    body.classList.remove('dark-mode');
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                    themeIcon.classList.remove('fa-lightbulb');
+                    themeIcon.classList.add('fa-sun');
+                    themeText.textContent = 'Light Mode';
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+
+            // Check for saved user preference and apply it
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+
+            // Event listeners for the dropdown items
+            lightMode.addEventListener('click', function() {
+                setTheme('light');
+            });
+
+            darkMode.addEventListener('click', function() {
+                setTheme('dark');
+            });
+        });
+    </script>
+    <!-- Script Welcome Text -->
+    <script>
+        function adjustWelcomeText() {
+            var welcomeTextElement = document.getElementById('welcome-text');
+            var username = "<?= $nama; ?>";
+            if (window.innerWidth <= 576) { // Adjust the width as needed
+                welcomeTextElement.textContent = username;
+            } else {
+                welcomeTextElement.textContent = "Welcome back, " + username;
+            }
+        }
+
+        // Run the function on page load and when the window is resized
+        window.onload = adjustWelcomeText;
+        window.onresize = adjustWelcomeText;
+    </script>
+    <!-- Scripts search bar -->
+    <script>
+        function filterMenu() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            menuItems.forEach(item => {
+                const menuName = item.querySelector('p').textContent.toLowerCase(); // Changed to select <p>
+                if (menuName.includes(searchInput)) {
+                    item.style.display = 'block'; // Show item
+                } else {
+                    item.style.display = 'none'; // Hide item
+                }
+            });
+        }
+    </script>
+    <!-- Script Tool Tips -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
 
 </html>

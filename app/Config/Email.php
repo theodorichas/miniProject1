@@ -3,11 +3,21 @@
 namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
+use app\Helpers;
 
 class Email extends BaseConfig
 {
-    public string $fromEmail  = 'testing.magang@gmail.com';
-    public string $fromName   = 'Arona';
+    public function __construct()
+    {
+        helper('app_settings_helper');
+        // Dynamically load settings from database using the helper function
+        $this->fromEmail = getAppSetting('fromEmail');
+        $this->fromName = getAppSetting('fromName');
+    }
+
+
+    public string $fromEmail;
+    public string $fromName;
     public string $recipients = '';
 
     /**

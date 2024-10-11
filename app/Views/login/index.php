@@ -388,6 +388,27 @@
             }
         });
     </script>
+    <!-- Flashdata -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for flashdata messages
+            <?php if (session()->getFlashdata('success')): ?>
+                Swal.fire({
+                    title: 'Success!',
+                    text: '<?= session()->getFlashdata('success') ?>',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            <?php elseif (session()->getFlashdata('error')): ?>
+                Swal.fire({
+                    title: 'Error!',
+                    text: '<?= session()->getFlashdata('error') ?>',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            <?php endif; ?>
+        });
+    </script>
 </body>
 
 </html>

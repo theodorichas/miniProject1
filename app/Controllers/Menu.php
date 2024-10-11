@@ -18,7 +18,7 @@ class Menu extends Home
         $this->ModelKaryawan = new ModelKaryawan();
         $this->ModelgPermission = new ModelgPermission();
         $this->request = \Config\Services::request();
-        helper(['general_helper', 'menu_helper']);
+        helper(['general_helper', 'menu_helper', 'icon_helper']);
     }
 
     public function index() //view table
@@ -57,7 +57,7 @@ class Menu extends Home
             return view('error-page/index');
         } else {
             $data['title'] = $pageName;
-            $data['icons'] = getFontAwesomeCheatSheet();
+            $data['icons'] = iconSheets();
             $data['menus'] = $this->ModelMenu->getMenuNames();
             $data['groupedMenus'] = groupMenusByParent($data['menus']);
             $data['nama'] = $_SESSION['nama'] ?? '';

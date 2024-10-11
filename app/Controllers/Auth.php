@@ -190,7 +190,7 @@ class Auth extends Home
         $template = $this->ModelTemplates->fetchTemplateBodyTest($templateName);
 
         $verificationLink = '<a href="' . site_url('/verify/' . $token) . '">Verify Email</a>';
-        $message = str_replace('<li>Link</li>', $verificationLink, $template->template_body);
+        $message = str_replace('[Link]', $verificationLink, $template->template_body);
         //load the email config
         $emailConfig = new Email();
         $this->email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
@@ -272,7 +272,7 @@ class Auth extends Home
             ];
             // Prepare email content
             $verificationLink = '<a href="' . site_url('/resetPassForm/' . $token) . '">Password Reset</a>';
-            $message = str_replace('<li>Link</li>', $verificationLink, $template->template_body);
+            $message = str_replace('[Link]', $verificationLink, $template->template_body);
 
             // $emailContent = view('template/reset_pass', [
             //     'token' => $token,

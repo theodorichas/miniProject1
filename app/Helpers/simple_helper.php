@@ -3,6 +3,7 @@
 if (!function_exists('helloWorld')) {
     function helloWorld()
     {
-        return 'welcome to helper function';
+        echo 'welcome to helper function';
+        log_message('info', 'helloWorld function is called.');
     }
 }

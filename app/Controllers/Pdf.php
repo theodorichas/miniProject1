@@ -211,7 +211,7 @@ class pdf extends Home
         });
 
         // Load email library
-        $email = \Config\Services::email();
+        $emailConfig = new Email();
         //calling the helper
         helper('formatrp');
         $results = [];
@@ -219,15 +219,18 @@ class pdf extends Home
             // Format salary
             $employee['formatted_salary'] = formatRupiah($employee['salary']);
             // Render email message
-            $message = view('template/paycheck', ['employee' => $employee]);
-            $email->setTo($employee['email']);
-            $email->setFrom('testing.magang@gmail.com', 'Arona');
-            $email->setSubject('Your Paycheck/Invoice "' . $employee['name'] . '"');
-            $email->setMessage($message);
+            $templateName = "Template Paycheck";
+            $template = $this->ModelTemplates->fetchTemplateBodyTest($templateName);
+            $message = str_replace('[Salary]', $employee['formatted_salary'], $template->template_body);
+            $message = str_replace('[Name]', $employee['name'], $message);
+            $this->email->setTo($employee['email']);
+            $this->email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
+            $this->email->setSubject('Your Paycheck/Invoice "' . $employee['name'] . '"');
+            $this->email->setMessage($message);
             // Attach a file
-            $email->attach('C:\Users\theod\Downloads\Hoshino.jpeg');
+            $this->email->attach('C:\Users\theod\Downloads\Hoshino.jpeg');
 
-            if (!$email->send()) {
+            if (!$this->email->send()) {
                 $results[] = ['email' => $employee['email'], 'status' => 'error', 'message' => 'There was an error sending the invoice'];
             } else {
                 $results[] = ['email' => $employee['email'], 'status' => 'success', 'message' => 'Paycheck has been sent to employees'];
@@ -339,7 +342,7 @@ class pdf extends Home
 
     // --- Helper Functions --- //
 
-    //dipakai di sendAttachTesting, sendAttach, sendEmail
+    // dipakai di sendAttachTesting, sendAttach, sendEmail
     protected function readExcelDataPC($file)
     {
         $spreadsheet = IOFactory::load($file->getTempName());

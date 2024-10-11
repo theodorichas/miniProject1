@@ -37,14 +37,21 @@
     <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/summernote/summernote-bs4.min.css') ?>">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Google material -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
 
-<body class="sidebar-mini layout-fixed sidebar-collapse layout-footer-fixed" style="height: auto;">
-    <div class=" wrapper">
+<body class="layout-fixed" style="height: auto;">
+    <div class="wrapper">
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
             <div class="loader"></div>
+            <div class="success-icon"></div>
+            <div class="error-icon"></div>
+            <div class="loader-content">
+                <h1 class="loader-message">Loading, Please Wait...</h1>
+            </div>
         </div>
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light fixed-top">
@@ -54,7 +61,6 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
             </ul>
-
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <!-- Notifications Dropdown Menu -->
@@ -80,6 +86,12 @@
                         <a class="dropdown-item" href="<?= base_url('/addLanguage') ?>"> +Add language</a>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span id="timeLabel">Time now: </span>
+                        <span id="clock"></span>
+                    </a>
+                </li>
                 <li class="nav-item dropdown">
                     <?php if (!empty($nama)) : ?>
                         <a class="nav-link welcome-text" data-toggle="dropdown" href="#" id="welcome-text">
@@ -104,81 +116,74 @@
             <!-- Brand Logo -->
             <a href="<?= base_url('/') ?>" class="brand-link">
                 <img src="asset/AdminLTE/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-                <span class="brand-text font-weight-light">Puka System</span>
+                <span class="brand-text font-weight-light">
+                    <h4 style="display: inline;">Puka</h4>
+                    <h4 id="brand-text-system">System</h4>
+                </span>
             </a>
-
             <!-- Sidebar -->
             <div class="sidebar" id='sidebar'>
-                <div class="form-inline">
-                    <div class="input-group" data-widget="sidebar-search">
-                        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-sidebar">
-                                <i class="fas fa-search fa-fw"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <?php if (session()->has('user_id')) : // Check if user is logged in 
-                        ?>
+                        <?php if (session()->has('user_id')) : ?>
+                            <div class="form-inline">
+                                <div class="input-group" data-widget="sidebar-search">
+                                    <input id="search-input" class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search" oninput="filterMenu()">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-sidebar">
+                                            <i class="fas fa-search fa-fw"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <?php foreach ($menus as $menu) : ?>
                                 <?php
-                                // Determine if the menu item should be hidden based on 'visible' status
+                                // Check if the current page matches the menu item's URL
+                                $isActive = (current_url() === base_url($menu->file_name)) ? 'activeted' : '';
+
+                                // Check if menu is visible
                                 $visibilityClass = ($menu->visible == 0) ? 'd-none' : '';
 
-                                // Debug: Print the visibility value
-                                // echo 'Menu ID: ' . $menu->menu_id . ' - Visible: ' . $menu->visible . '<br>';
-
-                                // Check if the user has permission to view this menu
+                                // Check if user has permission to view the menu
                                 $hasPermission = false;
                                 foreach ($permission as $perm) {
                                     if ($perm->menu_id == $menu->menu_id && $perm->view == 1) {
                                         $hasPermission = true;
-                                        break; // No need to continue checking once permission is found
+                                        break;
                                     }
                                 }
                                 ?>
                                 <?php if ($hasPermission) : ?>
-                                    <li class="nav-item <?= $visibilityClass ?>">
-                                        <!-- Debug: Print the applied visibility class -->
-                                        <!-- <?php echo 'Visibility Class: ' . $visibilityClass . '<br>'; ?> -->
-                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link">
-                                            <i class="<?= $menu->icon ?>"></i>
-                                            <p><?= $menu->menu_name ?></p>
+                                    <li class="nav-item <?= $visibilityClass ?> menu-item"> <!-- Added class 'menu-item' -->
+                                        <a href="<?= base_url($menu->file_name) ?>" class="nav-link <?= $isActive ?>" id="nav-link">
+                                            <i class="material-symbols-outlined">
+                                                <?= $menu->icon ?>
+                                            </i>
+                                            <p id="menu-names"><?= $menu->menu_name ?></p> <!-- Menu name is inside a <p> -->
                                         </a>
                                     </li>
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                        <?php else : // If user is not logged in 
-                        ?>
+                        <?php else : ?>
                             <div class="brand-text font-weight-light">
                                 <p class="sidemenu"><?= lang('app.sidemenu-alert'); ?></p>
                             </div>
                         <?php endif; ?>
                     </ul>
                 </nav>
-                <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
         </aside>
-
-
         <!-- Content Wrapper. Contains page content -->
         <?php if (session()->has('user_id')) : ?>
             <div class="content-wrapper">
                 <!-- Main content -->
                 <section class="content">
                     <div class="container-fluid">
-                        <div class="w3-container">
-                            <?= $this->renderSection('content'); ?>
-                        </div>
-                    </div><!-- /.container-fluid -->
+                        <?= $this->renderSection('content'); ?>
+                    </div>
                 </section>
-                <!-- /.content -->
             </div>
-            <!-- /.content-wrapper -->
         <?php else : ?>
             <div class="login-req">
                 <h1>
@@ -186,21 +191,6 @@
                 </h1>
             </div>
         <?php endif; ?>
-
-
-        <footer class="main-footer text-sm">
-            <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
-            All rights reserved.
-            <div class="float-right d-none d-sm-inline-block">
-                <b>Version</b> 3.2.0
-            </div>
-        </footer>
-
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
 
@@ -242,11 +232,18 @@
             const themeText = document.getElementById('themeText');
             const lightMode = document.getElementById('lightMode');
             const darkMode = document.getElementById('darkMode');
+            const navbar = document.querySelector('.navbar'); // Navbar
+            const sidebar = document.querySelector('.main-sidebar'); // Sidebar element
+            const sidemenu = document.querySelector('.sidemenu'); // Sidemenu element
 
             // Function to set the theme
             function setTheme(theme) {
                 if (theme === 'dark') {
                     body.classList.add('dark-mode');
+                    navbar.classList.add('navbar-dark', 'bg-dark');
+                    navbar.classList.remove('navbar-light', 'bg-light');
+                    sidebar.classList.add('sidebar-dark-primary');
+                    sidebar.classList.remove('sidebar-light-primary');
                     themeIcon.classList.replace('fa-moon', 'fa-sun');
                     themeIcon.classList.remove('fa-sun');
                     themeIcon.classList.add('fa-lightbulb');
@@ -254,6 +251,10 @@
                     localStorage.setItem('theme', 'dark');
                 } else {
                     body.classList.remove('dark-mode');
+                    navbar.classList.add('navbar-light', 'bg-light');
+                    navbar.classList.remove('navbar-dark', 'bg-dark');
+                    sidebar.classList.add('sidebar-light-primary');
+                    sidebar.classList.remove('sidebar-dark-primary');
                     themeIcon.classList.replace('fa-sun', 'fa-moon');
                     themeIcon.classList.remove('fa-lightbulb');
                     themeIcon.classList.add('fa-sun');
@@ -276,7 +277,6 @@
             });
         });
     </script>
-
     <!-- Script Welcome Text -->
     <script>
         function adjustWelcomeText() {
@@ -293,8 +293,39 @@
         window.onload = adjustWelcomeText;
         window.onresize = adjustWelcomeText;
     </script>
+    <!-- Scripts search bar -->
+    <script>
+        function filterMenu() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const menuItems = document.querySelectorAll('.menu-item');
 
+            menuItems.forEach(item => {
+                const menuName = item.querySelector('p').textContent.toLowerCase(); // Changed to select <p>
+                if (menuName.includes(searchInput)) {
+                    item.style.display = 'block'; // Show item
+                } else {
+                    item.style.display = 'none'; // Hide item
+                }
+            });
+        }
+    </script>
+    <!-- Scripts clock -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateClock() {
+                const clockElement = document.getElementById('clock');
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+            }
 
+            // Update the clock immediately, then every second
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
 
     <?= $this->renderSection('scripts'); ?>
 

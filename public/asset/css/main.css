@@ -1,10 +1,41 @@
+:root {
+  /* Colors */
+  --color-primary: #7380ec;
+  --color-danger: #ff7782;
+  --color-success: #41f1b6;
+  --color-warning: #ffbb55;
+  --color-white: #fff;
+  --color-info-dark: #7d8da1;
+  --color-info-light: #dce1eb;
+  --color-dark: #363949;
+  --color-light: rgba(132, 139, 200, 0.18);
+  --color-primary-variant: #111e88;
+  --color-dark-variant: #677483;
+  --color-background: #f6f6f9;
+  --color-hover-before:rgba(196, 139, 246, 0.904);
+  --color-hover: rgba(196, 139, 246, 0.512);
+
+
+  /* Card */
+  --card-border-radius: 2rem;
+  --border-radius-1: 0.4rem;
+  --border-radius-2: 0.8rem;
+  --border-radius-3: 1.2rem;
+  --card-padding: 1.8rem;
+  --padding-1: 1.2rem;
+  --box-shadow: 0 2rem 3rem var(--color-light)
+}
+
+
 *, ::after, ::before {
     box-sizing: border-box;
 }
 
-.container-fluid{
-    padding-top: 100px;
+.content{
+    margin-top: 2rem;
+    /* background-color: #41f1b6; */
 }
+
 /* Button Function for Datatables */
 .action-btn {
     margin-right: 10px; /* Adjust the value as needed */
@@ -24,7 +55,7 @@
 .sidemenu{
     text-align: center;
     margin-top: 250px;
-    color: white;
+    color: var(--color-dark-variant);
 }
 
 .g-recaptcha{
@@ -32,8 +63,69 @@
     margin-left: 10px;
 }
 
+/* ==== Sidebar ==== */
+/* Align the icon and menu name horizontally */
+#nav-link {
+  display: flex; /* Use flexbox to align items */
+}
+
+#nav-link :hover {
+  background-color: var(--color-danger); /* Use flexbox to align items */
+}
+
+/* Clock */
+#clock {
+  font-size: 1rem;
+  border-radius: 1rem;
+  padding: 0.4rem;
+  /* font-weight: bold; */
+}
+#timeLabel {
+  font-size: 14px;
+  font-weight: normal;
+  margin-right: 5px;
+}
+
+#brand-text-system{
+  color: #FF4B2B;
+  display: inline;
+}
+
+#menu-names{
+  font-size: 1rem;
+  margin-left: 1rem;
+}
+
+.nav-sidebar .nav-link{
+  transition: all 500ms ease;
+}
+
+/* Style for active menu item */
+.nav-link.activeted {
+  background-color: var(--color-danger); /* Highlight color (adjust as needed) */
+  p{
+    color: var(--color-dark); /* Text color for active item */
+  }
+}
+
+.nav-link.activeted i {
+  color:var(--color-dark); /* Icon color for active item */
+}
+
+
+.nav-sidebar .nav-link:hover i {
+  transform: translateY(-2px); /* Slight lift effect on hover */
+  color: #FF4B2B; /* Change icon color on hover */
+}
+
+.nav-sidebar .nav-link:hover p {
+  color: #FF4B2B; /* Change icon color on hover */
+}
+
+/* === Sidebar End === */
 
 /* ==== View Pages ==== */
+
 /* Karyawan */
 #btnAdd{
     margin-bottom: 20px;
@@ -68,7 +160,7 @@
     text-align: center;
     margin-top: 20px; /* Add spacing between loader and message */
     -webkit-animation: loader-content 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
-	animation: loader-content 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+	  animation: loader-content 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
     font-size: 1.5rem;
     padding-left: 10px;
 }
@@ -100,7 +192,6 @@
   
 .loader{
     width: 50px;
-    
     aspect-ratio: 1;
     --c:no-repeat linear-gradient(#000 0 0);
     background: 
@@ -128,42 +219,6 @@
     animation-name: l7-1;
   }
   
-  @keyframes l7-0 {
-   16.67% {background-size:8px 30%, 8px 30%, 8px 50%, 8px 50%, 8px 50%, 8px 50%}
-   33.33% {background-size:8px 30%, 8px 30%, 8px 30%, 8px 30%, 8px 50%, 8px 50%}
-   50%    {background-size:8px 30%, 8px 30%, 8px 30%, 8px 30%, 8px 30%, 8px 30%}
-   66.67% {background-size:8px 50%, 8px 50%, 8px 30%, 8px 30%, 8px 30%, 8px 30%}
-   83.33% {background-size:8px 50%, 8px 50%, 8px 50%, 8px 50%, 8px 30%, 8px 30%}
-  }
-  
-  @keyframes l7-1 {
-   20%  {left:0px}
-   40%  {left:calc(50%  - 4px)}
-   60%  {left:calc(100% - 8px)}
-   80%,
-   100% {left:100%}
-  }
-/* ==== End Pre Loader ==== */
-
-@keyframes puff {
-    0% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(2);
-      opacity: 0;
-    }
-  }
-  
-  @keyframes fadeOut {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
   .success-icon {
     display: none;
     width: 50px;
@@ -212,7 +267,57 @@
 
   .error-icon::after {
     transform: rotate(-45deg);
-  }
+  }  
+/* ==== End Pre Loader ==== */
 
+/* ==== Keyframes ==== */
+@keyframes fade-up {
+  0%{
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  100%{
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+@keyframes puff {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes l7-0 {
+  16.67% {background-size:8px 30%, 8px 30%, 8px 50%, 8px 50%, 8px 50%, 8px 50%}
+  33.33% {background-size:8px 30%, 8px 30%, 8px 30%, 8px 30%, 8px 50%, 8px 50%}
+  50%    {background-size:8px 30%, 8px 30%, 8px 30%, 8px 30%, 8px 30%, 8px 30%}
+  66.67% {background-size:8px 50%, 8px 50%, 8px 30%, 8px 30%, 8px 30%, 8px 30%}
+  83.33% {background-size:8px 50%, 8px 50%, 8px 50%, 8px 50%, 8px 30%, 8px 30%}
+ }
+ 
+ @keyframes l7-1 {
+  20%  {left:0px}
+  40%  {left:calc(50%  - 4px)}
+  60%  {left:calc(100% - 8px)}
+  80%,
+  100% {left:100%}
+ }
+  
+.content{
+  animation: fade-up 1s;
+}
   
   

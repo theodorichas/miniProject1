@@ -31,6 +31,8 @@ class Home extends BaseController
         $groupName = $_SESSION['group_name'] ?? '';
         $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
         $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        $sessionData = session()->get();
+        // print_r($sessionData);
         return view('home/index', $data);
     }
 
@@ -92,7 +94,15 @@ class Home extends BaseController
 
     public function testing()
     {
-        return view('template/testing');
+        $this->setLanguage();
+        $data['title'] = 'Home';
+        $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['nama'] = $_SESSION['nama'] ?? '';
+        $data['groupedMenus'] = groupMenusByParent($data['menus']);
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        return view('template/testing', $data);
     }
     public function testing2()
     {
@@ -109,6 +119,19 @@ class Home extends BaseController
     public function loader()
     {
         return view('testing/loader');
+    }
+
+    public function placeholder()
+    {
+        $this->setLanguage();
+        $data['title'] = 'Home';
+        $data['menus'] = $this->ModelMenu->getMenuNames();
+        $data['nama'] = $_SESSION['nama'] ?? '';
+        $data['groupedMenus'] = groupMenusByParent($data['menus']);
+        $groupName = $_SESSION['group_name'] ?? '';
+        $groupId = $this->ModelKaryawan->getGroupIdByName($groupName);
+        $data['permission'] = $this->ModelgPermission->get_permission($groupId);
+        return view('template/placeholder', $data);
     }
 
     public function setCookie()
