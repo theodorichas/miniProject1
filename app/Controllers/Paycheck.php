@@ -6,7 +6,7 @@ use App\Models\ModelMenu;
 use App\Models\ModelKaryawan;
 use App\Models\ModelgPermission;
 use App\Models\ModelTemplates;
-use App\Models\ModelExcel;
+use App\Models\ModelExcelv2;
 use TCPDF;
 use DateTime;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -16,7 +16,7 @@ use config\Email;
 
 class Paycheck extends Home
 {
-    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $ModelTemplates, $ModelExcel, $email;
+    protected $db, $builder, $ModelMenu, $ModelKaryawan, $ModelgPermission, $ModelTemplates, $ModelExcelv2, $email;
 
     public function __construct()
     {
@@ -26,7 +26,7 @@ class Paycheck extends Home
         $this->ModelKaryawan = new ModelKaryawan();
         $this->ModelgPermission = new ModelgPermission();
         $this->ModelTemplates = new ModelTemplates();
-        $this->ModelExcel = new ModelExcel();
+        $this->ModelExcelv2 = new ModelExcelv2();
         $this->request = \Config\Services::request();
         $this->email = \Config\Services::email();
     }
@@ -76,6 +76,38 @@ class Paycheck extends Home
         }
     }
 
+    public function printPdf()
+    {
+        // Create a new TCPDF instance
+        $uploadFile = $this->request->getFile('formFile');
+        $excelData = $this->readExcelData($uploadFile);
+
+        $pdf = new TCPDF();
+
+        // Set the PDF document details
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Author Name');
+        $pdf->SetTitle('Paycheck');
+        $pdf->SetSubject('Paycheck Template');
+
+        // Add a page
+        $pdf->AddPage();
+
+        // Write the content with HTML
+        $htmlContent = view('testing/index', ['excelData' => $excelData]);
+
+        // Output the HTML content
+        $pdf->writeHTML($htmlContent, true, false, true, false, '');
+
+        // Set the Content-Type to application/pdf
+        header('Content-Type: application/pdf');
+
+        // Output the PDF inline (I) or as download (D)
+        $pdf->Output('paycheck.pdf', 'I'); // Change 'I' to 'D' for download
+        exit(); // Ensure no further output is sent after the PDF
+    }
+
+
     // Function to read data from Excel file
     public function read()
     {
@@ -91,23 +123,6 @@ class Paycheck extends Home
             echo json_encode($excelData);
         }
     }
-
-    // Helper to Read the Excel data
-    // protected function readExcelData($file)
-    // {
-    //     $spreadsheet = IOFactory::load($file->getTempName());
-    //     $worksheet = $spreadsheet->getActiveSheet();
-
-    //     $data = [];
-    //     foreach ($worksheet->getRowIterator() as $row) {
-    //         $rowData = [];
-    //         foreach ($row->getCellIterator() as $cell) {
-    //             $rowData[] = $cell->getValue();
-    //         }
-    //         $data[] = $rowData;
-    //     }
-    //     return $data;
-    // }
 
     // Helper to Read the Excel data
     protected function readExcelData($file)
@@ -131,5 +146,33 @@ class Paycheck extends Home
             }
         }
         return ['columns' => $columns, 'data' => $data];
+    }
+
+    public function excelToDB()
+    {
+        $excelData = $this->request->getPost('excelData');
+
+        foreach ($excelData as $index => $row) {
+
+            $employeeData = [
+                'employee_id'      => $row['EmployeeId'],
+                'nama'      => $row['Nama Lengkap'],
+                'grade'      => $row['Grade'],
+                'periode'      => $row['Periode'],
+                'gaji_pokok'      => $row['gaji_pokok'],
+                'workdays'      => $row['workdays'],
+                'wfo'      => $row['WFO'],
+                'wfa'      => $row['WFA'],
+                'ijin'      => $row['Ijin'],
+                'alpha'      => $row['Alpha'],
+                'total_transfer' => $row['total_transfer'],
+                'bca_source' => $row['Bank'],
+                'email' => $row['Email'],
+
+
+            ];
+            $this->ModelExcelv2->insertExcel($employeeData);
+        }
+        return $this->response->setJSON(['status' => 'success']);
     }
 }

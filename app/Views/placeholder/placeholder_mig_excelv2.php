@@ -66,7 +66,7 @@ class CreateExcelTableV2 extends Migration
                 'type' => 'INT',
                 'constraint' => 11,
             ],
-            'izin' => [
+            'ijin' => [
                 'type' => 'INT',
                 'constraint' => 11,
             ],
@@ -225,7 +225,16 @@ class CreateExcelTableV2 extends Migration
             'bank' => [
                 'type' => 'VARCHAR',
                 'constraint' => '255',
+            ],
+            'Beneficiary' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
+            ],
+            'AccountNo' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
             ]
+
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->createTable('excelV2');

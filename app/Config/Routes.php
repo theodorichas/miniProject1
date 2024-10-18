@@ -47,6 +47,9 @@ $routes->post('/excelToDB', 'pdf::excelToDB');
 //Paycheck
 $routes->get('/paycheck', 'Paycheck::index');
 $routes->post('/paycheck/read', 'Paycheck::read');
+$routes->post('/paycheck/excelToDB', 'Paycheck::excelToDB');
+$routes->post('/paycheck/output', 'Paycheck::printPdf');
+
 
 
 

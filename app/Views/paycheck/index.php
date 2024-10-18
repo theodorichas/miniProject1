@@ -18,13 +18,14 @@
 <?= $this->section('content'); ?>
 
 <!-- Form submit -->
-<form id="excelForm" enctype="multipart/form-data" action="<?= base_url('/output') ?>" method="POST">
-    <h1>Ini paycek</h1>
+<form id="excelForm" enctype="multipart/form-data" action="<?= base_url('/paycheck/output') ?>" method="POST">
+    <h1>Package Paycheck Function</h1>
     <div class="mb-3">
         <label for="formFile" id="formFilelbl" class="form-label"><?= lang('app.text-input-excel') ?></label>
         <input class="form-control" type="file" id="formFile" name="formFile">
     </div>
     <button type="button" id="btnModal" class="btn btn-warning"><?= lang('app.text-generate-file') ?></button>
+    <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button>
 </form>
 
 <!-- Datatable -->
@@ -38,6 +39,32 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
+            <div class="form-group">
+                <label for="filterPeriode">Select Period</label>
+                <select name="filterPeriode" id="filterPeriode" class="form-control">
+                    <option value="">All</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filterPaycek">Eligible</label>
+                <select name="filterPaycek" id="filterPaycek" class="form-control">
+                    <option value="">All</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
             <table id="example" class="table table-bordered table-hover">
                 <thead>
                     <tr>
@@ -45,6 +72,10 @@
                         <th scope="col">Periode</th>
                         <th scope="col">Nama</th>
                         <th scope="col">Gaji Pokok</th>
+                        <th scope="col">Bank</th>
+                        <th scope="col">No. Rek</th>
+                        <th scope="col">Send slip</th>
+                        <th scope="col">Email</th>
                     </tr>
                 </thead>
             </table>
@@ -149,12 +180,12 @@
                         var responseData = JSON.parse(response); // Parsing response dari JSON
                         // Memfilter data dari responseData.data
                         var filteredData = responseData.data.filter(function(row) {
-                            // Memeriksa apakah setidaknya ada satu nilai dalam row yang tidak null
-                            return row.some(function(cell) {
+                            // Convert object values to an array and check if any value is not null
+                            return Object.values(row).some(function(cell) {
                                 return cell !== null;
                             });
                         });
-                        // console.log(filteredData); // Menampilkan hasil yang sudah difilter
+
                         if (filteredData.length === 0) {
                             console.log('All rows contain null values');
                             return;
@@ -177,7 +208,8 @@
                             }
                             return rowData;
                         });
-                        console.log(convertedData);
+                        console.log(responseData.data);
+
                         $('#example').DataTable({
                             responsive: true,
                             lengthChange: false,
@@ -195,30 +227,68 @@
                                 {
                                     data: 'total_transfer', // Column for total_transfer with custom rendering
                                     render: function(data, type, row) {
-                                        console.log(data); // Log the data to inspect its value
                                         return formatRupiah(data); // Ensure salary is displayed in currency format
                                     }
+                                }, {
+                                    data: 'Bank' // Column for Bank
+                                }, {
+                                    data: 'AccountNo' // Column for Account No.
+                                }, {
+                                    data: 'Send Salary Slip' // Column for Salary.
+                                }, {
+                                    data: 'Email' // Column for Salary.
                                 }
                             ]
                         });
 
+                        //Success notification
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!!',
                             text: 'Record has been updated!',
                             allowOutsideClick: false,
-                        })
+                        });
+
+                        // Event listener for periode dropdown
+                        $('#filterPeriode').on('change', function() {
+                            var selectedMonth = $(this).val();
+
+                            // Filter the DataTable by month
+                            var table = $('#example').DataTable();
+
+                            // If no month is selected, reset the filter
+                            if (selectedMonth === "") {
+                                table.column(1).search('').draw(); // Reset filter
+                            } else {
+                                // Use a regular expression to match the month in "YYYY-MM-DD" format
+                                var regex = '^\\d{4}-' + selectedMonth + '-\\d{2}$'; // Match "2024-01-31" format
+                                table.column(1).search(regex, true, false).draw(); // Apply the filter
+                            }
+                        });
+
+                        // Event listener for eligible dropdown
+                        $('#filterPaycek').on('change', function() {
+                            var selectedOption = $(this).val();
+
+                            // Filter the DataTable by month
+                            var table = $('#example').DataTable();
+
+                            // If no month is selected, reset the filter
+                            if (selectedOption === "") {
+                                table.column(6).search('').draw(); // Reset filter
+                            } else {
+                                // Use a regular expression to match the month in "YYYY-MM-DD" format
+                                table.column(6).search('^' + selectedOption + '$', true, false).draw(); // Apply the filter
+                            }
+                        });
 
                         $('#btnModal').text('<?= lang('app.text-insert-new-file') ?>');
                         $('#formFilelbl').hide();
                         $('#fileNameDisplay').text(` - ${fileName}`);
+                        $('#btnPaycheck').show();
 
                         $('#formFile').hide();
                         $('#dataTable').show();
-                        $('#btnPaycheck').show();
-                        $('#btnEmail').show();
-                        $('#btnTesting').show();
-                        $('#btnSendtoEmail').show();
                     },
                     error: function(xhr, status, error) {
                         console.log('AJAX request failed!');
@@ -243,7 +313,6 @@
         });
     }
 
-
     // Fungsi convert serial nomor ke tanggal pada excel
     function excelSerialToDate(serial) {
         var utc_days = Math.floor(serial - 25569);
@@ -257,5 +326,6 @@
         return year + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
     }
 </script>
+
 
 <?= $this->endSection('scripts'); ?>

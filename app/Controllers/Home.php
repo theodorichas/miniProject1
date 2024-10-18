@@ -118,7 +118,7 @@ class Home extends BaseController
 
     public function loader()
     {
-        return view('testing/loader');
+        return view('testing/index');
     }
 
     public function placeholder()

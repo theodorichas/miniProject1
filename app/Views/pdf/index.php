@@ -27,7 +27,7 @@
     <button type="button" id="btnEmail" class="btn btn-info" style="display: none;">Send Paycheck</button>
     <!-- <button type="button" id="btnAttach" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Send Attachments</button> -->
     <!-- <button type="button" id="btnTesting" class="btn btn-danger" data-toggle="modal" style="display: none;" data-target="#exampleModal">Send Files</button> -->
-    <!-- <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button> -->
+    <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button>
     <!-- <button type="button" id="btnSendtoEmail" class="btn btn-secondary" data-toggle="modal" style="display: none;" data-target="#exampleModal2">Send to email</button> -->
 
 </form>
