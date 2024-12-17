@@ -319,5 +319,39 @@
 .content{
   animation: fade-up 1s;
 }
-  
+
+.material-symbols-outlined[data-bs-toggle="tooltip"] {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.material-symbols-outlined[data-bs-toggle="tooltip"]:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: -35px; /* Adjust distance to keep it close above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.material-symbols-outlined[data-bs-toggle="tooltip"]:hover::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #333 transparent;
+  z-index: 1000;
+}
+
+
   

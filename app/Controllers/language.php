@@ -105,9 +105,9 @@ class language extends Home
 
         $data = [
             'langId' => $langId,
-            'key' => $langKey,
-            'en' => $langValueEn,
-            'indo' => $langValueIndo,
+            'langKey' => $langKey,
+            'langEn' => $langValueEn,
+            'langIndo' => $langValueIndo,
         ];
 
         var_dump($data);

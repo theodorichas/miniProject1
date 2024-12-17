@@ -124,15 +124,15 @@
             'serverMethod': 'post',
             "ajax": "<?= site_url('langdtb') ?>",
             "columns": [{
-                "data": "key",
+                "data": "langKey",
             }, {
-                "data": "en",
+                "data": "langEn",
             }, {
-                "data": "indo",
+                "data": "langIndo",
             }, {
                 "data": null,
                 "render": function(data, type, full, meta) {
-                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.langId + ', \'' + full.key + '\', \'' + full.en + '\', \'' + full.indo + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
+                    return '<button class="btn btn-primary action-btn" onclick="UpdateRecord(' + full.langId + ', \'' + full.langKey + '\', \'' + full.langEn + '\', \'' + full.langIndo + '\')" data-bs-toggle="modal" data-bs-target="#exampleModal"><?= getTranslation('button-update') ?></button>' +
                         '<button class="btn btn-danger action-btn"onclick="deleteRecord(' + full.langId + ')"><?= getTranslation('button-delete') ?></button>';
                 },
                 "defaultContent": ""

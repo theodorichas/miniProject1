@@ -12,11 +12,11 @@ class ModelLanguage extends Model
         $this->db = \Config\Database::connect();
     }
     protected $table = 'translations';
-    protected $allowedFields = ['key', 'en', 'indo'];
+    protected $allowedFields = ['langKey', 'langEn', 'langIndo'];
     protected $primaryKey = 'langId'; // Assuming 'id' is your primary key.
 
 
-    public function searchAndDisplay($keyword = null, $start = 0, $length = 0, $orderColumn = 'key', $orderDirection = 'asc')
+    public function searchAndDisplay($keyword = null, $start = 0, $length = 0, $orderColumn = 'langKey', $orderDirection = 'asc')
     {
         $builder = $this->table('translations');
 
@@ -24,9 +24,9 @@ class ModelLanguage extends Model
             $arr_keyword = explode(" ", $keyword);
             for ($i = 0; $i < count($arr_keyword); $i++) {
                 $builder->groupStart();
-                $builder->orLike('key', $arr_keyword[$i]);
-                $builder->orLike('en', $arr_keyword[$i]);
-                $builder->orLike('indo', $arr_keyword[$i]);
+                $builder->orLike('langKey', $arr_keyword[$i]);
+                $builder->orLike('langEn', $arr_keyword[$i]);
+                $builder->orLike('langIndo', $arr_keyword[$i]);
                 $builder->groupEnd();
             }
         }
@@ -40,7 +40,7 @@ class ModelLanguage extends Model
 
     public function getLanguages()
     {
-        return ['en', 'indo'];
+        return ['langEn', 'langIndo'];
     }
 
     public function add_lang($data)

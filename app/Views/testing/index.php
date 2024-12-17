@@ -61,19 +61,17 @@
             <td>Divisi:</td>
             <td>{{Divisi}}</td>
             <td>Dibayarkan melalui:</td>
-            <td></td>
+            <td>{{Bank}}</td>
         </tr>
         <tr>
             <td>Jabatan:</td>
-            <td></td>
+            <td>{{Jabatan}}</td>
             <td>Nomor Rekening:</td>
-            <td></td>
+            <td>{{AccountNo}}</td>
         </tr>
         <tr>
             <td>Pemilik Rekening:</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{Nama Lengkap}}</td>
         </tr>
     </table>
 
@@ -85,79 +83,79 @@
         </tr>
         <tr>
             <td>Gaji Pokok</td>
-            <td></td>
+            <td>{{gaji_pokok}}</td>
         </tr>
         <tr>
             <td>Tunj. Jabatan</td>
-            <td></td>
+            <td>{{tj_jabatan}}</td>
         </tr>
         <tr>
             <td>Tunj. Keahlian</td>
-            <td></td>
+            <td>{{tj_keahlian}}</td>
         </tr>
         <tr>
             <td>Tunj. Masa Kerja</td>
-            <td></td>
+            <td>{{tj_masa_kerja}}</td>
         </tr>
         <tr>
             <td>Tunj. Keluarga</td>
-            <td></td>
+            <td>{{tj_keluarga}}</td>
         </tr>
         <tr>
             <td>Jumlah Hari Kerja</td>
-            <td>22 hari</td>
+            <td>{{Workdays}} Hari</td>
         </tr>
         <tr>
             <td>Jumlah Hari Hadir WFO</td>
-            <td>20 hari</td>
+            <td>{{WFO}} Hari</td>
         </tr>
         <tr>
             <td>Jumlah Hari Hadir WFA</td>
-            <td>0 hari</td>
+            <td>{{WFA}} Hari</td>
         </tr>
         <tr>
             <td>Jumlah Hari Ijin/Cuti/Sakit</td>
-            <td>2 hari</td>
+            <td>{{Ijin}} Hari</td>
         </tr>
         <tr>
             <td>Jumlah Hari Alpha</td>
-            <td>0 hari</td>
+            <td>{{Alpha}} Hari</td>
         </tr>
         <tr>
             <td>Tunj. Transportasi</td>
-            <td></td>
+            <td>{{tj_transport}}</td>
         </tr>
         <tr>
             <td>Tunj. Makan Harian</td>
-            <td></td>
+            <td>{{tj_makan}}</td>
         </tr>
         <tr>
             <td>Tunj. Komunikasi</td>
-            <td></td>
+            <td>{{tj_komunikasi}}</td>
         </tr>
         <tr>
             <td>Tunj. PPH 21</td>
-            <td>0</td>
+            <td>{{tj_pph21}}</td>
         </tr>
         <tr>
             <td>Tunj. Hari Raya</td>
-            <td></td>
+            <td>{{tj_hari_raya}}</td>
         </tr>
         <tr>
             <td>Tunj. BPJS Kesehatan</td>
-            <td></td>
+            <td>{{tj_bpjs_kesehatan}}</td>
         </tr>
         <tr>
             <td>Bonus</td>
-            <td></td>
+            <td>{{bonus}}</td>
         </tr>
         <tr>
             <td>Lain-lain</td>
-            <td></td>
+            <td>{{lain_lain}}</td>
         </tr>
         <tr>
             <th>Sub-Total Penerimaan</th>
-            <td></td>
+            <td>{{Total Penerimaan}}</td>
         </tr>
     </table>
 
@@ -177,32 +175,32 @@
         </tr>
         <tr>
             <td>Jumlah Pinjaman</td>
-            <td>0</td>
+            <td>{{total_pj}}</td>
         </tr>
         <tr>
             <td>Pinjaman Terbayar</td>
-            <td>0</td>
+            <td>{{pj_dibayar}}</td>
         </tr>
         <tr>
             <td>Sisa Pinjaman</td>
-            <td>0</td>
+            <td>{{sisa_pj}}</td>
         </tr>
         <tr>
             <td>Pot. Kehadiran</td>
-            <td>0</td>
+            <td>{{pot_absensi}}</td>
         </tr>
         <tr>
             <td>Pot. Keterlambatan</td>
-            <td>0</td>
+            <td>{{pot_keterlambatan}}</td>
         </tr>
         <tr>
             <th>Sub-Total Potongan</th>
-            <td></td>
+            <td>{{Total Potongan}}</td>
         </tr>
     </table>
 
     <h3>TOTAL:</h3>
-    <p></p>
+    <p>{{total_transfer}} Rupiah</p>
 
     <div class="footer">
         Slip pembayaran gaji ini dibuat secara sistem dan tidak membutuhkan cap perusahaan dan tanda tangan.

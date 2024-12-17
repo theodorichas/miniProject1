@@ -19,13 +19,16 @@
 
 <!-- Form submit -->
 <form id="excelForm" enctype="multipart/form-data" action="<?= base_url('/paycheck/output') ?>" method="POST">
-    <h1>Package Paycheck Function</h1>
+    <h1><?= getTranslation('testing-text') ?></h1>
     <div class="mb-3">
-        <label for="formFile" id="formFilelbl" class="form-label"><?= lang('app.text-input-excel') ?></label>
+        <label for="formFile" id="formFilelbl" class="form-label"><?= getTranslation('text-input-excel') ?></label>
         <input class="form-control" type="file" id="formFile" name="formFile">
     </div>
-    <button type="button" id="btnModal" class="btn btn-warning"><?= lang('app.text-generate-file') ?></button>
-    <button type="submit" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= lang('app.text-send-email') ?></button>
+    <input type="hidden" id="filterPeriodeInput" name="filterPeriode">
+    <input type="hidden" id="filterPaycekInput" name="filterPaycek">
+    <button type="button" id="btnModal" class="btn btn-warning"><?= getTranslation('text-generate-file') ?></button>
+    <button type="button" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= getTranslation('text-send-email') ?></button>
+    <button type="button" id="btnCheckpdf" class="btn btn-info" style="display: none;"><?= getTranslation('text-check-pdf') ?></button>
 </form>
 
 <!-- Datatable -->
@@ -39,10 +42,20 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <div class="form-group">
-                <label for="filterPeriode">Select Period</label>
+            <!-- Filter Year -->
+            <!-- <div class="form-group">
+                <label for="filterYear"><?= getTranslation('text-filter-year') ?></label>
+                <i class="material-symbols-outlined" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= getTranslation('text-info-year') ?>">info</i>
+                <select name="filterYear" id="filterYear" class="form-control">
+                    <option value="">asd</option>
+                </select>
+            </div> -->
+            <!-- Filter Periode -->
+            <!-- <div class="form-group">
+                <label for="filterPeriode"><?= getTranslation('text-filter-periode') ?></label>
+                <i class="material-symbols-outlined" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= getTranslation('text-info-periode') ?>">info</i>
                 <select name="filterPeriode" id="filterPeriode" class="form-control">
-                    <option value="">All</option>
+                    <option value="">Select Option</option>
                     <option value="01">January</option>
                     <option value="02">February</option>
                     <option value="03">March</option>
@@ -56,18 +69,32 @@
                     <option value="11">November</option>
                     <option value="12">Desember</option>
                 </select>
-            </div>
+            </div> -->
             <div class="form-group">
-                <label for="filterPaycek">Eligible</label>
+                <label for="filterPeriode"><?= getTranslation('text-filter-periode') ?></label>
+                <i class="material-symbols-outlined" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= getTranslation('text-info-periode') ?>">info</i>
+                <select name="filterPeriode" id="filterPeriode" class="form-control">
+                    <option value="">Select Periode</option>
+
+                </select>
+            </div>
+            <!-- Filter Paycek -->
+            <div class="form-group">
+                <label for="filterPaycek"><?= getTranslation('text-filter-elegibilitas') ?></label>
+                <i class="material-symbols-outlined" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= htmlspecialchars(getTranslation('text-info-filter')) ?>">info</i>
                 <select name="filterPaycek" id="filterPaycek" class="form-control">
-                    <option value="">All</option>
+                    <option value=""><--- Select Option --></option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                 </select>
             </div>
+            <!-- Datatable -->
             <table id="example" class="table table-bordered table-hover">
                 <thead>
                     <tr>
+                        <th scope="col">
+                            <input type="checkbox" id="selectAll" />
+                        </th>
                         <th scope="col">Employee ID</th>
                         <th scope="col">Periode</th>
                         <th scope="col">Nama</th>
@@ -115,6 +142,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <!-- Jquery -->
 <script>
+    var table; //Variable to store dataTable
     $(document).ready(function() {
         $('#btnModal').click(function() {
             var fileInput = document.getElementById('formFile');
@@ -125,7 +153,7 @@
                 showConfirmButton: false,
             });
             // Check if button text is "Insert new file"
-            if ($('#btnModal').text() === '<?= lang('app.text-insert-new-file') ?>') {
+            if ($('#btnModal').text() === '<?= getTranslation('text-insert-new-file') ?>') {
                 // Reset the form and show the file input
                 // Show confirmation dialog
                 Swal.fire({
@@ -176,8 +204,17 @@
                     data: formData,
                     processData: false,
                     contentType: false,
+                    // New success function v2
                     success: function(response) {
                         var responseData = JSON.parse(response); // Parsing response dari JSON
+                        console.log('response data', responseData);
+                        // Populate the year dropdown
+                        var periodeDropdown = $('#filterPeriode');
+                        periodeDropdown.empty().append('<option value="">Select Periode</option>');
+                        responseData.periodes.forEach(function(periode) {
+                            periodeDropdown.append('<option value="' + periode + '">' + periode + '</option>');
+                        });
+
                         // Memfilter data dari responseData.data
                         var filteredData = responseData.data.filter(function(row) {
                             // Convert object values to an array and check if any value is not null
@@ -191,6 +228,7 @@
                             return;
                         }
                         var columns = filteredData.shift();
+                        console.log('columns', columns);
                         var convertedData = filteredData.map(function(row) {
                             var rowData = {};
                             for (var i = 0; i < columns.length; i++) {
@@ -208,15 +246,28 @@
                             }
                             return rowData;
                         });
-                        console.log(responseData.data);
 
-                        $('#example').DataTable({
+                        // Convert Periode column to match dropdown format (DD-MMM-YY) for filtering
+                        convertedData.forEach(row => {
+                            if (row.Periode) {
+                                row.Periode = formatDateToMatchDropdown(row.Periode); // Custom function
+                            }
+                        });
+
+                        table = $('#example').DataTable({
                             responsive: true,
                             lengthChange: false,
                             autoWidth: false,
                             data: convertedData, // This should contain the full data but we'll only show specific columns
                             destroy: true,
-                            columns: [{
+                            columns: [{ // Checkbox column
+                                    data: null,
+                                    orderable: false,
+                                    className: 'select-checkbox',
+                                    render: function(data, type, row) {
+                                        return '<input type="checkbox" class="row-select" />';
+                                    }
+                                }, {
                                     data: 'EmployeeId' // Column for Employee ID
                                 }, {
                                     data: 'Periode' // Column for Periode
@@ -249,22 +300,20 @@
                             allowOutsideClick: false,
                         });
 
-                        // Event listener for periode dropdown
+
+                        // Event listener for year and period filters
                         $('#filterPeriode').on('change', function() {
-                            var selectedMonth = $(this).val();
+                            const selectedPeriod = $('#filterPeriode').val();
 
-                            // Filter the DataTable by month
-                            var table = $('#example').DataTable();
-
-                            // If no month is selected, reset the filter
-                            if (selectedMonth === "") {
-                                table.column(1).search('').draw(); // Reset filter
+                            if (selectedPeriod) {
+                                table.column(2).search(`^${selectedPeriod}$`, true, false).draw(); // Exact match
+                                $('#example').show();
                             } else {
-                                // Use a regular expression to match the month in "YYYY-MM-DD" format
-                                var regex = '^\\d{4}-' + selectedMonth + '-\\d{2}$'; // Match "2024-01-31" format
-                                table.column(1).search(regex, true, false).draw(); // Apply the filter
+                                table.column(2).search('').draw(); // Clear filter
+                                $('#example').hide();
                             }
                         });
+
 
                         // Event listener for eligible dropdown
                         $('#filterPaycek').on('change', function() {
@@ -275,20 +324,46 @@
 
                             // If no month is selected, reset the filter
                             if (selectedOption === "") {
-                                table.column(6).search('').draw(); // Reset filter
+                                table.column(7).search('').draw(); // Reset filter
                             } else {
                                 // Use a regular expression to match the month in "YYYY-MM-DD" format
-                                table.column(6).search('^' + selectedOption + '$', true, false).draw(); // Apply the filter
+                                table.column(7).search('^' + selectedOption + '$', true, false).draw(); // Apply the filter
                             }
                         });
 
-                        $('#btnModal').text('<?= lang('app.text-insert-new-file') ?>');
+                        console.log('Converted Data Periode:', convertedData.map(row => row.Periode));
+
+
+                        $('#btnModal').text('<?= getTranslation('text-insert-new-file') ?>');
                         $('#formFilelbl').hide();
                         $('#fileNameDisplay').text(` - ${fileName}`);
-                        $('#btnPaycheck').show();
-
                         $('#formFile').hide();
                         $('#dataTable').show();
+                        $('#example').hide();
+                        // Handle "Select All" checkbox
+                        $('#selectAll').on('click', function() {
+                            // Get all checkboxes within the table body
+                            var $checkboxes = $('#example tbody input[type="checkbox"]');
+                            // Check or uncheck all checkboxes based on the state of the "selectAll" checkbox
+                            $checkboxes.prop('checked', $(this).is(':checked'));
+                            // Log the state of the "selectAll" checkbox to the console
+                            console.log('"selectAll" checkbox is checked:', $(this).is(':checked'));
+
+                            // Log the number of checked checkboxes in the table
+                            console.log('Number of checked checkboxes:', $checkboxes.filter(':checked').length);
+                        });
+                        $('#example tbody').on('change', 'input[type="checkbox"]', function() {
+                            if (!$(this).is(':checked')) {
+                                $('#selectAll').prop('checked', false);
+                            }
+
+                            // Log the state of the individual checkbox to the console
+                            console.log('Individual checkbox is checked:', $(this).is(':checked'));
+
+                            // Log the number of checked checkboxes in the table
+                            var $checkboxes = $('#example tbody input[type="checkbox"]');
+                            console.log('Number of checked checkboxes:', $checkboxes.filter(':checked').length);
+                        });
                     },
                     error: function(xhr, status, error) {
                         console.log('AJAX request failed!');
@@ -298,6 +373,149 @@
                             title: 'Incorrect format!',
                             text: 'Please insert the correct file format',
                         });
+                    }
+                });
+            }
+        });
+    });
+    $('#btnPaycheck').click(function() {
+        // Get selected filter values
+        var selectedMonth = $('#filterPeriode').val(); // From your month dropdown
+        var selectedPaycek = $('#filterPaycek').val(); // From your paycek dropdown
+
+        // Assign the filter values to hidden inputs
+        $('#filterPeriodeInput').val(selectedMonth);
+        $('#filterPaycekInput').val(selectedPaycek);
+
+        // Log the values to check if they are being captured correctly
+        console.log('Selected Periode (Month):', selectedMonth);
+        console.log('Selected Paycek:', selectedPaycek);
+
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to generate the PDF and display it inline for the filtered data?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, generate and display!',
+            allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Generating PDF...',
+                    text: 'Please wait while the PDF is being generated.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                var formData = new FormData();
+                formData.append('formFile', $('#formFile')[0].files[0]);
+                formData.append('filterPeriode', $('#filterPeriode').val());
+                formData.append('filterPaycek', $('#filterPaycek').val());
+
+                $.ajax({
+                    url: '/paycheck/output',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'PDF Generated!',
+                            text: 'Your PDF has been generated and will open in a new tab!',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK'
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Failed to generate the PDF. Please try again.',
+                        });
+                        console.error('AJAX request failed:', error);
+                    }
+                });
+            }
+        })
+    });
+    $('#btnCheckpdf').click(function() {
+        // Get selected checkboxes
+        var selectedRows = $('#example tbody input[type="checkbox"]:checked').map(function() {
+            return table.row($(this).closest('tr')).data().EmployeeId; // Adjust to match backend field
+        }).get();
+
+        console.log('Selected Rows:', selectedRows);
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to generate the PDF and display it inline for the filtered data?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, generate and display!',
+            allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Generating PDF...',
+                    text: 'Please wait while the PDF is being generated.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                var formData = new FormData();
+                formData.append('formFile', $('#formFile')[0].files[0]);
+                formData.append('filterPeriode', $('#filterPeriode').val());
+                formData.append('filterPaycek', $('#filterPaycek').val());
+                formData.append('selectedRows', JSON.stringify(selectedRows));
+                console.log(formData);
+                $.ajax({
+                    url: '/paycheck/checkpdf',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhrFields: {
+                        responseType: 'blob' // Important to receive PDF as blob
+                    },
+                    success: function(response) {
+                        Swal.close();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'PDF Generated!',
+                            text: 'Your PDF has been generated and will open in a new tab!',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Create a blob URL for the PDF
+                            var blob = new Blob([response], {
+                                type: 'application/pdf'
+                            });
+                            var blobUrl = URL.createObjectURL(blob);
+
+                            // Open the PDF in a new tab
+                            window.open(blobUrl, '_blank');
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Failed to generate the PDF. Please try again.',
+                        });
+                        console.error('AJAX request failed:', error);
                     }
                 });
             }
@@ -313,6 +531,16 @@
         });
     }
 
+    //format tanggal sesuai dengan drop down periode
+    function formatDateToMatchDropdown(date) {
+        const options = {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit'
+        };
+        return new Date(date).toLocaleDateString('en-GB', options).replace(/ /g, '-');
+    }
+
     // Fungsi convert serial nomor ke tanggal pada excel
     function excelSerialToDate(serial) {
         var utc_days = Math.floor(serial - 25569);
@@ -325,7 +553,54 @@
 
         return year + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
     }
+    // Combined function to handle button visibility based on both dropdowns
+    function updateButtonVisibility() {
+        var selectedYear = $('#filterYear').val(); // Get the selected Periode value
+        var selectedPeriode = $('#filterPeriode').val(); // Get the selected Periode value
+        var selectedPaycek = $('#filterPaycek').val(); // Get the selected Paycek value
+
+        console.log('Selected Periode:', selectedPeriode);
+        console.log('Selected Paycek:', selectedPaycek);
+
+        // Logic to determine button visibility
+        if (selectedPeriode === '') {
+            // Hide buttons if no period is selected
+            $('#btnPaycheck, #btnCheckpdf').hide();
+        } else if (selectedPeriode != '') {
+            // Show buttons if a period is selected
+            $('#btnPaycheck, #btnCheckpdf').show();
+            if (selectedPaycek === 'no') {
+                $('#btnPaycheck, #btnCheckpdf').hide(); // Hide both if Paycek is 'no'
+            }
+        } else {
+            // Period is selected, check Paycek filter
+            if (selectedPaycek === 'no') {
+                $('#btnPaycheck, #btnCheckpdf').hide(); // Hide both if Paycek is 'no'
+            } else if (selectedPaycek === '') {
+                $('#btnCheckpdf').hide(); // Show only btnCheckpdf if Paycek is blank
+                $('#btnPaycheck').hide();
+            } else {
+                $('#btnPaycheck, #btnCheckpdf').show(); // Show both if Paycek is 'yes' or other valid selection
+            }
+        }
+    }
+
+    // Attach the combined function to both dropdown change events
+    $('#filterYear').change(updateButtonVisibility);
+    $('#filterPeriode').change(updateButtonVisibility);
+    $('#filterPaycek').change(updateButtonVisibility);
 </script>
+
+<!-- Script Tool Tips -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+
 
 
 <?= $this->endSection('scripts'); ?>
