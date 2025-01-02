@@ -10,6 +10,8 @@ use App\Models\ModelExcelv2;
 use TCPDF;
 use DateTime;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Html as HtmlWriter;
 use config\Email;
 
 
@@ -88,38 +90,25 @@ class Paycheck extends Home
         $uploadFile = $this->request->getFile('formFile');
         $excelData = $this->readExcelDataV2($uploadFile);
 
-        // 2. Get filters from POST
         $filterPeriode = $this->request->getPost('filterPeriode');
         $filterPaycek = $this->request->getPost('filterPaycek');
-
-        // 3. Filter the data by Periode and Paycek
-        $filteredData = array_filter($excelData['data'], function ($row) use ($filterPeriode, $filterPaycek) {
-            // Skip rows without essential data
-            if (empty($row['EmployeeId']) || empty($row['Periode'])) {
-                return false;
-            }
-
+        $selectedRows = json_decode($this->request->getPost('selectedRows'), true);
+        $filteredData = array_filter($excelData['data'], function ($row) use ($filterPeriode, $filterPaycek, $selectedRows) {
             $matchesPeriode = true;
             $matchesPaycek = true;
+            $isRowSelected = empty($selectedRows) || in_array((string)$row['EmployeeId'], array_map('strval', $selectedRows));
 
-            // Apply Periode filter if it's set
             if ($filterPeriode && isset($row['Periode'])) {
-                $rowPeriode = !empty($row['Periode']) ? $this->excelSerialToDate($row['Periode']) : null;
-
-                // Convert $filterPeriode to 'YYYY-MM-DD'
+                $rowPeriode = $this->excelSerialToDate($row['Periode']);
                 $filterPeriodeFormatted = date('Y-m-d', strtotime($filterPeriode));
-
-                // Compare with $rowPeriode
                 $matchesPeriode = ($rowPeriode === $filterPeriodeFormatted);
             }
 
-
-            // Apply Paycek filter if it's set
             if ($filterPaycek && isset($row['Paycek'])) {
                 $matchesPaycek = ($row['Paycek'] === $filterPaycek);
             }
 
-            return $matchesPeriode && $matchesPaycek;
+            return $matchesPeriode && $matchesPaycek && $isRowSelected;
         });
 
         $emailConfig = new Email();
@@ -181,6 +170,7 @@ class Paycheck extends Home
         return $this->response->setJSON(['results' => $results]);
     }
 
+    //Old checkPDF
     // public function checkPdf()
     // {
     //     // 1. Read data from the uploaded Excel file
@@ -403,6 +393,7 @@ class Paycheck extends Home
     //         ->setBody($pdfContent);
     // }
 
+    // Current working CheckPDF
     public function checkPdf()
     {
         // 1. Read data from the uploaded Excel file
@@ -487,6 +478,91 @@ class Paycheck extends Home
             ->setHeader('Content-Disposition', 'inline; filename="paycheck.pdf"')
             ->setBody($pdfContent);
     }
+
+    // Xls CheckPDF test
+    // public function checkPdf()
+    // {
+    //     // Load the Excel template
+    //     $templateFilePath = FCPATH . 'asset/layout_slip_gaji.xlsx';
+    //     $spreadsheet = IOFactory::load($templateFilePath);
+    //     $sheet = $spreadsheet->getActiveSheet();
+
+    //     // 1. Read data from the uploaded Excel file
+    //     $uploadFile = $this->request->getFile('formFile');
+    //     $excelData = $this->readExcelDataV2($uploadFile);
+
+    //     // 2. Get filters from POST
+    //     $filterPeriode = $this->request->getPost('filterPeriode');
+    //     $filterPaycek = $this->request->getPost('filterPaycek');
+    //     $selectedRows = json_decode($this->request->getPost('selectedRows'), true);
+
+    //     $filteredData = array_filter($excelData['data'], function ($row) use ($filterPeriode, $filterPaycek, $selectedRows) {
+    //         $matchesPeriode = true;
+    //         $matchesPaycek = true;
+    //         $isRowSelected = empty($selectedRows) || in_array((string)$row['EmployeeId'], array_map('strval', $selectedRows));
+
+    //         if ($filterPeriode && isset($row['Periode'])) {
+    //             $rowPeriode = $this->excelSerialToDate($row['Periode']);
+    //             $filterPeriodeFormatted = date('Y-m-d', strtotime($filterPeriode));
+    //             $matchesPeriode = ($rowPeriode === $filterPeriodeFormatted);
+    //         }
+
+    //         if ($filterPaycek && isset($row['Paycek'])) {
+    //             $matchesPaycek = ($row['Paycek'] === $filterPaycek);
+    //         }
+
+    //         return $matchesPeriode && $matchesPaycek && $isRowSelected;
+    //     });
+
+    //     // 3. Generate a PDF for each filtered user
+    //     $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, 'A4', true, 'UTF-8', false);
+    //     $pdf->SetCreator(PDF_CREATOR);
+    //     $pdf->SetAuthor('Your Name');
+    //     $pdf->SetTitle('Paycheck');
+    //     $pdf->SetSubject('Paycheck Details');
+
+    //     // Data that is going to be formatted as currency
+    //     $columnsToFormat = ['gaji_pokok', 'tj_jabatan', 'tj_keahlian', 'tj_masa_kerja', 'tj_keluarga', 'tj_transport', 'tj_makan', 'tj_komunikasi', 'tj_pph21', 'tj_hari_raya', 'tj_bpjs_kesehatan', 'bonus', 'lain_lain', 'Total Penerimaan', 'total_pj', 'pj_dibayar', 'sisa_pj', 'pot_absensi', 'pot_keterlambatan', 'Total Potongan', 'total_transfer'];
+
+    //     foreach ($filteredData as $row) {
+    //         // Add a new page
+    //         $pdf->AddPage();
+
+    //         // Fill placeholders in the Excel template
+    //         foreach ($row as $key => $value) {
+    //             foreach ($sheet->getCellCollection() as $cell) {
+    //                 $cellValue = $sheet->getCell($cell)->getValue();
+
+    //                 foreach ($row as $key => $value) {
+    //                     $placeholder = "{{{$key}}}"; // Match placeholders like {{Nama Lengkap}}
+
+    //                     if (strpos($cellValue, $placeholder) !== false) {
+    //                         $cellValue = str_replace($placeholder, $value, $cellValue);
+    //                         $sheet->setCellValue($cell, $cellValue); // Update cell with replaced value
+    //                     }
+    //                 }
+    //             }
+    //         }
+
+    //         // Export the filled Excel to HTML
+    //         $htmlWriter = new HtmlWriter($spreadsheet);
+    //         ob_start();
+    //         $htmlWriter->save('php://output');
+    //         $htmlContent = ob_get_clean();
+
+    //         // Write the HTML content to the PDF
+    //         $pdf->writeHTML($htmlContent, true, false, true, false, '');
+    //     }
+
+    //     // Output the PDF to the browser
+    //     $this->response->setContentType('application/pdf');
+    //     $pdfContent = $pdf->Output('paycheck.pdf', 'S');
+
+    //     return $this->response
+    //         ->setHeader('Content-Type', 'application/pdf')
+    //         ->setHeader('Content-Disposition', 'inline; filename="paycheck.pdf"')
+    //         ->setBody($pdfContent);
+    // }
 
     // Function to read data from Excel file 
     public function read()

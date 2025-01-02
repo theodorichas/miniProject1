@@ -3,6 +3,11 @@
 
 <?= $this->section('links'); ?>
 <title><?= $title ?></title>
+
+
+<!-- CSS -->
+<link rel="stylesheet" href="<?= base_url('asset/css/paycheck.css') ?>">
+
 <!-- DataTable -->
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('asset/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') ?>">
@@ -27,8 +32,6 @@
     <input type="hidden" id="filterPeriodeInput" name="filterPeriode">
     <input type="hidden" id="filterPaycekInput" name="filterPaycek">
     <button type="button" id="btnModal" class="btn btn-warning"><?= getTranslation('text-generate-file') ?></button>
-    <button type="button" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= getTranslation('text-send-email') ?></button>
-    <button type="button" id="btnCheckpdf" class="btn btn-info" style="display: none;"><?= getTranslation('text-check-pdf') ?></button>
 </form>
 
 <!-- Datatable -->
@@ -108,6 +111,10 @@
             </table>
         </div>
         <!-- /.card-body -->
+        <div class="button-container" id="button-container">
+            <button type="button" id="btnPaycheck" class="btn btn-success" style="display: none;"><?= getTranslation('text-send-email') ?></button>
+            <button type="button" id="btnCheckpdf" class="btn btn-info" style="display: none;"><?= getTranslation('text-check-pdf') ?></button>
+        </div>
     </div>
     <!-- /.card -->
 </div>
@@ -352,6 +359,7 @@
                             // Log the number of checked checkboxes in the table
                             console.log('Number of checked checkboxes:', $checkboxes.filter(':checked').length);
                         });
+                        // Handle individual checkbox click
                         $('#example tbody').on('change', 'input[type="checkbox"]', function() {
                             if (!$(this).is(':checked')) {
                                 $('#selectAll').prop('checked', false);
@@ -378,19 +386,24 @@
             }
         });
     });
+
     $('#btnPaycheck').click(function() {
-        // Get selected filter values
-        var selectedMonth = $('#filterPeriode').val(); // From your month dropdown
-        var selectedPaycek = $('#filterPaycek').val(); // From your paycek dropdown
+        var selectedRows = $('#example tbody input[type="checkbox"]:checked').map(function() {
+            var rowData = table.row($(this).closest('tr')).data(); // Get the entire row data
+            return {
+                EmployeeId: rowData.EmployeeId,
+                NamaLengkap: rowData['Nama Lengkap'] // Get user's name
+            };
+        }).get();
 
-        // Assign the filter values to hidden inputs
-        $('#filterPeriodeInput').val(selectedMonth);
-        $('#filterPaycekInput').val(selectedPaycek);
-
-        // Log the values to check if they are being captured correctly
-        console.log('Selected Periode (Month):', selectedMonth);
-        console.log('Selected Paycek:', selectedPaycek);
-
+        if (selectedRows.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Users Selected',
+                text: 'Please select at least one user to proceed.',
+            });
+            return;
+        }
 
         Swal.fire({
             title: 'Are you sure?',
@@ -403,49 +416,111 @@
             allowOutsideClick: false,
         }).then((result) => {
             if (result.isConfirmed) {
+                let completedUsers = 0;
+
                 Swal.fire({
-                    title: 'Generating PDF...',
-                    text: 'Please wait while the PDF is being generated.',
-                    icon: 'info',
+                    title: 'Processing...',
+                    html: `
+                    <div style="width: 100%; background: #eee; height: 10px; position: relative; margin-top: 10px;">
+                        <div id="swal-progress" style="background: #28a745; width: 0%; height: 100%;"></div>
+                    </div>
+                    <p id="swal-progress-text" style="margin-top: 10px;">Please wait...</p>
+                    <ul id="swal-user-status" style="text-align: left; padding: 10px; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; list-style: none;">
+                    </ul>
+                `,
                     allowOutsideClick: false,
                     showConfirmButton: false,
-                    didOpen: () => Swal.showLoading()
-                });
+                    didOpen: () => {
+                        const updateProgress = () => {
+                            const progressPercent = Math.round((completedUsers / selectedRows.length) * 100);
+                            $('#swal-progress').css('width', `${progressPercent}%`);
+                            $('#swal-progress-text').text(`Progress: ${progressPercent}%`);
+                        };
 
-                var formData = new FormData();
-                formData.append('formFile', $('#formFile')[0].files[0]);
-                formData.append('filterPeriode', $('#filterPeriode').val());
-                formData.append('filterPaycek', $('#filterPaycek').val());
+                        const updateUserStatus = (username, status, success = true) => {
+                            const color = success ? 'green' : 'red';
+                            $('#swal-user-status').append(
+                                `<li style="color: ${color};">${username} - ${status}</li>`
+                            );
+                        };
 
-                $.ajax({
-                    url: '/paycheck/output',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        Swal.close();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'PDF Generated!',
-                            text: 'Your PDF has been generated and will open in a new tab!',
-                            allowOutsideClick: false,
-                            confirmButtonText: 'OK'
+                        selectedRows.forEach((row, index) => {
+                            updateUserStatus(row.NamaLengkap, 'Compiling...'); // Initial status
+                            setTimeout(() => {
+                                // Simulate server response (replace with actual AJAX logic)
+                                const isSuccess = true; // Simulate success/failure
+
+                                if (isSuccess) {
+                                    updateUserStatus(row.NamaLengkap, 'Done', true);
+                                } else {
+                                    updateUserStatus(row.NamaLengkap, 'Failed', false);
+                                }
+
+                                completedUsers++;
+                                updateProgress();
+
+                                if (completedUsers === selectedRows.length) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Processing Completed',
+                                        text: 'All selected users have been processed',
+                                        allowOutsideClick: false,
+                                    }).then(() => {
+                                        // After "Processing Completed", show the loading spinner
+                                        Swal.fire({
+                                            title: 'Loading, please wait...',
+                                            showConfirmButton: false,
+                                            allowOutsideClick: false,
+                                            showCloseButton: false,
+                                            didOpen: () => {
+                                                // Start the AJAX request after the spinner is shown
+                                                var formData = new FormData();
+                                                formData.append('formFile', $('#formFile')[0].files[0]);
+                                                formData.append('filterPeriode', $('#filterPeriode').val());
+                                                formData.append('filterPaycek', $('#filterPaycek').val());
+                                                formData.append(
+                                                    'selectedRows',
+                                                    JSON.stringify(selectedRows.map(row => row.EmployeeId)) // Only send EmployeeId
+                                                );
+
+                                                $.ajax({
+                                                    url: '/paycheck/output',
+                                                    type: 'POST',
+                                                    data: formData,
+                                                    processData: false,
+                                                    contentType: false,
+                                                    success: function(response) {
+                                                        Swal.close();
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Paycheck Sent!',
+                                                            text: 'The paycheck has been sent to your employee.',
+                                                            allowOutsideClick: false,
+                                                            confirmButtonText: 'OK'
+                                                        });
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        Swal.close();
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Error!',
+                                                            text: 'Failed to generate the PDF. Please try again.',
+                                                        });
+                                                        console.error('AJAX request failed:', error);
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    });
+                                }
+                            }, 1000 * (index + 1)); // Simulate staggered delay
                         });
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.close();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'Failed to generate the PDF. Please try again.',
-                        });
-                        console.error('AJAX request failed:', error);
                     }
                 });
             }
-        })
+        });
     });
+
     $('#btnCheckpdf').click(function() {
         // Get selected checkboxes
         var selectedRows = $('#example tbody input[type="checkbox"]:checked').map(function() {
