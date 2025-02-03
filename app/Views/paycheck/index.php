@@ -388,13 +388,16 @@
     });
 
     $('#btnPaycheck').click(function() {
-        var selectedRows = $('#example tbody input[type="checkbox"]:checked').map(function() {
-            var rowData = table.row($(this).closest('tr')).data(); // Get the entire row data
+        // Updated: Get selected checkboxes across all pages with "Nama Lengkap"
+        var selectedRows = table.rows().nodes().to$().find('input[type="checkbox"]:checked').map(function() {
+            const rowData = table.row($(this).closest('tr')).data();
             return {
                 EmployeeId: rowData.EmployeeId,
-                NamaLengkap: rowData['Nama Lengkap'] // Get user's name
-            };
+                name: rowData['Nama Lengkap']
+            }; // Handle "Nama Lengkap" with space
         }).get();
+
+        console.log('Selected Rows:', selectedRows);
 
         if (selectedRows.length === 0) {
             Swal.fire({
@@ -421,13 +424,13 @@
                 Swal.fire({
                     title: 'Processing...',
                     html: `
-                    <div style="width: 100%; background: #eee; height: 10px; position: relative; margin-top: 10px;">
-                        <div id="swal-progress" style="background: #28a745; width: 0%; height: 100%;"></div>
-                    </div>
-                    <p id="swal-progress-text" style="margin-top: 10px;">Please wait...</p>
-                    <ul id="swal-user-status" style="text-align: left; padding: 10px; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; list-style: none;">
-                    </ul>
-                `,
+                <div style="width: 100%; background: #eee; height: 10px; position: relative; margin-top: 10px;">
+                    <div id="swal-progress" style="background: #28a745; width: 0%; height: 100%;"></div>
+                </div>
+                <p id="swal-progress-text" style="margin-top: 10px;">Please wait...</p>
+                <ul id="swal-user-status" style="text-align: left; padding: 10px; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; list-style: none;">
+                </ul>
+            `,
                     allowOutsideClick: false,
                     showConfirmButton: false,
                     didOpen: () => {
@@ -444,16 +447,17 @@
                             );
                         };
 
-                        selectedRows.forEach((row, index) => {
-                            updateUserStatus(row.NamaLengkap, 'Compiling...'); // Initial status
+                        const processRow = (row, index) => {
+                            updateUserStatus(`${row.name} (${row.employeeId})`, 'Compiling...');
                             setTimeout(() => {
                                 // Simulate server response (replace with actual AJAX logic)
-                                const isSuccess = true; // Simulate success/failure
+                                const isSuccess = Math.random() > 0.2; // Simulate 80% success rate
 
                                 if (isSuccess) {
-                                    updateUserStatus(row.NamaLengkap, 'Done', true);
+                                    updateUserStatus(`${row.name} (${row.employeeId})`, 'Done', true);
                                 } else {
-                                    updateUserStatus(row.NamaLengkap, 'Failed', false);
+                                    updateUserStatus(row[`${row.name} (${row.employeeId})`], 'Failed. Retrying...', false);
+                                    processRow(row, index); // Retry failed row
                                 }
 
                                 completedUsers++;
@@ -480,9 +484,11 @@
                                                 formData.append('filterPaycek', $('#filterPaycek').val());
                                                 formData.append(
                                                     'selectedRows',
-                                                    JSON.stringify(selectedRows.map(row => row.EmployeeId)) // Only send EmployeeId
+                                                    JSON.stringify(selectedRows.map(row => ({
+                                                        EmployeeId: row.EmployeeId,
+                                                        name: row.name
+                                                    })))
                                                 );
-
                                                 $.ajax({
                                                     url: '/paycheck/output',
                                                     type: 'POST',
@@ -514,16 +520,20 @@
                                     });
                                 }
                             }, 1000 * (index + 1)); // Simulate staggered delay
-                        });
+                        };
+
+                        selectedRows.forEach(processRow);
                     }
                 });
             }
         });
     });
 
+
+
     $('#btnCheckpdf').click(function() {
-        // Get selected checkboxes
-        var selectedRows = $('#example tbody input[type="checkbox"]:checked').map(function() {
+        // Updated: Get selected checkboxes across all pages
+        var selectedRows = table.rows().nodes().to$().find('input[type="checkbox"]:checked').map(function() {
             return table.row($(this).closest('tr')).data().EmployeeId; // Adjust to match backend field
         }).get();
 
@@ -605,7 +615,6 @@
             maximumFractionDigits: 2 // Adjust to display up to 2 decimal places if needed
         });
     }
-
     //format tanggal sesuai dengan drop down periode
     function formatDateToMatchDropdown(date) {
         const options = {
@@ -615,7 +624,6 @@
         };
         return new Date(date).toLocaleDateString('en-GB', options).replace(/ /g, '-');
     }
-
     // Fungsi convert serial nomor ke tanggal pada excel
     function excelSerialToDate(serial) {
         var utc_days = Math.floor(serial - 25569);

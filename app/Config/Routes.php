@@ -103,6 +103,9 @@ $routes->get('/testing', 'home::testing');
 $routes->get('/testing2', 'home::testing2');
 $routes->get('/loader', 'home::loader');
 $routes->get('/placeholder', 'home::placeholder');
+$routes->get('/testingpdf', 'paycheck::testingpdf');
+
+$routes->get('/testingtemp', 'home::testingtemp');
 
 
 service('auth')->routes($routes);

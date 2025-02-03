@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= $this->renderSection('links'); ?>
 
-
     <!-- CSS -->
     <link rel="stylesheet" href="<?= base_url('asset/css/main.css') ?>">
     <link rel="stylesheet" href="<?= base_url('asset/css/font-awesome-animation.min.css') ?>">
